@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building MetroPulse: Data Ingestion & Storage on AWS — MLA-C01 Series #1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Spline+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EDE3;
+    --paper-2:#FBF8F2;
+    --ink:#17130F;
+    --ink-soft:#473d33;
+    --rust:#BE4A2C;
+    --amber:#D98A2B;
+    --teal:#1E7A64;
+    --slate:#385a7a;
+    --line:#D9CFBE;
+    --line-2:#cbbfa9;
+    --code-bg:#1c1814;
+    --code-fg:#e9e0d0;
+    --max:880px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Spline Sans',system-ui,sans-serif;
+    font-size:18px;
+    line-height:1.72;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(190,74,44,.05), transparent 38%),
+      radial-gradient(circle at 88% 22%, rgba(217,138,43,.06), transparent 40%);
+  }
+  ::selection{background:var(--amber);color:var(--ink);}
+
+  /* ---------- Layout ---------- */
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px;}
+  .full{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- Masthead ---------- */
+  header.hero{
+    border-bottom:3px solid var(--ink);
+    padding:46px 0 38px;
+    margin-bottom:6px;
+  }
+  .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--rust);font-weight:700;margin:0 0 18px;
+    display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+  }
+  .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--rust);display:inline-block;}
+  .kicker .muted{color:var(--ink-soft);font-weight:500;letter-spacing:.14em;}
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(34px,6vw,62px);
+    line-height:1.02;
+    letter-spacing:-.015em;
+    margin:0 0 22px;
+  }
+  h1 em{font-style:italic;color:var(--rust);}
+  .dek{
+    font-size:clamp(18px,2.4vw,22px);
+    color:var(--ink-soft);
+    max-width:46ch;
+    margin:0 0 26px;
+    line-height:1.5;
+  }
+  .byline{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    font-size:14.5px;color:var(--ink-soft);
+    border-top:1px solid var(--line);padding-top:20px;
+  }
+  .byline .av{
+    width:42px;height:42px;border-radius:50%;
+    background:linear-gradient(135deg,var(--rust),var(--amber));
+    display:grid;place-items:center;color:#fff;font-weight:700;font-family:'Fraunces',serif;font-size:15px;letter-spacing:-0.3px;
+    flex:none;
+  }
+  .byline b{color:var(--ink);}
+  .byline .sep{color:var(--line-2);}
+
+  /* ---------- Body typography ---------- */
+  main{padding:42px 0 10px;}
+  p{margin:0 0 20px;}
+  main h2{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(26px,3.6vw,38px);line-height:1.1;letter-spacing:-.01em;
+    margin:60px 0 8px;scroll-margin-top:20px;
+  }
+  main h2 .num{
+    font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--rust);
+    display:block;letter-spacing:.18em;margin-bottom:10px;font-weight:700;
+  }
+  main h3{
+    font-family:'Spline Sans',sans-serif;font-weight:700;
+    font-size:21px;margin:38px 0 6px;letter-spacing:-.01em;
+  }
+  main h2 + p, main h3 + p{margin-top:14px;}
+  a{color:var(--rust);text-decoration:none;border-bottom:1.5px solid var(--line-2);transition:border-color .2s;}
+  a:hover{border-color:var(--rust);}
+  strong{font-weight:700;color:var(--ink);}
+  em{font-style:italic;}
+  code{
+    font-family:'JetBrains Mono',monospace;font-size:.86em;
+    background:rgba(190,74,44,.08);color:#9c3a22;
+    padding:.12em .42em;border-radius:5px;
+  }
+  hr.rule{border:none;border-top:1px solid var(--line);margin:54px 0;}
+  .lead-line{
+    border-left:3px solid var(--rust);
+    padding-left:22px;font-size:21px;line-height:1.6;color:var(--ink);
+    font-family:'Fraunces',serif;font-weight:400;font-style:italic;
+    margin:8px 0 30px;
+  }
+
+  /* ---------- Callouts ---------- */
+  .note{
+    background:var(--paper-2);border:1px solid var(--line);
+    border-left:4px solid var(--amber);
+    border-radius:10px;padding:18px 22px;margin:28px 0;font-size:16.5px;line-height:1.62;
+  }
+  .note .tag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--amber);font-weight:700;display:block;margin-bottom:6px;
+  }
+  .note.exam{border-left-color:var(--teal);}
+  .note.exam .tag{color:var(--teal);}
+  .note.gotcha{border-left-color:var(--rust);}
+  .note.gotcha .tag{color:var(--rust);}
+
+  /* ---------- Code ---------- */
+  pre{
+    background:var(--code-bg);color:var(--code-fg);
+    border-radius:12px;padding:22px 22px;overflow-x:auto;
+    font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.65;
+    margin:24px 0;border:1px solid #000;
+    box-shadow:0 14px 30px -18px rgba(0,0,0,.5);
+  }
+  pre .cmt{color:#8c8275;font-style:italic;}
+  pre .k{color:#e9a23b;}
+  pre .s{color:#9ccc8f;}
+  pre .n{color:#e3a6f0;}
+  pre code{background:none;color:inherit;padding:0;font-size:inherit;}
+  .code-label{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-soft);margin:24px 0 -14px;font-weight:700;
+  }
+
+  /* ---------- Figures / diagrams ---------- */
+  figure{margin:38px 0;}
+  figure.bleed{margin:46px 0;}
+  .diagram{
+    background:var(--paper-2);border:1px solid var(--line);border-radius:16px;
+    padding:26px 20px 14px;box-shadow:0 18px 40px -28px rgba(20,15,10,.4);
+  }
+  .diagram svg{display:block;width:100%;height:auto;}
+  figcaption{
+    font-size:14px;color:var(--ink-soft);margin-top:14px;text-align:center;
+    font-style:italic;font-family:'Fraunces',serif;
+  }
+  figcaption b{font-style:normal;color:var(--rust);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;}
+
+  /* ---------- Tables ---------- */
+  .table-scroll{overflow-x:auto;margin:28px 0;-webkit-overflow-scrolling:touch;}
+  table{border-collapse:collapse;width:100%;font-size:15px;min-width:560px;}
+  th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top;}
+  thead th{
+    background:var(--ink);color:var(--paper);font-weight:600;font-size:13px;
+    letter-spacing:.04em;border-bottom:none;
+  }
+  thead th:first-child{border-top-left-radius:9px;}
+  thead th:last-child{border-top-right-radius:9px;}
+  tbody tr:nth-child(even){background:rgba(217,138,43,.05);}
+  tbody td:first-child{font-weight:600;}
+
+  /* ---------- TOC ---------- */
+  nav.toc{
+    background:var(--paper-2);border:1px solid var(--line);border-radius:14px;
+    padding:24px 28px;margin:14px 0 8px;
+  }
+  nav.toc .toc-h{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--rust);font-weight:700;margin-bottom:14px;
+  }
+  nav.toc ol{margin:0;padding:0;list-style:none;counter-reset:toc;
+    columns:2;column-gap:36px;}
+  nav.toc li{counter-increment:toc;margin:0 0 9px;font-size:15px;break-inside:avoid;}
+  nav.toc li a{
+    border:none;color:var(--ink);display:flex;gap:12px;align-items:baseline;
+  }
+  nav.toc li a:hover{color:var(--rust);}
+  nav.toc li a::before{
+    content:counter(toc,decimal-leading-zero);
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--amber);font-weight:700;flex:none;
+  }
+
+  /* ---------- Pull / project card ---------- */
+  .project-card{
+    background:var(--ink);color:var(--paper);border-radius:18px;
+    padding:34px 34px 30px;margin:40px 0;position:relative;overflow:hidden;
+  }
+  .project-card::after{
+    content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;
+    background:radial-gradient(circle,rgba(217,138,43,.28),transparent 70%);
+  }
+  .project-card .tag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--amber);font-weight:700;
+  }
+  .project-card h3{color:var(--paper);font-size:26px;margin:8px 0 14px;font-family:'Fraunces',serif;font-weight:600;}
+  .project-card p{color:#d8cdbb;margin-bottom:14px;position:relative;z-index:1;}
+  .project-card ul{margin:0;padding-left:20px;color:#d8cdbb;position:relative;z-index:1;}
+  .project-card li{margin-bottom:7px;}
+  .project-card b{color:var(--amber);}
+
+  /* ---------- Key takeaways ---------- */
+  .takeaways{
+    background:var(--paper-2);border:2px solid var(--ink);border-radius:16px;padding:28px 30px;margin:36px 0;
+  }
+  .takeaways h3{margin-top:0;}
+  .takeaways ul{margin:0;padding-left:0;list-style:none;}
+  .takeaways li{padding-left:30px;position:relative;margin-bottom:13px;font-size:16px;}
+  .takeaways li::before{
+    content:"→";position:absolute;left:0;color:var(--rust);font-weight:700;font-family:'JetBrains Mono',monospace;
+  }
+
+  /* ---------- Footer / CTA ---------- */
+  footer{
+    border-top:3px solid var(--ink);margin-top:64px;padding:46px 0 60px;
+  }
+  .cta{
+    background:linear-gradient(135deg,var(--rust),var(--amber));
+    border-radius:18px;padding:36px;color:#fff;text-align:center;
+  }
+  .cta h3{font-family:'Fraunces',serif;font-size:28px;margin:0 0 12px;color:#fff;}
+  .cta p{color:rgba(255,255,255,.92);margin:0 auto 8px;max-width:48ch;}
+  .next-up{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-soft);margin-top:34px;text-align:center;font-weight:700;
+  }
+  .next-up b{color:var(--rust);}
+
+  @media (max-width:680px){
+    body{font-size:17px;}
+    nav.toc ol{columns:1;}
+    .project-card,.takeaways,.cta{padding:24px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SITE NAV ===== -->
+<nav style="position:sticky;top:0;z-index:999;background:rgba(243,237,227,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #D9CFBE;display:flex;align-items:center;justify-content:space-between;padding:13px 28px;font-family:'Spline Sans',system-ui,sans-serif;" role="navigation" aria-label="Site navigation">
+  <a href="../index.html" style="font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:600;color:#17130F;text-decoration:none;border:none;letter-spacing:-.02em;">SBM<span style="color:#BE4A2C">.</span></a>
+  <div style="display:flex;align-items:center;gap:22px;">
+    <a href="../index.html" style="font-size:14px;font-weight:500;color:#473d33;text-decoration:none;border:none;">← Portfolio</a>
+    <a href="../index.html#blog" style="font-size:14px;font-weight:500;color:#473d33;text-decoration:none;border:none;">All Posts</a>
+    <a href="../index.html#contact" style="font-size:13px;font-weight:600;color:#fff;background:#BE4A2C;padding:7px 18px;border-radius:8px;text-decoration:none;border:none;white-space:nowrap;">Hire Me</a>
+  </div>
+</nav>
+
+<!-- ===================== AWS-STYLE ICON SPRITE (custom SVG renditions) ===================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="g-storage" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B7A1E"/><stop offset="1" stop-color="#6BA53A"/></linearGradient>
+    <linearGradient id="g-analytics" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2DBA"/><stop offset="1" stop-color="#8C4FFF"/></linearGradient>
+    <linearGradient id="g-compute" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C25A12"/><stop offset="1" stop-color="#ED7100"/></linearGradient>
+    <linearGradient id="g-ml" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B7E6E"/><stop offset="1" stop-color="#12B5A0"/></linearGradient>
+    <linearGradient id="g-appint" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B30D5E"/><stop offset="1" stop-color="#E7157B"/></linearGradient>
+    <linearGradient id="g-security" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B41F32"/><stop offset="1" stop-color="#DD344C"/></linearGradient>
+    <linearGradient id="g-neutral" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2C4763"/><stop offset="1" stop-color="#4A6685"/></linearGradient>
+  </defs>
+
+  <symbol id="ic-s3" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-storage)"/>
+    <path d="M15 18h18l-1.6 15.4a2 2 0 0 1-2 1.8H18.6a2 2 0 0 1-2-1.8z" fill="#fff"/>
+    <ellipse cx="24" cy="18" rx="9" ry="2.6" fill="#fff" stroke="#2E6B1B" stroke-width="0.7"/>
+  </symbol>
+  <symbol id="ic-kinesis" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <g fill="#fff"><circle cx="15" cy="17" r="2.2"/><rect x="19" y="15.6" width="15" height="2.8" rx="1.4"/><circle cx="15" cy="24" r="2.2"/><rect x="19" y="22.6" width="15" height="2.8" rx="1.4"/><circle cx="15" cy="31" r="2.2"/><rect x="19" y="29.6" width="15" height="2.8" rx="1.4"/></g>
+  </symbol>
+  <symbol id="ic-firehose" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M14 15h20l-7.5 9.5V32l-5 2.5V24.5z" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-flink" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M31.5 19.5A9 9 0 1 0 33 25" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M27.2 14.2l5.6 4.8-5.8 2.6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-msk" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <g stroke="#fff" stroke-width="2"><line x1="18" y1="17" x2="31" y2="24"/><line x1="18" y1="31" x2="31" y2="24"/></g>
+    <g fill="#fff"><circle cx="18" cy="17" r="3.4"/><circle cx="18" cy="31" r="3.4"/><circle cx="32" cy="24" r="3.6"/></g>
+  </symbol>
+  <symbol id="ic-sagemaker" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M24 13l9.5 5.5v11L24 35l-9.5-5.5v-11z" fill="none" stroke="#fff" stroke-width="2.4"/>
+    <circle cx="24" cy="24" r="3.4" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-glue" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M20 14h8M21.5 14v6l-5.2 11.4a2 2 0 0 0 1.8 2.9h11.8a2 2 0 0 0 1.8-2.9L26.5 20v-6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-eventbridge" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-appint)"/>
+    <path d="M24 12.5l11.5 11.5L24 35.5 12.5 24z" fill="none" stroke="#fff" stroke-width="2.4"/>
+    <circle cx="24" cy="24" r="2.8" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-stepfn" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-appint)"/>
+    <path d="M21 18h5a4 4 0 0 1 4 4v3" fill="none" stroke="#fff" stroke-width="2"/>
+    <g fill="#fff"><rect x="12.5" y="13.5" width="9" height="9" rx="2.2"/><rect x="26.5" y="25.5" width="9" height="9" rx="2.2"/></g>
+  </symbol>
+  <symbol id="ic-ebs" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-storage)"/>
+    <rect x="13" y="18" width="22" height="12" rx="2.5" fill="#fff"/>
+    <circle cx="30" cy="24" r="1.9" fill="#3B7A1E"/>
+    <rect x="16" y="22.5" width="8" height="3" rx="1.5" fill="#3B7A1E" opacity="0.5"/>
+  </symbol>
+  <symbol id="ic-efs" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-storage)"/>
+    <rect x="13.5" y="15" width="13" height="17" rx="2" fill="#fff" opacity="0.55"/>
+    <rect x="20" y="18" width="13" height="17" rx="2" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-fsx" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-storage)"/>
+    <rect x="15" y="13" width="18" height="22" rx="2.5" fill="#fff"/>
+    <path d="M25 17l-4.5 8h3.2l-1.7 6 5.5-8.5h-3.3z" fill="#3B7A1E"/>
+  </symbol>
+  <symbol id="ic-kms" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-security)"/>
+    <circle cx="20" cy="20" r="6" fill="none" stroke="#fff" stroke-width="2.6"/>
+    <path d="M23.6 23.6L33 33M30 33l3-3M27 33l3-3" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-athena" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <circle cx="22" cy="22" r="6.5" fill="none" stroke="#fff" stroke-width="2.6"/>
+    <line x1="27" y1="27" x2="33.5" y2="33.5" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-quicksight" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <g fill="#fff"><rect x="14" y="25" width="4.5" height="9" rx="1.2"/><rect x="21.7" y="19" width="4.5" height="15" rx="1.2"/><rect x="29.5" y="14" width="4.5" height="20" rx="1.2"/></g>
+  </symbol>
+  <symbol id="ic-redshift" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M24 13l10 5.5v11L24 35 14 29.5v-11z" fill="none" stroke="#fff" stroke-width="2"/>
+    <path d="M14 18.5l10 5.5 10-5.5M24 24v11" fill="none" stroke="#fff" stroke-width="2"/>
+  </symbol>
+  <symbol id="ic-lakeformation" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M24 13l10 4.5v7c0 6-4.3 9.3-10 11-5.7-1.7-10-5-10-11v-7z" fill="none" stroke="#fff" stroke-width="2.2"/>
+    <path d="M20 24l3 3 5.5-5.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-lambda" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-compute)"/>
+    <path d="M16 34l8-20 9 20" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-sns" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-appint)"/>
+    <path d="M24 13a7 7 0 0 0-7 7c0 7-3 8-3 10h20c0-2-3-3-3-10a7 7 0 0 0-7-7z" fill="#fff"/>
+    <path d="M21.4 33.5a2.7 2.7 0 0 0 5.2 0z" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-iot" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <circle cx="24" cy="29" r="3" fill="#fff"/>
+    <path d="M18.5 25a8 8 0 0 1 11 0M15 21a13 13 0 0 1 18 0" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-mobile" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <rect x="17.5" y="12.5" width="13" height="23" rx="3" fill="#fff"/>
+    <circle cx="24" cy="32" r="1.4" fill="#2C4763"/>
+  </symbol>
+  <symbol id="ic-api" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <path d="M21 14c-3 0-3 4-3 5s0 5-3 5c3 0 3 4 3 5s0 5 3 5" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>
+    <path d="M27 14c3 0 3 4 3 5s0 5 3 5c-3 0-3 4-3 5s0 5-3 5" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<!-- ===================== MASTHEAD ===================== -->
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">
+      <span class="dot"></span> AWS ML Engineer · Associate (MLA-C01)
+      <span class="muted">— Series #1 of 6 · Domain 1, Part 1 (28%)</span>
+    </p>
+    <h1>Where Machine Learning Really Begins: <em>Data Ingestion &amp; Storage</em> on AWS</h1>
+    <p class="dek">No model survives bad plumbing. Before a single feature is engineered, the data has to be captured, moved, and stored correctly. Here's how I'd architect that layer — explained through one realistic build.</p>
+    <div class="byline">
+      <span class="av">SBM</span>
+      <span>By <b>Shahriar Bin Mohsin</b><br><span style="color:var(--ink-soft)"><b style="color:var(--ink)">The ML Engineering Notebook</b> — AWS Certified Machine Learning Engineer – Associate</span></span>
+      <span class="sep">·</span>
+      <span>~22 min read</span>
+      <span class="sep">·</span>
+      <span>Updated 2026</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc">
+    <div class="toc-h">In this build</div>
+    <ol>
+      <li><a href="#project">The project: MetroPulse</a></li>
+      <li><a href="#know">Know your data: types &amp; the V's</a></li>
+      <li><a href="#sources">Sources &amp; data formats</a></li>
+      <li><a href="#homes">Warehouse vs Lake vs Lakehouse</a></li>
+      <li><a href="#mesh">Data mesh</a></li>
+      <li><a href="#s3">Amazon S3, the foundation</a></li>
+      <li><a href="#blockfile">EBS, EFS &amp; FSx</a></li>
+      <li><a href="#stream">Streaming: Kinesis &amp; Flink</a></li>
+      <li><a href="#msk">Kafka on AWS: Amazon MSK</a></li>
+      <li><a href="#etl">ETL &amp; orchestration</a></li>
+      <li><a href="#whole">The complete architecture</a></li>
+      <li><a href="#cheatsheet">Exam cheat-sheet</a></li>
+    </ol>
+  </nav>
+</div>
+
+<main class="wrap">
+
+  <p class="lead-line">Domain 1, “Data Preparation for Machine Learning,” is the single heaviest-weighted area of the MLA-C01 exam at 28% of scored content. It's also where most production ML projects quietly succeed or fail.</p>
+
+  <p>This is the first post in a <strong>six-part series</strong> I'm writing as I work through the <strong>AWS Certified Machine Learning Engineer – Associate</strong> certification. Domain 1 is large enough that I'm splitting it across two posts: this one covers <em>ingestion and storage</em>; Part 2 will cover data transformation, integrity, and feature engineering. Rather than march through a feature checklist, I want to do what an architect actually does: pick a believable problem and let the services earn their place in the design. By the end, every concept from the “Data Ingestion and Storage” module — types of data, the three V's, lakes and lakehouses, data mesh, S3 and its many features, block and file storage, Kinesis, Apache Flink, and Amazon MSK — will have shown up because the build <em>needed</em> it, not because a syllabus listed it.</p>
+
+  <p>Let me introduce the company we're building for.</p>
+
+  <!-- ===================== PROJECT ===================== -->
+  <h2 id="project"><span class="num">01 / THE SCENARIO</span>MetroPulse: a city-scale mobility platform</h2>
+
+  <div class="project-card">
+    <span class="tag">The brief</span>
+    <h3>MetroPulse Mobility</h3>
+    <p>MetroPulse operates a fleet of <b>e-scooters, e-bikes, and shuttle vans</b> across a mid-sized city. Tens of thousands of vehicles emit telemetry every few seconds; riders book and pay through a mobile app; partner transit agencies share schedule feeds. The data team needs to:</p>
+    <ul>
+      <li>Detect anomalies <b>in real time</b> — a battery draining abnormally fast, or a ride pattern that looks like payment fraud.</li>
+      <li>Land every event in a <b>durable, queryable data lake</b> to train demand-forecasting and predictive-maintenance models.</li>
+      <li>Give data scientists <b>fast, shared access</b> to training datasets without copying terabytes around.</li>
+      <li>Keep all of it <b>secure, compliant, and cost-controlled</b> as data ages from hot to cold.</li>
+    </ul>
+  </div>
+
+  <p>That brief maps cleanly onto the three jobs of this layer: <strong>ingest</strong> (get data in, in batch and in real time), <strong>store</strong> (durably, at the right cost, with the right access), and <strong>organize</strong> (so the rest of the ML lifecycle can use it). Here's the shape of what we're building before we zoom into the pieces.</p>
+
+  <figure class="bleed">
+    <div class="diagram">
+      <svg viewBox="0 0 1120 470" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 Z" fill="#473d33"/>
+          </marker>
+          <marker id="arrR" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 Z" fill="#BE4A2C"/>
+          </marker>
+        </defs>
+        <!-- column headers -->
+        <g font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" letter-spacing="1.5" fill="#BE4A2C" text-anchor="middle">
+          <text x="110" y="26">SOURCES</text>
+          <text x="330" y="26">INGEST</text>
+          <text x="560" y="26">PROCESS</text>
+          <text x="800" y="26">STORE · DATA LAKE</text>
+          <text x="1030" y="26">ML &amp; CONSUME</text>
+        </g>
+
+        <!-- SOURCES -->
+        <g>
+          <rect x="30" y="50" width="160" height="46" rx="9" fill="#fff" stroke="#385a7a" stroke-width="1.6"/>
+          <use href="#ic-iot" x="38" y="58" width="30" height="30"/>
+          <text x="76" y="71" font-size="12" font-weight="600" fill="#17130f">Vehicle telemetry</text>
+          <text x="76" y="86" font-size="10" fill="#473d33">GPS · battery · faults</text>
+
+          <rect x="30" y="112" width="160" height="46" rx="9" fill="#fff" stroke="#385a7a" stroke-width="1.6"/>
+          <use href="#ic-mobile" x="38" y="120" width="30" height="30"/>
+          <text x="76" y="133" font-size="12" font-weight="600" fill="#17130f">Mobile app events</text>
+          <text x="76" y="148" font-size="10" fill="#473d33">rides · payments</text>
+
+          <rect x="30" y="174" width="160" height="46" rx="9" fill="#fff" stroke="#385a7a" stroke-width="1.6"/>
+          <use href="#ic-api" x="38" y="182" width="30" height="30"/>
+          <text x="76" y="195" font-size="12" font-weight="600" fill="#17130f">Partner APIs</text>
+          <text x="76" y="210" font-size="10" fill="#473d33">transit feeds (batch)</text>
+        </g>
+
+        <!-- INGEST -->
+        <g>
+          <rect x="252" y="78" width="160" height="60" rx="10" fill="#fae6d8" stroke="#BE4A2C" stroke-width="1.8"/>
+          <use href="#ic-kinesis" x="260" y="92" width="32" height="32"/>
+          <text x="300" y="104" font-size="12.5" font-weight="700" fill="#17130f">Kinesis Data</text>
+          <text x="300" y="120" font-size="12.5" font-weight="700" fill="#17130f">Streams</text>
+
+          <rect x="252" y="156" width="160" height="46" rx="9" fill="#fff" stroke="#385a7a" stroke-width="1.6" stroke-dasharray="4 3"/>
+          <use href="#ic-msk" x="260" y="164" width="30" height="30"/>
+          <text x="296" y="177" font-size="12" font-weight="600" fill="#17130f">Amazon MSK</text>
+          <text x="296" y="192" font-size="10" fill="#473d33">(Kafka option)</text>
+        </g>
+
+        <!-- PROCESS -->
+        <g>
+          <rect x="478" y="60" width="164" height="62" rx="10" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.8"/>
+          <use href="#ic-flink" x="484" y="74" width="32" height="32"/>
+          <text x="522" y="82" font-size="12.5" font-weight="700" fill="#17130f">Managed Service</text>
+          <text x="522" y="98" font-size="12.5" font-weight="700" fill="#17130f">for Apache Flink</text>
+          <text x="522" y="113" font-size="9.5" fill="#1E7A64" font-family="'JetBrains Mono',monospace">RANDOM_CUT_FOREST</text>
+
+          <rect x="478" y="138" width="164" height="40" rx="9" fill="#fff" stroke="#D98A2B" stroke-width="1.6"/>
+          <use href="#ic-sns" x="486" y="145" width="28" height="28"/>
+          <text x="520" y="162" font-size="12.5" font-weight="600" fill="#17130f">Real-time alerts</text>
+
+          <rect x="478" y="194" width="164" height="44" rx="9" fill="#fae6d8" stroke="#BE4A2C" stroke-width="1.6"/>
+          <use href="#ic-firehose" x="486" y="200" width="30" height="30"/>
+          <text x="522" y="212" font-size="12.5" font-weight="700" fill="#17130f">Data Firehose</text>
+          <text x="522" y="228" font-size="10" fill="#473d33">buffer → S3</text>
+        </g>
+
+        <!-- STORE -->
+        <g>
+          <rect x="708" y="52" width="184" height="200" rx="12" fill="#fbf8f2" stroke="#17130f" stroke-width="1.8"/>
+          <use href="#ic-s3" x="724" y="59" width="22" height="22"/>
+          <text x="753" y="74" font-size="12.5" font-weight="700" fill="#17130f" font-family="'JetBrains Mono',monospace">S3 LAKE</text>
+          <rect x="726" y="86" width="148" height="38" rx="7" fill="#f2d9c4" stroke="#BE4A2C" stroke-width="1.2"/>
+          <text x="800" y="110" text-anchor="middle" font-size="12.5" font-weight="600" fill="#17130f">🥉 Bronze · raw</text>
+          <rect x="726" y="132" width="148" height="38" rx="7" fill="#e7e0d0" stroke="#8a7a5e" stroke-width="1.2"/>
+          <text x="800" y="156" text-anchor="middle" font-size="12.5" font-weight="600" fill="#17130f">🥈 Silver · clean</text>
+          <rect x="726" y="178" width="148" height="38" rx="7" fill="#e0d8b4" stroke="#D98A2B" stroke-width="1.2"/>
+          <text x="800" y="202" text-anchor="middle" font-size="12.5" font-weight="600" fill="#17130f">🥇 Gold · curated</text>
+          <use href="#ic-glue" x="741" y="226" width="16" height="16"/>
+          <text x="763" y="238" font-size="10.5" fill="#473d33">Glue ETL + Catalog</text>
+        </g>
+
+        <!-- CONSUME -->
+        <g>
+          <rect x="958" y="58" width="142" height="48" rx="9" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.6"/>
+          <use href="#ic-sagemaker" x="966" y="66" width="30" height="30"/>
+          <text x="1002" y="79" font-size="12.5" font-weight="700" fill="#17130f">SageMaker</text>
+          <text x="1002" y="95" font-size="10" fill="#473d33">training jobs</text>
+
+          <rect x="958" y="118" width="142" height="52" rx="9" fill="#fff" stroke="#385a7a" stroke-width="1.6"/>
+          <use href="#ic-ebs" x="993" y="123" width="20" height="20"/>
+          <use href="#ic-efs" x="1019" y="123" width="20" height="20"/>
+          <use href="#ic-fsx" x="1045" y="123" width="20" height="20"/>
+          <text x="1029" y="160" text-anchor="middle" font-size="10.5" font-weight="600" fill="#473d33">EBS · EFS · FSx</text>
+
+          <rect x="958" y="182" width="142" height="48" rx="9" fill="#fff" stroke="#385a7a" stroke-width="1.6"/>
+          <use href="#ic-athena" x="1006" y="186" width="20" height="20"/>
+          <use href="#ic-quicksight" x="1032" y="186" width="20" height="20"/>
+          <text x="1029" y="222" text-anchor="middle" font-size="10.5" fill="#473d33">Athena · QuickSight</text>
+        </g>
+
+        <!-- arrows -->
+        <g stroke="#473d33" stroke-width="1.6" fill="none">
+          <path d="M190,73 L248,100" marker-end="url(#arr)"/>
+          <path d="M190,135 L248,115" marker-end="url(#arr)"/>
+          <path d="M190,197 L248,178" marker-end="url(#arr)"/>
+          <path d="M412,108 L474,95" marker-end="url(#arr)"/>
+          <path d="M412,178 L474,150" marker-end="url(#arr)"/>
+          <path d="M642,216 L704,180" marker-end="url(#arr)"/>
+          <path d="M642,158 C672,158 678,210 706,212" marker-end="url(#arr)"/>
+          <path d="M892,120 L954,90" marker-end="url(#arr)"/>
+          <path d="M892,150 L954,142" marker-end="url(#arr)"/>
+          <path d="M892,190 L954,200" marker-end="url(#arr)"/>
+        </g>
+        <!-- partner batch path to lake -->
+        <path d="M110,220 C110,300 540,310 540,310 L730,310 C760,310 760,230 770,222" stroke="#BE4A2C" stroke-width="1.6" fill="none" stroke-dasharray="5 4" marker-end="url(#arrR)"/>
+        <text x="430" y="305" font-size="11" fill="#BE4A2C" font-family="'JetBrains Mono',monospace">batch ETL path (AWS Glue / DMS)</text>
+
+        <!-- orchestration band -->
+        <rect x="252" y="360" width="640" height="40" rx="10" fill="#fff" stroke="#385a7a" stroke-width="1.4" stroke-dasharray="3 3"/>
+        <use href="#ic-stepfn" x="264" y="369" width="22" height="22"/>
+        <use href="#ic-eventbridge" x="290" y="369" width="22" height="22"/>
+        <text x="320" y="385" font-size="12" font-weight="600" fill="#385a7a">Orchestration: Step Functions · Amazon MWAA (Airflow) · EventBridge</text>
+        <path d="M572,400 L572,420 M332,360 L332,250 M800,360 L800,256" stroke="#385a7a" stroke-width="1.2" fill="none" stroke-dasharray="3 3"/>
+      </svg>
+    </div>
+    <figcaption><b>Fig 1 — Reference architecture</b> The full MetroPulse data platform. We'll build it up service by service.</figcaption>
+  </figure>
+
+  <hr class="rule">
+
+  <!-- ===================== KNOW YOUR DATA ===================== -->
+  <h2 id="know"><span class="num">02 / FOUNDATIONS</span>Know your data before you store it</h2>
+
+  <p>Every storage and ingestion decision downstream is dictated by the <em>shape</em> of the incoming data. MetroPulse produces all three classic categories at once, which is exactly why it's a good teaching example:</p>
+
+  <p><strong>Structured data</strong> — fixed schema, rows and columns. MetroPulse's ride records (rider ID, start time, distance, fare) live here. It fits naturally in relational databases and columnar formats.</p>
+
+  <p><strong>Semi-structured data</strong> — has tags or keys but no rigid table schema. The vehicle telemetry arrives as JSON: <code>{ "vehicle_id": "...", "battery": 0.62, "lat": ..., "lng": ... }</code>. The schema can evolve (a new firmware adds a field) without breaking everything.</p>
+
+  <p><strong>Unstructured data</strong> — no predefined model: the maintenance photos riders upload, support-call audio, free-text trouble tickets. This is where object storage (S3) becomes non-negotiable, and where ML feature extraction does the heavy lifting.</p>
+
+  <h3>The “V's” that decide your architecture</h3>
+
+  <p>AWS material frames data engineering challenges around the properties of big data — the “three V's,” often extended to five. They aren't trivia; each V points at a specific design lever.</p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 1080 250" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <g>
+          <!-- Volume -->
+          <rect x="20" y="30" width="196" height="180" rx="14" fill="#fae6d8" stroke="#BE4A2C" stroke-width="1.8"/>
+          <text x="118" y="68" text-anchor="middle" font-family="'Fraunces',serif" font-size="22" font-weight="600" fill="#BE4A2C">Volume</text>
+          <text x="118" y="98" text-anchor="middle" font-size="13" font-weight="600" fill="#17130f">How much?</text>
+          <text x="118" y="126" text-anchor="middle" font-size="12" fill="#473d33">Millions of telemetry</text>
+          <text x="118" y="143" text-anchor="middle" font-size="12" fill="#473d33">events per hour</text>
+          <text x="118" y="180" text-anchor="middle" font-size="11" font-family="'JetBrains Mono',monospace" fill="#9c3a22">→ S3 + partitioning</text>
+          <text x="118" y="196" text-anchor="middle" font-size="11" font-family="'JetBrains Mono',monospace" fill="#9c3a22">+ lifecycle tiering</text>
+        </g>
+        <g>
+          <!-- Velocity -->
+          <rect x="232" y="30" width="196" height="180" rx="14" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.8"/>
+          <text x="330" y="68" text-anchor="middle" font-family="'Fraunces',serif" font-size="22" font-weight="600" fill="#1E7A64">Velocity</text>
+          <text x="330" y="98" text-anchor="middle" font-size="13" font-weight="600" fill="#17130f">How fast?</text>
+          <text x="330" y="126" text-anchor="middle" font-size="12" fill="#473d33">Sub-second anomaly</text>
+          <text x="330" y="143" text-anchor="middle" font-size="12" fill="#473d33">detection needed</text>
+          <text x="330" y="180" text-anchor="middle" font-size="11" font-family="'JetBrains Mono',monospace" fill="#15604f">→ Kinesis / MSK +</text>
+          <text x="330" y="196" text-anchor="middle" font-size="11" font-family="'JetBrains Mono',monospace" fill="#15604f">Flink streaming</text>
+        </g>
+        <g>
+          <!-- Variety -->
+          <rect x="444" y="30" width="196" height="180" rx="14" fill="#ece4cf" stroke="#D98A2B" stroke-width="1.8"/>
+          <text x="542" y="68" text-anchor="middle" font-family="'Fraunces',serif" font-size="22" font-weight="600" fill="#b3711f">Variety</text>
+          <text x="542" y="98" text-anchor="middle" font-size="13" font-weight="600" fill="#17130f">How different?</text>
+          <text x="542" y="126" text-anchor="middle" font-size="12" fill="#473d33">JSON, photos, audio,</text>
+          <text x="542" y="143" text-anchor="middle" font-size="12" fill="#473d33">relational feeds</text>
+          <text x="542" y="180" text-anchor="middle" font-size="11" font-family="'JetBrains Mono',monospace" fill="#a86a18">→ schema-on-read</text>
+          <text x="542" y="196" text-anchor="middle" font-size="11" font-family="'JetBrains Mono',monospace" fill="#a86a18">data lake</text>
+        </g>
+        <g opacity="0.92">
+          <!-- Veracity -->
+          <rect x="656" y="30" width="196" height="180" rx="14" fill="#fbf8f2" stroke="#385a7a" stroke-width="1.6"/>
+          <text x="754" y="68" text-anchor="middle" font-family="'Fraunces',serif" font-size="22" font-weight="600" fill="#385a7a">Veracity</text>
+          <text x="754" y="98" text-anchor="middle" font-size="13" font-weight="600" fill="#17130f">How trustworthy?</text>
+          <text x="754" y="126" text-anchor="middle" font-size="12" fill="#473d33">GPS drift, dropped</text>
+          <text x="754" y="143" text-anchor="middle" font-size="12" fill="#473d33">sensors, dupes</text>
+          <text x="754" y="180" text-anchor="middle" font-size="11" font-family="'JetBrains Mono',monospace" fill="#2c4763">→ validation +</text>
+          <text x="754" y="196" text-anchor="middle" font-size="11" font-family="'JetBrains Mono',monospace" fill="#2c4763">cleaning stage</text>
+        </g>
+        <g opacity="0.92">
+          <!-- Value -->
+          <rect x="868" y="30" width="196" height="180" rx="14" fill="#fbf8f2" stroke="#385a7a" stroke-width="1.6"/>
+          <text x="966" y="68" text-anchor="middle" font-family="'Fraunces',serif" font-size="22" font-weight="600" fill="#385a7a">Value</text>
+          <text x="966" y="98" text-anchor="middle" font-size="13" font-weight="600" fill="#17130f">So what?</text>
+          <text x="966" y="126" text-anchor="middle" font-size="12" fill="#473d33">Demand forecasts,</text>
+          <text x="966" y="143" text-anchor="middle" font-size="12" fill="#473d33">fewer breakdowns</text>
+          <text x="966" y="180" text-anchor="middle" font-size="11" font-family="'JetBrains Mono',monospace" fill="#2c4763">→ the reason we</text>
+          <text x="966" y="196" text-anchor="middle" font-size="11" font-family="'JetBrains Mono',monospace" fill="#2c4763">store any of it</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption><b>Fig 2 — The five V's</b> Each property maps to a concrete architectural decision in MetroPulse.</figcaption>
+  </figure>
+
+  <div class="note exam">
+    <span class="tag">Exam lens</span>
+    The MLA-C01 won't ask you to recite definitions. It will give a scenario — “high-velocity sensor data needs sub-second analysis” — and expect you to reach for the streaming stack, not a nightly batch job. Read for the V that's stressed and match it to the service.
+  </div>
+
+  <!-- ===================== SOURCES & FORMATS ===================== -->
+  <h2 id="sources"><span class="num">03 / SOURCES &amp; FORMATS</span>Common data sources and the formats that matter</h2>
+
+  <p>Data reaches an ML platform from predictable places: operational <strong>databases</strong> (RDS/Aurora, DynamoDB), <strong>applications</strong> emitting events, <strong>logs and clickstreams</strong>, <strong>IoT devices and sensors</strong>, <strong>public/third-party datasets</strong>, and <strong>files dropped into object storage</strong>. MetroPulse touches almost all of them.</p>
+
+  <p>Format choice is one of the most under-appreciated cost-and-performance levers in the whole pipeline. The short version:</p>
+
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr><th>Format</th><th>Shape</th><th>Best for</th><th>MetroPulse use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>CSV</td><td>Row, text</td><td>Human-readable interchange, small extracts</td><td>Partner CSV drops</td></tr>
+      <tr><td>JSON</td><td>Row, semi-structured</td><td>Flexible/evolving event payloads</td><td>Raw telemetry &amp; app events</td></tr>
+      <tr><td>Avro</td><td>Row, binary + schema</td><td>Streaming, schema evolution</td><td>Kafka/MSK topics</td></tr>
+      <tr><td>Parquet</td><td>Columnar, binary</td><td>Analytics &amp; ML reads, compression</td><td>Silver/Gold lake zones</td></tr>
+      <tr><td>ORC</td><td>Columnar, binary</td><td>Hive/Big-data analytics</td><td>Alternative to Parquet</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>The pattern to internalize: <strong>row formats for writing/streaming, columnar formats for reading/analytics.</strong> Telemetry lands as JSON because producers are simple and the schema flexes. But before our models read it back hundreds of times, ETL rewrites it to <strong>Parquet</strong> — columnar storage means a query for “average battery drain by model” scans only two columns instead of every byte, slashing both scan time and cost in Athena.</p>
+
+  <hr class="rule">
+
+  <!-- ===================== HOMES ===================== -->
+  <h2 id="homes"><span class="num">04 / STORAGE PARADIGMS</span>Warehouse, lake, or lakehouse?</h2>
+
+  <p>MetroPulse needs to serve two very different consumers: BI analysts who want clean, governed tables, and data scientists who want raw, high-volume, multi-format data for feature engineering. That tension is exactly what the warehouse/lake/lakehouse debate is about.</p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 1080 320" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <!-- Warehouse -->
+        <g>
+          <rect x="24" y="40" width="320" height="248" rx="14" fill="#fbf8f2" stroke="#385a7a" stroke-width="1.8"/>
+          <use href="#ic-redshift" x="40" y="54" width="26" height="26"/>
+          <text x="184" y="74" text-anchor="middle" font-family="'Fraunces',serif" font-size="22" font-weight="600" fill="#385a7a">Data Warehouse</text>
+          <text x="184" y="98" text-anchor="middle" font-size="12.5" font-style="italic" fill="#473d33">Redshift</text>
+          <line x1="50" y1="114" x2="318" y2="114" stroke="#D9CFBE"/>
+          <g font-size="13" fill="#17130f">
+            <text x="50" y="142">✓ Schema-on-write</text>
+            <text x="50" y="170">✓ Structured, cleaned data</text>
+            <text x="50" y="198">✓ Fast SQL &amp; BI</text>
+            <text x="50" y="226">✗ Expensive at petabyte scale</text>
+            <text x="50" y="254">✗ Poor fit for raw / unstructured</text>
+          </g>
+        </g>
+        <!-- Lake -->
+        <g>
+          <rect x="380" y="40" width="320" height="248" rx="14" fill="#fbf8f2" stroke="#BE4A2C" stroke-width="1.8"/>
+          <use href="#ic-s3" x="396" y="54" width="26" height="26"/>
+          <use href="#ic-glue" x="426" y="54" width="26" height="26"/>
+          <text x="540" y="74" text-anchor="middle" font-family="'Fraunces',serif" font-size="22" font-weight="600" fill="#BE4A2C">Data Lake</text>
+          <text x="540" y="98" text-anchor="middle" font-size="12.5" font-style="italic" fill="#473d33">S3 + Glue Catalog</text>
+          <line x1="406" y1="114" x2="674" y2="114" stroke="#D9CFBE"/>
+          <g font-size="13" fill="#17130f">
+            <text x="406" y="142">✓ Schema-on-read</text>
+            <text x="406" y="170">✓ Any format, cheap &amp; vast</text>
+            <text x="406" y="198">✓ Ideal for ML &amp; raw data</text>
+            <text x="406" y="226">✗ Governance can sprawl</text>
+            <text x="406" y="254">✗ No native ACID / quality</text>
+          </g>
+        </g>
+        <!-- Lakehouse -->
+        <g>
+          <rect x="736" y="40" width="320" height="248" rx="14" fill="#dcefe9" stroke="#1E7A64" stroke-width="2.2"/>
+          <use href="#ic-s3" x="752" y="54" width="26" height="26"/>
+          <use href="#ic-lakeformation" x="782" y="54" width="26" height="26"/>
+          <text x="896" y="74" text-anchor="middle" font-family="'Fraunces',serif" font-size="22" font-weight="600" fill="#1E7A64">Lakehouse</text>
+          <text x="896" y="98" text-anchor="middle" font-size="12.5" font-style="italic" fill="#473d33">S3 + Iceberg + Lake Formation</text>
+          <line x1="762" y1="114" x2="1030" y2="114" stroke="#bcd6cd"/>
+          <g font-size="13" fill="#17130f">
+            <text x="762" y="142">✓ Lake economics…</text>
+            <text x="762" y="170">✓ …+ warehouse governance</text>
+            <text x="762" y="198">✓ ACID tables, time travel</text>
+            <text x="762" y="226">✓ One copy, BI &amp; ML both read</text>
+            <text x="762" y="254" font-weight="700" fill="#1E7A64">★ MetroPulse choice</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <figcaption><b>Fig 3 — Three paradigms</b> The lakehouse combines lake economics with warehouse-grade governance — why it wins for mixed BI + ML workloads.</figcaption>
+  </figure>
+
+  <p>For MetroPulse, a pure warehouse would choke on the raw telemetry volume and can't store rider photos at all. A pure lake risks becoming a “data swamp.” So we build a <strong>lakehouse</strong>: S3 as the storage substrate, open table formats (Apache Iceberg) for ACID transactions and schema evolution, and AWS Lake Formation for centralized, fine-grained governance. Analysts query the governed Gold tables; scientists reach into Silver and Bronze. One copy of data, two audiences.</p>
+
+  <!-- ===================== MESH ===================== -->
+  <h2 id="mesh"><span class="num">05 / ORGANIZATION</span>Data mesh: who owns what</h2>
+
+  <p>A lakehouse solves <em>where</em> data lives. A <strong>data mesh</strong> answers <em>who is responsible for it.</em> Instead of one central team being a bottleneck for every dataset, a mesh treats data as a <strong>product</strong> owned by the domain that knows it best. At MetroPulse that means three domains — <strong>Rides</strong>, <strong>Fleet</strong>, and <strong>Payments</strong> — each publishing well-documented, discoverable, trustworthy data products into a shared platform. On AWS, this is typically implemented with separate accounts, Lake Formation permissions, and <strong>AWS Glue Data Catalog</strong> sharing.</p>
+
+  <div class="note">
+    <span class="tag">Concept check</span>
+    Lakehouse and data mesh are not competitors. The <b>lakehouse is an architecture</b> (technology); the <b>data mesh is an operating model</b> (organization and ownership). You can — and MetroPulse does — run a data mesh <em>on top of</em> a lakehouse.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== S3 ===================== -->
+  <h2 id="s3"><span class="num">06 / THE FOUNDATION</span>Amazon S3 — the floor everything else stands on</h2>
+
+  <p>If you remember one thing for Domain 1, make it S3. It is the gravitational center of data on AWS: the lake, the SageMaker training-data source, the Firehose destination, the model-artifact store. It offers eleven 9's of durability (99.999999999%) by redundantly storing objects across multiple devices and Availability Zones within a Region. Let's wire up the features MetroPulse actually relies on.</p>
+
+  <h3>Buckets, zones, and partitioning</h3>
+  <p>We organize the lake by zone and partition aggressively by date so query engines can prune. A telemetry object's key looks like:</p>
+  <pre><code>s3://metropulse-datalake/<span class="n">bronze</span>/telemetry/year=2026/month=06/day=02/hour=14/part-0007.json</code></pre>
+  <p>That key structure isn't cosmetic — Athena and Spark read the <code>year=/month=/day=</code> prefixes as partition columns and skip everything irrelevant to a query.</p>
+
+  <h3>Storage classes &amp; lifecycle: paying for data by temperature</h3>
+  <p>Telemetry is scorching hot on day one and frozen by day ninety. Paying S3 Standard rates forever would be wasteful, so we let data flow down the cost curve automatically.</p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 1080 300" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <linearGradient id="temp" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#BE4A2C"/>
+            <stop offset="0.5" stop-color="#D98A2B"/>
+            <stop offset="1" stop-color="#385a7a"/>
+          </linearGradient>
+          <marker id="arr2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#473d33"/></marker>
+        </defs>
+        <rect x="40" y="24" width="1000" height="10" rx="5" fill="url(#temp)"/>
+        <text x="40" y="18" font-size="11" font-family="'JetBrains Mono',monospace" font-weight="700" fill="#BE4A2C">HOT</text>
+        <text x="1000" y="18" font-size="11" font-family="'JetBrains Mono',monospace" font-weight="700" fill="#385a7a" text-anchor="end">COLD / ARCHIVE</text>
+        <use href="#ic-s3" x="40" y="40" width="26" height="26"/>
+        <text x="74" y="58" font-size="12" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#3B7A1E">AMAZON S3 CLASSES</text>
+
+        <g>
+          <rect x="40" y="70" width="170" height="92" rx="11" fill="#fae6d8" stroke="#BE4A2C" stroke-width="1.8"/>
+          <text x="125" y="96" text-anchor="middle" font-size="13.5" font-weight="700" fill="#17130f">S3 Standard</text>
+          <text x="125" y="118" text-anchor="middle" font-size="11.5" fill="#473d33">Day 0–30</text>
+          <text x="125" y="138" text-anchor="middle" font-size="11" fill="#473d33">active training</text>
+          <text x="125" y="154" text-anchor="middle" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#9c3a22">ms access</text>
+
+          <rect x="248" y="70" width="170" height="92" rx="11" fill="#f6ddc6" stroke="#D98A2B" stroke-width="1.8"/>
+          <text x="333" y="96" text-anchor="middle" font-size="13" font-weight="700" fill="#17130f">Standard-IA</text>
+          <text x="333" y="118" text-anchor="middle" font-size="11.5" fill="#473d33">Day 30–90</text>
+          <text x="333" y="138" text-anchor="middle" font-size="11" fill="#473d33">occasional reruns</text>
+          <text x="333" y="154" text-anchor="middle" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#a86a18">ms · retrieval fee</text>
+
+          <rect x="456" y="70" width="170" height="92" rx="11" fill="#ece4cf" stroke="#b3711f" stroke-width="1.8"/>
+          <text x="541" y="96" text-anchor="middle" font-size="12.5" font-weight="700" fill="#17130f">Glacier Instant</text>
+          <text x="541" y="118" text-anchor="middle" font-size="11.5" fill="#473d33">Day 90–365</text>
+          <text x="541" y="138" text-anchor="middle" font-size="11" fill="#473d33">compliance keep</text>
+          <text x="541" y="154" text-anchor="middle" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#a86a18">ms · cheap store</text>
+
+          <rect x="664" y="70" width="170" height="92" rx="11" fill="#dfe4ea" stroke="#385a7a" stroke-width="1.8"/>
+          <text x="749" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Glacier Flexible</text>
+          <text x="749" y="118" text-anchor="middle" font-size="11.5" fill="#473d33">Year 1–3</text>
+          <text x="749" y="138" text-anchor="middle" font-size="11" fill="#473d33">rare retrieval</text>
+          <text x="749" y="154" text-anchor="middle" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#2c4763">mins–hrs</text>
+
+          <rect x="872" y="70" width="170" height="92" rx="11" fill="#d2d8e0" stroke="#2c4763" stroke-width="1.8"/>
+          <text x="957" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Deep Archive</text>
+          <text x="957" y="118" text-anchor="middle" font-size="11.5" fill="#473d33">Year 3+</text>
+          <text x="957" y="138" text-anchor="middle" font-size="11" fill="#473d33">legal hold only</text>
+          <text x="957" y="154" text-anchor="middle" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#2c4763">up to 12 hrs</text>
+        </g>
+        <g stroke="#473d33" stroke-width="1.5" fill="none">
+          <path d="M210,116 L246,116" marker-end="url(#arr2)"/>
+          <path d="M418,116 L454,116" marker-end="url(#arr2)"/>
+          <path d="M626,116 L662,116" marker-end="url(#arr2)"/>
+          <path d="M834,116 L870,116" marker-end="url(#arr2)"/>
+        </g>
+        <text x="540" y="220" text-anchor="middle" font-size="13.5" font-style="italic" font-family="'Fraunces',serif" fill="#473d33">One S3 Lifecycle policy moves objects down this curve automatically — no application changes.</text>
+        <text x="540" y="258" text-anchor="middle" font-size="12" fill="#1E7A64" font-family="'JetBrains Mono',monospace">Don't know the access pattern? → S3 Intelligent-Tiering auto-moves objects for you.</text>
+        <text x="540" y="282" text-anchor="middle" font-size="12" fill="#9c3a22" font-family="'JetBrains Mono',monospace">Need single-digit-ms speed for hot ML data? → S3 Express One Zone (single-AZ).</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig 4 — Storage classes &amp; lifecycle</b> Match each storage class to data temperature; let lifecycle rules do the moving.</figcaption>
+  </figure>
+
+  <p class="code-label">// S3 lifecycle policy for the Bronze zone</p>
+  <pre><code>{
+  <span class="n">"Rules"</span>: [{
+    <span class="n">"ID"</span>: <span class="s">"bronze-telemetry-tiering"</span>,
+    <span class="n">"Filter"</span>: { <span class="n">"Prefix"</span>: <span class="s">"bronze/telemetry/"</span> },
+    <span class="n">"Status"</span>: <span class="s">"Enabled"</span>,
+    <span class="n">"Transitions"</span>: [
+      { <span class="n">"Days"</span>: 30,  <span class="n">"StorageClass"</span>: <span class="s">"STANDARD_IA"</span> },
+      { <span class="n">"Days"</span>: 90,  <span class="n">"StorageClass"</span>: <span class="s">"GLACIER_IR"</span> },
+      { <span class="n">"Days"</span>: 365, <span class="n">"StorageClass"</span>: <span class="s">"DEEP_ARCHIVE"</span> }
+    ],
+    <span class="n">"Expiration"</span>: { <span class="n">"Days"</span>: 2555 }   <span class="cmt">// delete after 7 years</span>
+  }]
+}</code></pre>
+
+  <div class="note gotcha">
+    <span class="tag">Cost gotcha</span>
+    The “Infrequent Access” and Glacier classes have <b>minimum storage durations</b> (30/90/180 days) and <b>per-GB retrieval fees</b>. Transitioning tiny, frequently-read objects into them can cost <em>more</em> than S3 Standard. Tier by temperature, not by reflex.
+  </div>
+
+  <h3>Versioning &amp; replication: protecting the lake</h3>
+  <p><strong>Versioning</strong> keeps every iteration of an object, so an accidental overwrite of a curated training set is recoverable and deletes become reversible (delete markers). It's also a prerequisite for <strong>S3 Replication</strong>. We enable <strong>Cross-Region Replication (CRR)</strong> to copy the Gold zone into a second Region for disaster recovery and to put data closer to a remote analytics team — while <strong>Same-Region Replication (SRR)</strong> can aggregate logs across accounts.</p>
+
+  <h3>Security: bucket policies, encryption, access points</h3>
+  <p>The lake holds rider PII, so security is layered. First, a <strong>bucket policy</strong> denies any non-TLS request outright:</p>
+  <pre><code>{
+  <span class="n">"Sid"</span>: <span class="s">"DenyInsecureTransport"</span>,
+  <span class="n">"Effect"</span>: <span class="s">"Deny"</span>,
+  <span class="n">"Principal"</span>: <span class="s">"*"</span>,
+  <span class="n">"Action"</span>: <span class="s">"s3:*"</span>,
+  <span class="n">"Resource"</span>: [<span class="s">"arn:aws:s3:::metropulse-datalake/*"</span>],
+  <span class="n">"Condition"</span>: { <span class="n">"Bool"</span>: { <span class="s">"aws:SecureTransport"</span>: <span class="s">"false"</span> } }
+}</code></pre>
+
+  <p>Next, <strong>encryption at rest</strong>. All new S3 objects are encrypted by default; the question is which key model:</p>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th>Option</th><th>Who manages keys</th><th>When to use</th></tr></thead>
+    <tbody>
+      <tr><td>SSE-S3</td><td>AWS (AES-256), fully managed</td><td>Default, zero overhead</td></tr>
+      <tr><td>SSE-KMS</td><td>AWS KMS keys you control + audit</td><td>Need key rotation, access logs, separation of duties</td></tr>
+      <tr><td>DSSE-KMS</td><td>Two independent layers of KMS encryption</td><td>Strict regulatory “dual-layer” mandates</td></tr>
+      <tr><td>SSE-C</td><td>You supply the key per request</td><td>You must hold keys outside AWS</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>MetroPulse uses <strong>SSE-KMS</strong> on the lake (auditable via CloudTrail), and applies <strong>DSSE-KMS</strong> to the Payments domain where dual-layer encryption is contractually required.</p>
+
+  <p>Finally, <strong>S3 Access Points</strong> give each team its own named endpoint and policy onto the shared bucket — the Fleet domain's access point can't even see the Payments prefix. And <strong>S3 Object Lambda</strong> lets us transform objects <em>on the way out</em>: analysts reading rider records get a view with PII automatically redacted by a Lambda, without ever duplicating the dataset.</p>
+
+  <h3>Event notifications: the lake that reacts</h3>
+  <p>When Firehose writes a new Bronze object, an <strong>S3 Event Notification</strong> fires. We route it to <strong>EventBridge</strong>, which triggers the Glue job that promotes Bronze → Silver. The lake isn't a passive bucket; it's an event-driven pipeline trigger.</p>
+
+  <div class="note exam">
+    <span class="tag">Exam lens</span>
+    Expect “pick the cheapest option that meets the SLA” questions. Keywords decide the answer: <b>“unknown/changing access”</b> → Intelligent-Tiering; <b>“single-digit-ms, latency-sensitive ML”</b> → Express One Zone; <b>“milliseconds but rarely accessed”</b> → Glacier Instant Retrieval; <b>“redact PII without copying data”</b> → Object Lambda; <b>“per-team scoped access to one bucket”</b> → Access Points.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== BLOCK/FILE ===================== -->
+  <h2 id="blockfile"><span class="num">07 / COMPUTE STORAGE</span>EBS, EFS &amp; FSx — feeding the training instances</h2>
+
+  <p>S3 is object storage: brilliant for the lake, but you can't mount it as a normal filesystem for a training job that needs millions of fast random reads. That's where <strong>block</strong> and <strong>file</strong> storage come in. This trio is a perennial exam favorite because the distinctions are crisp once you see them side by side.</p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 1080 290" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <g>
+          <rect x="24" y="34" width="328" height="232" rx="14" fill="#fae6d8" stroke="#BE4A2C" stroke-width="1.8"/>
+          <use href="#ic-ebs" x="40" y="48" width="28" height="28"/>
+          <text x="188" y="68" text-anchor="middle" font-family="'Fraunces',serif" font-size="21" font-weight="600" fill="#BE4A2C">Amazon EBS</text>
+          <text x="188" y="90" text-anchor="middle" font-size="12" font-style="italic" fill="#473d33">Block storage</text>
+          <line x1="48" y1="104" x2="328" y2="104" stroke="#e7cbb6"/>
+          <g font-size="12.5" fill="#17130f">
+            <text x="48" y="130">One EC2 instance at a time*</text>
+            <text x="48" y="156">Tied to a single AZ</text>
+            <text x="48" y="182">Like a virtual hard drive</text>
+            <text x="48" y="208">Elastic Volumes: resize live</text>
+          </g>
+          <text x="48" y="244" font-size="11.5" font-family="'JetBrains Mono',monospace" fill="#9c3a22">→ Boot vol &amp; scratch for</text>
+          <text x="48" y="260" font-size="11.5" font-family="'JetBrains Mono',monospace" fill="#9c3a22">  a single training instance</text>
+        </g>
+        <g>
+          <rect x="376" y="34" width="328" height="232" rx="14" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.8"/>
+          <use href="#ic-efs" x="392" y="48" width="28" height="28"/>
+          <text x="540" y="68" text-anchor="middle" font-family="'Fraunces',serif" font-size="21" font-weight="600" fill="#1E7A64">Amazon EFS</text>
+          <text x="540" y="90" text-anchor="middle" font-size="12" font-style="italic" fill="#473d33">Shared file storage (NFS)</text>
+          <line x1="400" y1="104" x2="680" y2="104" stroke="#bcd6cd"/>
+          <g font-size="12.5" fill="#17130f">
+            <text x="400" y="130">1000s of instances, shared</text>
+            <text x="400" y="156">Multi-AZ, fully elastic</text>
+            <text x="400" y="182">Linux / POSIX</text>
+            <text x="400" y="208">Pay for what you use</text>
+          </g>
+          <text x="400" y="244" font-size="11.5" font-family="'JetBrains Mono',monospace" fill="#15604f">→ Shared notebooks &amp;</text>
+          <text x="400" y="260" font-size="11.5" font-family="'JetBrains Mono',monospace" fill="#15604f">  datasets across the team</text>
+        </g>
+        <g>
+          <rect x="728" y="34" width="328" height="232" rx="14" fill="#ece4cf" stroke="#D98A2B" stroke-width="1.8"/>
+          <use href="#ic-fsx" x="744" y="48" width="28" height="28"/>
+          <text x="892" y="68" text-anchor="middle" font-family="'Fraunces',serif" font-size="21" font-weight="600" fill="#b3711f">Amazon FSx</text>
+          <text x="892" y="90" text-anchor="middle" font-size="12" font-style="italic" fill="#473d33">Specialized file systems</text>
+          <line x1="752" y1="104" x2="1032" y2="104" stroke="#e3d4b4"/>
+          <g font-size="12.5" fill="#17130f">
+            <text x="752" y="130">FSx for Lustre: HPC / ML</text>
+            <text x="752" y="156">FSx for Windows File Server</text>
+            <text x="752" y="182">FSx for NetApp ONTAP / OpenZFS</text>
+            <text x="752" y="208">Lustre links straight to S3</text>
+          </g>
+          <text x="752" y="244" font-size="11.5" font-family="'JetBrains Mono',monospace" fill="#a86a18">→ High-throughput training</text>
+          <text x="752" y="260" font-size="11.5" font-family="'JetBrains Mono',monospace" fill="#a86a18">  data straight off the lake</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption><b>Fig 5 — Block vs file storage</b> *EBS io2 with Multi-Attach can attach to multiple instances, but the everyday model is one-to-one.</figcaption>
+  </figure>
+
+  <p>In MetroPulse, each SageMaker training instance gets <strong>EBS</strong> volumes for its OS and local scratch space. The data-science team shares feature notebooks and reference datasets over a single <strong>EFS</strong> mount so nobody re-downloads 200 GB to their own machine. And when we run a large distributed training job that must stream terabytes of Parquet at maximum throughput, we attach <strong>FSx for Lustre</strong>, which links directly to the S3 lake and presents it as a blisteringly fast POSIX filesystem.</p>
+
+  <div class="note exam">
+    <span class="tag">Exam lens</span>
+    Decode by keyword: <b>“single instance, block device, boot volume”</b> → EBS · <b>“shared across many Linux instances”</b> → EFS · <b>“high-performance computing / Lustre / fastest ML training throughput from S3”</b> → FSx for Lustre · <b>“Windows file shares”</b> → FSx for Windows.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== STREAM ===================== -->
+  <h2 id="stream"><span class="num">08 / REAL-TIME INGESTION</span>Kinesis &amp; Apache Flink — catching data in motion</h2>
+
+  <p>Now the heart of the velocity problem. MetroPulse can't wait for a nightly batch to discover a scooter's battery is failing — it needs to know in seconds. This is the streaming stack.</p>
+
+  <h3>Kinesis Data Streams: the durable pipe</h3>
+  <p><strong>Amazon Kinesis Data Streams</strong> is a managed, ordered, replayable stream. Its unit of capacity is the <strong>shard</strong>: each shard ingests up to <strong>1 MB/s (or 1,000 records/s) and reads at 2 MB/s</strong>. You scale by adding shards (provisioned mode) or let <strong>on-demand</strong> mode handle it automatically. Data is retained from 24 hours up to 365 days, so multiple consumers can read — and re-read — the same events independently.</p>
+
+  <p>The <strong>partition key</strong> decides which shard a record lands on. We key by <code>vehicle_id</code> so all of one vehicle's events stay ordered on the same shard:</p>
+  <pre><code><span class="k">import</span> boto3, json
+kinesis = boto3.client(<span class="s">"kinesis"</span>)
+
+kinesis.put_record(
+    StreamName=<span class="s">"metropulse-telemetry"</span>,
+    Data=json.dumps(event),
+    PartitionKey=event[<span class="s">"vehicle_id"</span>]   <span class="cmt"># keeps a vehicle's events ordered</span>
+)</code></pre>
+
+  <h3>Managed Service for Apache Flink: real-time anomaly detection</h3>
+  <p>Reading from the stream is <strong>Amazon Managed Service for Apache Flink</strong> (formerly Kinesis Data Analytics). It runs continuous computations over the stream. Crucially for an ML platform, its SQL engine ships a built-in <strong>RANDOM_CUT_FOREST</strong> function — an unsupervised, streaming anomaly-detection algorithm that learns the normal pattern of numeric data and scores each new record by how distant it is from the rest. No labels, no separate model to deploy — anomaly detection right inside the pipeline.</p>
+
+  <p class="code-label">// Streaming anomaly detection in Flink SQL</p>
+  <pre><code><span class="k">CREATE OR REPLACE STREAM</span> <span class="s">"ANOMALY_STREAM"</span> (
+    vehicle_id     <span class="k">VARCHAR</span>(16),
+    battery_drain  <span class="k">DOUBLE</span>,
+    trip_distance  <span class="k">DOUBLE</span>,
+    anomaly_score  <span class="k">DOUBLE</span>
+);
+
+<span class="k">CREATE OR REPLACE PUMP</span> <span class="s">"ANOMALY_PUMP"</span> <span class="k">AS</span>
+<span class="k">INSERT INTO</span> <span class="s">"ANOMALY_STREAM"</span>
+<span class="k">SELECT STREAM</span> vehicle_id, battery_drain, trip_distance, anomaly_score
+<span class="k">FROM TABLE</span>(
+    <span class="k">RANDOM_CUT_FOREST</span>(
+        <span class="k">CURSOR</span>(<span class="k">SELECT STREAM</span> vehicle_id, battery_drain, trip_distance
+                <span class="k">FROM</span> <span class="s">"SOURCE_SQL_STREAM_001"</span>)
+    )
+);  <span class="cmt">-- high anomaly_score → batteries failing / possible fraud</span></code></pre>
+
+  <h3>Amazon Data Firehose: the no-code delivery hose</h3>
+  <p>While Flink watches for anomalies, every event must also be archived to the lake. That's <strong>Amazon Data Firehose</strong> (formerly Kinesis Data Firehose) — a fully managed, near-real-time delivery service that <strong>buffers</strong> records (by size or time), can <strong>transform</strong> them with Lambda, <strong>convert JSON to Parquet</strong> on the fly, and lands them in S3 (or Redshift, OpenSearch, etc.). It's serverless with no shards to manage; you trade a little latency (the buffer window) for zero operational overhead.</p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 1080 270" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs><marker id="arr3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#473d33"/></marker></defs>
+        <!-- producers -->
+        <rect x="24" y="96" width="150" height="70" rx="11" fill="#fff" stroke="#385a7a" stroke-width="1.6"/>
+        <use href="#ic-iot" x="87" y="101" width="24" height="24"/>
+        <text x="99" y="140" text-anchor="middle" font-size="13" font-weight="600" fill="#17130f">Producers</text>
+        <text x="99" y="156" text-anchor="middle" font-size="11" fill="#473d33">scooters, app</text>
+        <!-- stream w/ shards -->
+        <rect x="220" y="70" width="190" height="122" rx="12" fill="#fae6d8" stroke="#BE4A2C" stroke-width="1.8"/>
+        <use href="#ic-kinesis" x="232" y="44" width="20" height="20"/>
+        <text x="320" y="60" text-anchor="middle" font-size="12.5" font-weight="700" fill="#BE4A2C" font-family="'JetBrains Mono',monospace">KINESIS DATA STREAMS</text>
+        <g fill="#fff" stroke="#BE4A2C" stroke-width="1.3">
+          <rect x="238" y="88" width="154" height="22" rx="5"/>
+          <rect x="238" y="116" width="154" height="22" rx="5"/>
+          <rect x="238" y="144" width="154" height="22" rx="5"/>
+        </g>
+        <text x="315" y="103" text-anchor="middle" font-size="11" fill="#473d33">shard 1 · 1MB/s in</text>
+        <text x="315" y="131" text-anchor="middle" font-size="11" fill="#473d33">shard 2</text>
+        <text x="315" y="159" text-anchor="middle" font-size="11" fill="#473d33">shard 3</text>
+        <!-- two consumers -->
+        <rect x="470" y="34" width="200" height="74" rx="11" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.8"/>
+        <use href="#ic-flink" x="478" y="40" width="24" height="24"/>
+        <text x="570" y="62" text-anchor="middle" font-size="12.5" font-weight="700" fill="#17130f">Managed Flink</text>
+        <text x="570" y="80" text-anchor="middle" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#1E7A64">RANDOM_CUT_FOREST</text>
+        <text x="570" y="96" text-anchor="middle" font-size="10.5" fill="#473d33">→ alerts (SNS/Lambda)</text>
+
+        <rect x="470" y="150" width="200" height="62" rx="11" fill="#f6ddc6" stroke="#D98A2B" stroke-width="1.8"/>
+        <use href="#ic-firehose" x="478" y="156" width="24" height="24"/>
+        <text x="578" y="178" text-anchor="middle" font-size="12.5" font-weight="700" fill="#17130f">Data Firehose</text>
+        <text x="570" y="196" text-anchor="middle" font-size="10.5" fill="#473d33">buffer · transform · JSON→Parquet</text>
+
+        <!-- destinations -->
+        <rect x="730" y="38" width="180" height="66" rx="11" fill="#fff" stroke="#385a7a" stroke-width="1.6"/>
+        <use href="#ic-sns" x="738" y="44" width="24" height="24"/>
+        <text x="824" y="66" text-anchor="middle" font-size="12.5" font-weight="600" fill="#17130f">Ops alerting</text>
+        <text x="824" y="84" text-anchor="middle" font-size="11" fill="#473d33">dispatch a van</text>
+        <rect x="730" y="156" width="180" height="66" rx="11" fill="#fbf8f2" stroke="#17130f" stroke-width="1.8"/>
+        <use href="#ic-s3" x="738" y="162" width="24" height="24"/>
+        <text x="824" y="184" text-anchor="middle" font-size="12.5" font-weight="700" fill="#17130f">S3 Data Lake</text>
+        <text x="824" y="202" text-anchor="middle" font-size="11" fill="#473d33">Bronze zone</text>
+
+        <g stroke="#473d33" stroke-width="1.6" fill="none">
+          <path d="M174,131 L218,131" marker-end="url(#arr3)"/>
+          <path d="M410,108 C440,95 446,80 468,74" marker-end="url(#arr3)"/>
+          <path d="M410,150 C440,160 446,176 468,180" marker-end="url(#arr3)"/>
+          <path d="M670,71 L728,71" marker-end="url(#arr3)"/>
+          <path d="M670,185 L728,188" marker-end="url(#arr3)"/>
+        </g>
+        <text x="540" y="252" text-anchor="middle" font-size="12.5" font-style="italic" font-family="'Fraunces',serif" fill="#473d33">One stream, two independent consumers: real-time detection AND durable archival.</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig 6 — The streaming pipeline</b> Kinesis Data Streams fans out to Flink (act now) and Firehose (store forever).</figcaption>
+  </figure>
+
+  <h3>Tuning &amp; troubleshooting</h3>
+  <p>The classic Kinesis failure mode is <strong><code>ProvisionedThroughputExceededException</code></strong> — a “hot shard.” Usually the culprit is a poorly distributed partition key sending too much traffic to one shard. Fixes: choose a higher-cardinality key, <strong>reshard</strong> (split the hot shard), switch to <strong>on-demand</strong> mode, or use the <strong>Kinesis Producer Library (KPL)</strong> to batch and aggregate records. For consumers that compete for the 2 MB/s read limit, <strong>enhanced fan-out</strong> gives each consumer its own dedicated 2 MB/s pipe via a push model.</p>
+
+  <hr class="rule">
+
+  <!-- ===================== MSK ===================== -->
+  <h2 id="msk"><span class="num">09 / KAFKA ON AWS</span>Amazon MSK — when the org speaks Kafka</h2>
+
+  <p>MetroPulse's partner transit agencies already run <strong>Apache Kafka</strong>. Rebuilding their producers for the Kinesis API would be wasteful, so for that ingestion path we use <strong>Amazon MSK (Managed Streaming for Apache Kafka)</strong> — fully managed, open-source-compatible Kafka. Producers keep speaking the Kafka protocol; AWS runs the brokers, patching, and Zookeeper/KRaft plumbing.</p>
+
+  <p>Two companions matter: <strong>MSK Connect</strong> is managed Kafka Connect, so we stream topics into S3 or a database with configuration instead of custom consumer code. <strong>MSK Serverless</strong> removes broker sizing entirely — it auto-provisions and scales capacity and manages partitions for you, much like Kinesis on-demand.</p>
+
+  <h3>Kinesis Data Streams vs Amazon MSK</h3>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th>Dimension</th><th>Kinesis Data Streams</th><th>Amazon MSK</th></tr></thead>
+    <tbody>
+      <tr><td>Protocol</td><td>Kinesis API (AWS SDK)</td><td>Apache Kafka protocol</td></tr>
+      <tr><td>Unit of scale</td><td>Shard (1 MB/s in · 2 MB/s out)</td><td>Broker + partition count</td></tr>
+      <tr><td>Auto-scaling</td><td>On-demand mode</td><td>MSK Serverless</td></tr>
+      <tr><td>Ops overhead</td><td>Lowest — fully serverless</td><td>Higher (provisioned); low (Serverless)</td></tr>
+      <tr><td>Ecosystem</td><td>Deep native AWS integration</td><td>Huge open-source Kafka ecosystem</td></tr>
+      <tr><td>Best when…</td><td>Greenfield, AWS-native, simplicity</td><td>Existing Kafka, portability, Connect connectors</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note exam">
+    <span class="tag">Exam lens</span>
+    The deciding word is almost always present. <b>“Existing Kafka / open-source / migrate / Kafka Connect”</b> → MSK. <b>“Serverless / simplest / tight AWS integration / no infrastructure”</b> → Kinesis Data Streams. If they mention <b>“Kafka without managing brokers”</b> → MSK Serverless.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== ETL ===================== -->
+  <h2 id="etl"><span class="num">10 / GLUE &amp; FLOW</span>ETL pipelines &amp; orchestration</h2>
+
+  <p>Raw Bronze data isn't model-ready — it has duplicates, GPS drift, and the wrong format. <strong>ETL</strong> (Extract, Transform, Load) is the cleaning and reshaping stage. <strong>AWS Glue</strong> is the serverless workhorse: it crawls our S3 data to populate the <strong>Glue Data Catalog</strong> (the metadata layer that makes the lake queryable), and runs Spark jobs to dedupe, validate, and rewrite JSON to partitioned Parquet — moving data Bronze → Silver → Gold.</p>
+
+  <p>One detail worth flagging for ML: the distinction between <strong>ETL</strong> (transform before loading — good for structured warehouse targets) and <strong>ELT</strong> (load raw, transform later — natural for the lakehouse, where cheap storage lets you keep everything and transform on demand). MetroPulse leans ELT into Bronze, then ETL forward.</p>
+
+  <p>None of this runs by hand. <strong>Orchestration</strong> sequences the steps, handles retries, and enforces dependencies. We use <strong>AWS Step Functions</strong> for event-driven, serverless workflows (S3 event → validate → Glue job → quality check → publish), and <strong>Amazon MWAA</strong> (managed Apache Airflow) when teams already author DAGs in Python. <strong>EventBridge</strong> handles scheduled and event triggers.</p>
+
+  <hr class="rule">
+
+  <!-- ===================== WHOLE ===================== -->
+  <h2 id="whole"><span class="num">11 / ZOOM OUT</span>The complete picture</h2>
+
+  <p>Every box in Fig 1 now has a reason to exist. Trace one telemetry event end to end:</p>
+
+  <ol style="font-size:16.5px;line-height:1.7;">
+    <li>A scooter emits a JSON heartbeat → <strong>Kinesis Data Streams</strong> (partitioned by <code>vehicle_id</code>).</li>
+    <li><strong>Managed Service for Apache Flink</strong> scores it with <strong>RANDOM_CUT_FOREST</strong>; a high score fires a real-time alert to dispatch.</li>
+    <li>In parallel, <strong>Amazon Data Firehose</strong> buffers, converts to Parquet, and lands it in the <strong>S3</strong> Bronze zone.</li>
+    <li>The S3 write fires an <strong>event notification</strong> → <strong>EventBridge</strong> → <strong>Step Functions</strong> → <strong>AWS Glue</strong> cleans and promotes Bronze → Silver → Gold.</li>
+    <li><strong>Lifecycle rules</strong> age aging data down through the storage classes; <strong>SSE-KMS</strong> encrypts it; <strong>CRR</strong> replicates Gold for DR.</li>
+    <li><strong>SageMaker</strong> training jobs read curated Parquet — over <strong>FSx for Lustre</strong> for throughput, with <strong>EBS</strong> scratch and a shared <strong>EFS</strong> mount for the team.</li>
+  </ol>
+
+  <p>That's a complete, defensible data ingestion and storage layer — and it's exactly the kind of reasoning the MLA-C01 rewards: not “what does service X do,” but “which service, and why, for <em>this</em> requirement.”</p>
+
+  <!-- ===================== CHEATSHEET ===================== -->
+  <h2 id="cheatsheet"><span class="num">12 / REVISION</span>Part 1 cheat-sheet: ingestion &amp; storage</h2>
+
+  <div class="takeaways">
+    <h3>Lock these in before exam day</h3>
+    <ul>
+      <li><strong>S3 is the center of gravity.</strong> Lake, training source, Firehose target, model store. Know storage classes, lifecycle, versioning, replication, encryption (SSE-S3 / SSE-KMS / DSSE-KMS / SSE-C), Access Points, Object Lambda, and event notifications cold.</li>
+      <li><strong>Storage class = data temperature + access SLA.</strong> Unknown pattern → Intelligent-Tiering. Latency-critical ML → Express One Zone. Cheap-but-instant → Glacier Instant Retrieval. Deep archive → Glacier Deep Archive.</li>
+      <li><strong>Block vs file vs object.</strong> EBS = single-instance block. EFS = shared multi-instance Linux file. FSx for Lustre = high-throughput HPC/ML, links to S3. S3 = object lake.</li>
+      <li><strong>Streaming trio.</strong> Kinesis Data Streams = durable, replayable, sharded pipe. Managed Service for Apache Flink = real-time compute (RANDOM_CUT_FOREST for anomaly detection). Amazon Data Firehose = no-code buffered delivery to S3/Redshift/etc.</li>
+      <li><strong>Kinesis vs MSK.</strong> Greenfield + AWS-native + serverless → Kinesis. Existing/open-source Kafka + Connect ecosystem → MSK (Serverless removes broker management).</li>
+      <li><strong>Mind the renames.</strong> Kinesis Data Analytics → <em>Managed Service for Apache Flink</em>. Kinesis Data Firehose → <em>Amazon Data Firehose</em>. Old names still appear in exam-adjacent material.</li>
+      <li><strong>Lakehouse = architecture; data mesh = operating model.</strong> They stack, not compete.</li>
+      <li><strong>Formats:</strong> row (JSON/Avro) for writes &amp; streaming; columnar (Parquet/ORC) for analytics &amp; ML reads.</li>
+    </ul>
+  </div>
+
+  <p>That's the ingestion-and-storage half of Domain 1. The data is now landing, durable, secured, and organized — but it's still raw. <strong>Part 2</strong> picks up exactly here: cleaning and validating that data, engineering features, handling missing values and class imbalance, and detecting bias and PII before any model ever sees it.</p>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="cta">
+      <h3>The next five are coming</h3>
+      <p>I'm publishing six project-driven deep-dives across the four MLA-C01 domains, each advancing the same MetroPulse build — the same path that got me certified. Follow along whether you're working toward the cert yourself or hiring someone who's earned it.</p>
+    </div>
+    <p class="next-up">Next in the series → <b>#2 · Domain 1, Part 2 — Data Transformation, Integrity &amp; Feature Engineering</b> · cleaning, encoding, imbalance, bias &amp; PII on the MetroPulse lake</p>
+  </div>
+</footer>
+
+</body>
+</html>

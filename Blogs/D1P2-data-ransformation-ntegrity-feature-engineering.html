@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building MetroPulse: Data Transformation, Integrity &amp; Feature Engineering on AWS — MLA-C01 Series #2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Spline+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EDE3;
+    --paper-2:#FBF8F2;
+    --ink:#17130F;
+    --ink-soft:#473d33;
+    --rust:#BE4A2C;
+    --amber:#D98A2B;
+    --teal:#1E7A64;
+    --slate:#385a7a;
+    --line:#D9CFBE;
+    --line-2:#cbbfa9;
+    --code-bg:#1c1814;
+    --code-fg:#e9e0d0;
+    --max:880px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Spline Sans',system-ui,sans-serif;
+    font-size:18px;
+    line-height:1.72;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(190,74,44,.05), transparent 38%),
+      radial-gradient(circle at 88% 22%, rgba(217,138,43,.06), transparent 40%);
+  }
+  ::selection{background:var(--amber);color:var(--ink);}
+
+  /* ---------- Layout ---------- */
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px;}
+  .full{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- Masthead ---------- */
+  header.hero{
+    border-bottom:3px solid var(--ink);
+    padding:46px 0 38px;
+    margin-bottom:6px;
+  }
+  .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--rust);font-weight:700;margin:0 0 18px;
+    display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+  }
+  .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--rust);display:inline-block;}
+  .kicker .muted{color:var(--ink-soft);font-weight:500;letter-spacing:.14em;}
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(34px,6vw,62px);
+    line-height:1.02;
+    letter-spacing:-.015em;
+    margin:0 0 22px;
+  }
+  h1 em{font-style:italic;color:var(--rust);}
+  .dek{
+    font-size:clamp(18px,2.4vw,22px);
+    color:var(--ink-soft);
+    max-width:46ch;
+    margin:0 0 26px;
+    line-height:1.5;
+  }
+  .byline{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    font-size:14.5px;color:var(--ink-soft);
+    border-top:1px solid var(--line);padding-top:20px;
+  }
+  .byline .av{
+    width:42px;height:42px;border-radius:50%;
+    background:linear-gradient(135deg,var(--rust),var(--amber));
+    display:grid;place-items:center;color:#fff;font-weight:700;font-family:'Fraunces',serif;font-size:15px;letter-spacing:-0.3px;
+    flex:none;
+  }
+  .byline b{color:var(--ink);}
+  .byline .sep{color:var(--line-2);}
+
+  /* ---------- Body typography ---------- */
+  main{padding:42px 0 10px;}
+  p{margin:0 0 20px;}
+  main h2{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(26px,3.6vw,38px);line-height:1.1;letter-spacing:-.01em;
+    margin:60px 0 8px;scroll-margin-top:20px;
+  }
+  main h2 .num{
+    font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--rust);
+    display:block;letter-spacing:.18em;margin-bottom:10px;font-weight:700;
+  }
+  main h3{
+    font-family:'Spline Sans',sans-serif;font-weight:700;
+    font-size:21px;margin:38px 0 6px;letter-spacing:-.01em;
+  }
+  main h2 + p, main h3 + p{margin-top:14px;}
+  a{color:var(--rust);text-decoration:none;border-bottom:1.5px solid var(--line-2);transition:border-color .2s;}
+  a:hover{border-color:var(--rust);}
+  strong{font-weight:700;color:var(--ink);}
+  em{font-style:italic;}
+  code{
+    font-family:'JetBrains Mono',monospace;font-size:.86em;
+    background:rgba(190,74,44,.08);color:#9c3a22;
+    padding:.12em .42em;border-radius:5px;
+  }
+  hr.rule{border:none;border-top:1px solid var(--line);margin:54px 0;}
+  .lead-line{
+    border-left:3px solid var(--rust);
+    padding-left:22px;font-size:21px;line-height:1.6;color:var(--ink);
+    font-family:'Fraunces',serif;font-weight:400;font-style:italic;
+    margin:8px 0 30px;
+  }
+
+  /* ---------- Callouts ---------- */
+  .note{
+    background:var(--paper-2);border:1px solid var(--line);
+    border-left:4px solid var(--amber);
+    border-radius:10px;padding:18px 22px;margin:28px 0;font-size:16.5px;line-height:1.62;
+  }
+  .note .tag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--amber);font-weight:700;display:block;margin-bottom:6px;
+  }
+  .note.exam{border-left-color:var(--teal);}
+  .note.exam .tag{color:var(--teal);}
+  .note.gotcha{border-left-color:var(--rust);}
+  .note.gotcha .tag{color:var(--rust);}
+
+  /* ---------- Code ---------- */
+  pre{
+    background:var(--code-bg);color:var(--code-fg);
+    border-radius:12px;padding:22px 22px;overflow-x:auto;
+    font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.65;
+    margin:24px 0;border:1px solid #000;
+    box-shadow:0 14px 30px -18px rgba(0,0,0,.5);
+  }
+  pre .cmt{color:#8c8275;font-style:italic;}
+  pre .k{color:#e9a23b;}
+  pre .s{color:#9ccc8f;}
+  pre .n{color:#e3a6f0;}
+  pre code{background:none;color:inherit;padding:0;font-size:inherit;}
+  .code-label{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-soft);margin:24px 0 -14px;font-weight:700;
+  }
+
+  /* ---------- Figures / diagrams ---------- */
+  figure{margin:38px 0;}
+  figure.bleed{margin:46px 0;}
+  .diagram{
+    background:var(--paper-2);border:1px solid var(--line);border-radius:16px;
+    padding:26px 20px 14px;box-shadow:0 18px 40px -28px rgba(20,15,10,.4);
+  }
+  .diagram svg{display:block;width:100%;height:auto;}
+  figcaption{
+    font-size:14px;color:var(--ink-soft);margin-top:14px;text-align:center;
+    font-style:italic;font-family:'Fraunces',serif;
+  }
+  figcaption b{font-style:normal;color:var(--rust);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;}
+
+  /* ---------- Tables ---------- */
+  .table-scroll{overflow-x:auto;margin:28px 0;-webkit-overflow-scrolling:touch;}
+  table{border-collapse:collapse;width:100%;font-size:15px;min-width:560px;}
+  th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top;}
+  thead th{
+    background:var(--ink);color:var(--paper);font-weight:600;font-size:13px;
+    letter-spacing:.04em;border-bottom:none;
+  }
+  thead th:first-child{border-top-left-radius:9px;}
+  thead th:last-child{border-top-right-radius:9px;}
+  tbody tr:nth-child(even){background:rgba(217,138,43,.05);}
+  tbody td:first-child{font-weight:600;}
+
+  /* ---------- TOC ---------- */
+  nav.toc{
+    background:var(--paper-2);border:1px solid var(--line);border-radius:14px;
+    padding:24px 28px;margin:14px 0 8px;
+  }
+  nav.toc .toc-h{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--rust);font-weight:700;margin-bottom:14px;
+  }
+  nav.toc ol{margin:0;padding:0;list-style:none;counter-reset:toc;
+    columns:2;column-gap:36px;}
+  nav.toc li{counter-increment:toc;margin:0 0 9px;font-size:15px;break-inside:avoid;}
+  nav.toc li a{
+    border:none;color:var(--ink);display:flex;gap:12px;align-items:baseline;
+  }
+  nav.toc li a:hover{color:var(--rust);}
+  nav.toc li a::before{
+    content:counter(toc,decimal-leading-zero);
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--amber);font-weight:700;flex:none;
+  }
+
+  /* ---------- Pull / project card ---------- */
+  .project-card{
+    background:var(--ink);color:var(--paper);border-radius:18px;
+    padding:34px 34px 30px;margin:40px 0;position:relative;overflow:hidden;
+  }
+  .project-card::after{
+    content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;
+    background:radial-gradient(circle,rgba(217,138,43,.28),transparent 70%);
+  }
+  .project-card .tag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--amber);font-weight:700;
+  }
+  .project-card h3{color:var(--paper);font-size:26px;margin:8px 0 14px;font-family:'Fraunces',serif;font-weight:600;}
+  .project-card p{color:#d8cdbb;margin-bottom:14px;position:relative;z-index:1;}
+  .project-card ul{margin:0;padding-left:20px;color:#d8cdbb;position:relative;z-index:1;}
+  .project-card li{margin-bottom:7px;}
+  .project-card b{color:var(--amber);}
+
+  /* ---------- Key takeaways ---------- */
+  .takeaways{
+    background:var(--paper-2);border:2px solid var(--ink);border-radius:16px;padding:28px 30px;margin:36px 0;
+  }
+  .takeaways h3{margin-top:0;}
+  .takeaways ul{margin:0;padding-left:0;list-style:none;}
+  .takeaways li{padding-left:30px;position:relative;margin-bottom:13px;font-size:16px;}
+  .takeaways li::before{
+    content:"→";position:absolute;left:0;color:var(--rust);font-weight:700;font-family:'JetBrains Mono',monospace;
+  }
+
+  /* ---------- Footer / CTA ---------- */
+  footer{
+    border-top:3px solid var(--ink);margin-top:64px;padding:46px 0 60px;
+  }
+  .cta{
+    background:linear-gradient(135deg,var(--rust),var(--amber));
+    border-radius:18px;padding:36px;color:#fff;text-align:center;
+  }
+  .cta h3{font-family:'Fraunces',serif;font-size:28px;margin:0 0 12px;color:#fff;}
+  .cta p{color:rgba(255,255,255,.92);margin:0 auto 8px;max-width:48ch;}
+  .next-up{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-soft);margin-top:34px;text-align:center;font-weight:700;
+  }
+  .next-up b{color:var(--rust);}
+
+  @media (max-width:680px){
+    body{font-size:17px;}
+    nav.toc ol{columns:1;}
+    .project-card,.takeaways,.cta{padding:24px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SITE NAV ===== -->
+<nav style="position:sticky;top:0;z-index:999;background:rgba(243,237,227,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #D9CFBE;display:flex;align-items:center;justify-content:space-between;padding:13px 28px;font-family:'Spline Sans',system-ui,sans-serif;" role="navigation" aria-label="Site navigation">
+  <a href="../index.html" style="font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:600;color:#17130F;text-decoration:none;border:none;letter-spacing:-.02em;">SBM<span style="color:#BE4A2C">.</span></a>
+  <div style="display:flex;align-items:center;gap:22px;">
+    <a href="../index.html" style="font-size:14px;font-weight:500;color:#473d33;text-decoration:none;border:none;">← Portfolio</a>
+    <a href="../index.html#blog" style="font-size:14px;font-weight:500;color:#473d33;text-decoration:none;border:none;">All Posts</a>
+    <a href="../index.html#contact" style="font-size:13px;font-weight:600;color:#fff;background:#BE4A2C;padding:7px 18px;border-radius:8px;text-decoration:none;border:none;white-space:nowrap;">Hire Me</a>
+  </div>
+</nav>
+
+<!-- ===================== AWS-STYLE ICON SPRITE (custom SVG renditions) ===================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="g-storage" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B7A1E"/><stop offset="1" stop-color="#6BA53A"/></linearGradient>
+    <linearGradient id="g-analytics" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2DBA"/><stop offset="1" stop-color="#8C4FFF"/></linearGradient>
+    <linearGradient id="g-compute" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C25A12"/><stop offset="1" stop-color="#ED7100"/></linearGradient>
+    <linearGradient id="g-ml" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B7E6E"/><stop offset="1" stop-color="#12B5A0"/></linearGradient>
+    <linearGradient id="g-appint" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B30D5E"/><stop offset="1" stop-color="#E7157B"/></linearGradient>
+    <linearGradient id="g-security" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B41F32"/><stop offset="1" stop-color="#DD344C"/></linearGradient>
+    <linearGradient id="g-neutral" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2C4763"/><stop offset="1" stop-color="#4A6685"/></linearGradient>
+  </defs>
+
+  <symbol id="ic-s3" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-storage)"/>
+    <path d="M15 18h18l-1.6 15.4a2 2 0 0 1-2 1.8H18.6a2 2 0 0 1-2-1.8z" fill="#fff"/>
+    <ellipse cx="24" cy="18" rx="9" ry="2.6" fill="#fff" stroke="#2E6B1B" stroke-width="0.7"/>
+  </symbol>
+  <symbol id="ic-kinesis" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <g fill="#fff"><circle cx="15" cy="17" r="2.2"/><rect x="19" y="15.6" width="15" height="2.8" rx="1.4"/><circle cx="15" cy="24" r="2.2"/><rect x="19" y="22.6" width="15" height="2.8" rx="1.4"/><circle cx="15" cy="31" r="2.2"/><rect x="19" y="29.6" width="15" height="2.8" rx="1.4"/></g>
+  </symbol>
+  <symbol id="ic-firehose" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M14 15h20l-7.5 9.5V32l-5 2.5V24.5z" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-flink" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M31.5 19.5A9 9 0 1 0 33 25" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M27.2 14.2l5.6 4.8-5.8 2.6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-msk" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <g stroke="#fff" stroke-width="2"><line x1="18" y1="17" x2="31" y2="24"/><line x1="18" y1="31" x2="31" y2="24"/></g>
+    <g fill="#fff"><circle cx="18" cy="17" r="3.4"/><circle cx="18" cy="31" r="3.4"/><circle cx="32" cy="24" r="3.6"/></g>
+  </symbol>
+  <symbol id="ic-sagemaker" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M24 13l9.5 5.5v11L24 35l-9.5-5.5v-11z" fill="none" stroke="#fff" stroke-width="2.4"/>
+    <circle cx="24" cy="24" r="3.4" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-glue" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M20 14h8M21.5 14v6l-5.2 11.4a2 2 0 0 0 1.8 2.9h11.8a2 2 0 0 0 1.8-2.9L26.5 20v-6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-eventbridge" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-appint)"/>
+    <path d="M24 12.5l11.5 11.5L24 35.5 12.5 24z" fill="none" stroke="#fff" stroke-width="2.4"/>
+    <circle cx="24" cy="24" r="2.8" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-stepfn" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-appint)"/>
+    <path d="M21 18h5a4 4 0 0 1 4 4v3" fill="none" stroke="#fff" stroke-width="2"/>
+    <g fill="#fff"><rect x="12.5" y="13.5" width="9" height="9" rx="2.2"/><rect x="26.5" y="25.5" width="9" height="9" rx="2.2"/></g>
+  </symbol>
+  <symbol id="ic-ebs" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-storage)"/>
+    <rect x="13" y="18" width="22" height="12" rx="2.5" fill="#fff"/>
+    <circle cx="30" cy="24" r="1.9" fill="#3B7A1E"/>
+    <rect x="16" y="22.5" width="8" height="3" rx="1.5" fill="#3B7A1E" opacity="0.5"/>
+  </symbol>
+  <symbol id="ic-efs" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-storage)"/>
+    <rect x="13.5" y="15" width="13" height="17" rx="2" fill="#fff" opacity="0.55"/>
+    <rect x="20" y="18" width="13" height="17" rx="2" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-fsx" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-storage)"/>
+    <rect x="15" y="13" width="18" height="22" rx="2.5" fill="#fff"/>
+    <path d="M25 17l-4.5 8h3.2l-1.7 6 5.5-8.5h-3.3z" fill="#3B7A1E"/>
+  </symbol>
+  <symbol id="ic-kms" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-security)"/>
+    <circle cx="20" cy="20" r="6" fill="none" stroke="#fff" stroke-width="2.6"/>
+    <path d="M23.6 23.6L33 33M30 33l3-3M27 33l3-3" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-athena" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <circle cx="22" cy="22" r="6.5" fill="none" stroke="#fff" stroke-width="2.6"/>
+    <line x1="27" y1="27" x2="33.5" y2="33.5" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-quicksight" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <g fill="#fff"><rect x="14" y="25" width="4.5" height="9" rx="1.2"/><rect x="21.7" y="19" width="4.5" height="15" rx="1.2"/><rect x="29.5" y="14" width="4.5" height="20" rx="1.2"/></g>
+  </symbol>
+  <symbol id="ic-redshift" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M24 13l10 5.5v11L24 35 14 29.5v-11z" fill="none" stroke="#fff" stroke-width="2"/>
+    <path d="M14 18.5l10 5.5 10-5.5M24 24v11" fill="none" stroke="#fff" stroke-width="2"/>
+  </symbol>
+  <symbol id="ic-lakeformation" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M24 13l10 4.5v7c0 6-4.3 9.3-10 11-5.7-1.7-10-5-10-11v-7z" fill="none" stroke="#fff" stroke-width="2.2"/>
+    <path d="M20 24l3 3 5.5-5.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-lambda" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-compute)"/>
+    <path d="M16 34l8-20 9 20" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-sns" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-appint)"/>
+    <path d="M24 13a7 7 0 0 0-7 7c0 7-3 8-3 10h20c0-2-3-3-3-10a7 7 0 0 0-7-7z" fill="#fff"/>
+    <path d="M21.4 33.5a2.7 2.7 0 0 0 5.2 0z" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-iot" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <circle cx="24" cy="29" r="3" fill="#fff"/>
+    <path d="M18.5 25a8 8 0 0 1 11 0M15 21a13 13 0 0 1 18 0" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-mobile" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <rect x="17.5" y="12.5" width="13" height="23" rx="3" fill="#fff"/>
+    <circle cx="24" cy="32" r="1.4" fill="#2C4763"/>
+  </symbol>
+  <symbol id="ic-api" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <path d="M21 14c-3 0-3 4-3 5s0 5-3 5c3 0 3 4 3 5s0 5 3 5" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>
+    <path d="M27 14c3 0 3 4 3 5s0 5 3 5c-3 0-3 4-3 5s0 5-3 5" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- ===== Part 2 additions ===== -->
+  <symbol id="ic-emr" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <g fill="#fff"><rect x="14" y="14" width="20" height="6" rx="2"/><rect x="14" y="22" width="20" height="6" rx="2"/><rect x="14" y="30" width="20" height="6" rx="2"/></g>
+    <g fill="#5A2DBA"><circle cx="18" cy="17" r="1.4"/><circle cx="18" cy="25" r="1.4"/><circle cx="18" cy="33" r="1.4"/></g>
+  </symbol>
+  <symbol id="ic-spark" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M24 12l2.7 8.3 8.3 2.7-8.3 2.7L24 34l-2.7-8.3L13 23l8.3-2.7z" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-datawrangler" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M14 15h20l-7.5 9.5V32l-5 2.5V24.5z" fill="#fff"/>
+    <circle cx="33" cy="31" r="3.4" fill="#fff"/><path d="M33 29.4v3.2M31.4 31h3.2" stroke="#0B7E6E" stroke-width="1.4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-featurestore" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <rect x="13" y="14" width="22" height="20" rx="2.5" fill="none" stroke="#fff" stroke-width="2"/>
+    <line x1="13" y1="21" x2="35" y2="21" stroke="#fff" stroke-width="2"/>
+    <line x1="20.5" y1="21" x2="20.5" y2="34" stroke="#fff" stroke-width="2"/>
+    <line x1="27.5" y1="21" x2="27.5" y2="34" stroke="#fff" stroke-width="2"/>
+  </symbol>
+  <symbol id="ic-clarify" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <line x1="24" y1="14" x2="24" y2="34" stroke="#fff" stroke-width="2.4"/>
+    <line x1="15" y1="19" x2="33" y2="19" stroke="#fff" stroke-width="2.4"/>
+    <path d="M15 19l-3.2 6h6.4z" fill="#fff"/><path d="M33 19l-3.2 6h6.4z" fill="#fff"/>
+    <rect x="18.5" y="33" width="11" height="2.6" rx="1.3" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-groundtruth" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M15 16v-1h6M33 16v-1h-6M15 32v1h6M33 32v1h-6M14 18v12M34 18v12" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <path d="M19 24l3.2 3.2L29 20" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-canvas" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <rect x="13" y="13" width="22" height="17" rx="2.5" fill="none" stroke="#fff" stroke-width="2"/>
+    <circle cx="20" cy="20" r="2.3" fill="#fff"/>
+    <path d="M16 29l5-6 4 4 3-3 4 5" stroke="#fff" stroke-width="2" fill="none" stroke-linejoin="round"/>
+    <line x1="24" y1="30" x2="24" y2="35" stroke="#fff" stroke-width="2"/>
+    <line x1="19" y1="35" x2="29" y2="35" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-modelmonitor" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <circle cx="24" cy="24" r="11" fill="none" stroke="#fff" stroke-width="2.2"/>
+    <path d="M15 24h3.5l2-5 3.2 10 2.3-5H33" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-databrew" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M15 22h15v6a6 6 0 0 1-6 6h-3a6 6 0 0 1-6-6z" fill="#fff"/>
+    <path d="M30 23.5h3a3 3 0 0 1 0 6h-3" fill="none" stroke="#fff" stroke-width="2"/>
+    <path d="M19 13.5c0 2-1.4 2.2-1.4 4M24.5 13.5c0 2-1.4 2.2-1.4 4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-comprehend" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M14 16h20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H23l-6 4.5V29h-3a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2z" fill="#fff"/>
+    <g stroke="#0B7E6E" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20.5" x2="30" y2="20.5"/><line x1="18" y1="25" x2="27" y2="25"/></g>
+  </symbol>
+  <symbol id="ic-mturk" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <g fill="#fff"><circle cx="19" cy="19" r="4.2"/><path d="M11 34a8 8 0 0 1 16 0z"/></g>
+    <g fill="#fff" opacity="0.82"><circle cx="31" cy="20.5" r="3.4"/><path d="M26.5 34a6.5 6.5 0 0 1 11.5 0z"/></g>
+  </symbol>
+  <symbol id="ic-text" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <rect x="15" y="13" width="18" height="22" rx="2.5" fill="#fff"/>
+    <g stroke="#2C4763" stroke-width="2" stroke-linecap="round"><line x1="19" y1="19" x2="29" y2="19"/><line x1="19" y1="24" x2="29" y2="24"/><line x1="19" y1="29" x2="25" y2="29"/></g>
+  </symbol>
+  <symbol id="ic-image" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <rect x="13" y="15" width="22" height="18" rx="2.5" fill="#fff"/>
+    <circle cx="19" cy="21" r="2.1" fill="#2C4763"/>
+    <path d="M15 31l6-7 4 4 3-3 5 6z" fill="#2C4763"/>
+  </symbol>
+</svg>
+
+<!-- ===================== MASTHEAD ===================== -->
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">
+      <span class="dot"></span> AWS ML Engineer · Associate (MLA-C01)
+      <span class="muted">— Series #2 of 6 · Domain 1, Part 2 (28%)</span>
+    </p>
+    <h1>From Raw to Ready: <em>Data Transformation, Integrity &amp; Feature Engineering</em></h1>
+    <p class="dek">The lake is full — and useless. Models don't learn from raw events; they learn from features. Here's how I'd turn MetroPulse's messy data into model-ready signal on AWS, end to end.</p>
+    <div class="byline">
+      <span class="av">SBM</span>
+      <span>By <b>Shahriar Bin Mohsin</b><br><span style="color:var(--ink-soft)"><b style="color:var(--ink)">The ML Engineering Notebook</b> — AWS Certified Machine Learning Engineer – Associate</span></span>
+      <span class="sep">·</span>
+      <span>~24 min read</span>
+      <span class="sep">·</span>
+      <span>Updated 2026</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc">
+    <div class="toc-h">In this build · Part 2</div>
+    <ol>
+      <li><a href="#recap">Recap &amp; the Part 2 brief</a></li>
+      <li><a href="#emr">Scaling transformation: EMR &amp; Spark</a></li>
+      <li><a href="#curse">Features &amp; the curse of dimensionality</a></li>
+      <li><a href="#gauntlet">The feature gauntlet: clean, fix, encode, scale</a></li>
+      <li><a href="#tfidf">Text features &amp; TF-IDF</a></li>
+      <li><a href="#labeling">Labeling: Ground Truth &amp; Mechanical Turk</a></li>
+      <li><a href="#sagemaker">SageMaker AI &amp; the data-prep suite</a></li>
+      <li><a href="#featurestore">SageMaker Feature Store</a></li>
+      <li><a href="#clarify">Integrity, bias &amp; explainability</a></li>
+      <li><a href="#glue">AWS Glue: Studio, Data Quality &amp; DataBrew</a></li>
+      <li><a href="#athena">Athena: query, materialize, govern</a></li>
+      <li><a href="#whole">The complete Part 2 picture</a></li>
+      <li><a href="#cheatsheet">Which tool when &amp; cheat-sheet</a></li>
+    </ol>
+  </nav>
+</div>
+
+<main class="wrap">
+
+  <p class="lead-line">Domain 1 is 28% of the MLA-C01 — the largest slice — and it splits into three task statements. Part 1 covered Task 1.1 (ingest &amp; store). This post covers the other two: Task 1.2 (transform data &amp; perform feature engineering) and Task 1.3 (ensure data integrity &amp; prepare data for modeling).</p>
+
+  <div class="note">
+    <span class="tag">Previously on MetroPulse</span>
+    In <strong>Part 1</strong> we designed the ingestion &amp; storage layer for <strong>MetroPulse</strong> — a city-scale mobility platform (e-scooters, e-bikes, shuttle vans). Vehicle telemetry and app events stream through <strong>Kinesis Data Streams</strong>; <strong>Managed Service for Apache Flink</strong> scores anomalies in real time; <strong>Amazon Data Firehose</strong> lands everything as Parquet in an <strong>S3</strong> data lake organized into Bronze (raw) → Silver (clean) → Gold (curated) zones, catalogued by <strong>AWS Glue</strong>. That gave us durable, queryable, secured data. But raw events are not features. This post is where the data actually becomes usable for ML.
+  </div>
+
+  <p>One quick scope note before we build. This part of Domain 1 threads through a lot of services — EMR and Spark, the feature-engineering fundamentals, the whole SageMaker AI data-prep suite, Glue, and Athena. Rather than tour them one at a time, I'll let the MetroPulse build pull each one in exactly where a real engineer would reach for it. Two AWS naming updates are already baked in below, because they will trip you up on the exam if you learned the old names: on <strong>December 3, 2024</strong> the original Amazon SageMaker was renamed <strong>SageMaker AI</strong> (it's now one component inside the next-generation, unified Amazon SageMaker), and <strong>SageMaker Data Wrangler</strong> no longer has its own console — it lives <em>inside</em> SageMaker Canvas.</p>
+
+  <!-- ===================== RECAP / BRIEF ===================== -->
+  <h2 id="recap"><span class="num">01 / THE HANDOFF</span>What Part 2 has to accomplish — and a small confession about the project</h2>
+
+  <p>Before writing this post I went back and stress-tested the MetroPulse scenario against everything Task 1.2 and 1.3 expect you to know. The verdict: the project holds up, but it needed <em>enriching</em>, not replacing. Here's the honest reasoning, because it's the same judgment call you'll make on real systems.</p>
+
+  <p>Part 1's MetroPulse was almost entirely <strong>numeric and time-series</strong> data: GPS coordinates, battery levels, ride durations, payment amounts. That's perfect for teaching imputation, outliers, scaling, and encoding. But Section 3 also teaches <strong>text feature engineering</strong> (TF-IDF) and <strong>data labeling</strong> (Ground Truth, Mechanical Turk) — and you can't motivate those honestly with telemetry alone. So rather than bolt on contrived examples, I added two data facets that any real mobility company genuinely has:</p>
+
+  <div class="project-card">
+    <span class="tag">The brief · Part 2 (two new data facets)</span>
+    <h3>Same MetroPulse, richer data</h3>
+    <p>Everything from Part 1 stays exactly as it was. We're adding two sources that were always implied by the business:</p>
+    <ul>
+      <li><b>Rider support tickets &amp; in-app feedback</b> — free <b>text</b>. "App charged me twice." "Scooter #4471 brakes feel loose." This unlocks TF-IDF, text vectorization, and PII handling — and feeds a future ticket-routing model.</li>
+      <li><b>Field-reported damage photos</b> — <b>images</b> uploaded by ops staff and riders. Unlabeled, they're worthless; labeled (bounding boxes around cracks, bent forks), they train a damage-triage model. This is the canonical job for Ground Truth + a human workforce.</li>
+    </ul>
+    <p>The mission for this post: take the raw Bronze-zone lake plus these two new facets, and produce <b>clean, validated, feature-rich datasets</b> that Part 3's models can train on — without leaking PII, without bias we didn't check for, and at a scale that won't fall over.</p>
+  </div>
+
+  <div class="note exam">
+    <span class="tag">Exam lens</span>
+    The exam loves the seam between <strong>1.2</strong> and <strong>1.3</strong>. 1.2 is "make features" (transform, encode, scale, reduce dimensionality, engineer signal). 1.3 is "make sure the data is trustworthy and ready" (validate quality, fix imbalance, detect bias and PII, split and shuffle correctly). When a question describes a <em>problem with the data</em>, it's usually testing 1.3; when it describes <em>creating model inputs</em>, it's 1.2.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== EMR & SPARK ===================== -->
+  <h2 id="emr"><span class="num">02 / SCALE</span>When the data is too big for one machine: EMR &amp; Spark</h2>
+
+  <p>MetroPulse lands billions of telemetry rows a month. Our first transformation job — sessionize raw GPS pings into discrete <em>rides</em>, then compute per-ride features like distance, average speed, and battery drain rate — simply will not run on a single instance. This is where distributed processing earns its keep.</p>
+
+  <p>The lineage matters for the exam. <strong>Apache Hadoop</strong> introduced the idea of splitting work across a cluster (HDFS for storage, <strong>MapReduce</strong> for compute). <strong>Apache Spark</strong> kept the distributed model but moved the working set <em>in-memory</em> and replaced rigid map-reduce stages with a flexible DAG of transformations — making it dramatically faster for the iterative, multi-step pipelines that feature engineering actually is. <strong>Amazon EMR (Elastic MapReduce)</strong> is the managed home for this whole ecosystem: Spark, Hive, Presto/Trino, HBase, Flink and more, with AWS handling provisioning, scaling, and patching.</p>
+
+  <figure class="bleed">
+    <div class="diagram">
+      <svg viewBox="0 0 1080 380" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <marker id="e-arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#473d33"/></marker>
+        </defs>
+        <!-- S3 source -->
+        <rect x="24" y="150" width="150" height="80" rx="12" fill="#fbf8f2" stroke="#17130f" stroke-width="1.8"/>
+        <use href="#ic-s3" x="40" y="162" width="26" height="26"/>
+        <text x="99" y="200" text-anchor="middle" font-size="13" font-weight="700" fill="#17130f">S3 Bronze</text>
+        <text x="99" y="218" text-anchor="middle" font-size="11" fill="#473d33">raw telemetry</text>
+
+        <!-- EMR cluster box -->
+        <rect x="232" y="34" width="560" height="312" rx="16" fill="#f3edf9" stroke="#5A2DBA" stroke-width="1.8"/>
+        <use href="#ic-emr" x="252" y="46" width="26" height="26"/>
+        <text x="288" y="64" font-size="13" font-weight="700" fill="#5A2DBA" font-family="'JetBrains Mono',monospace">AMAZON EMR · SPARK CLUSTER</text>
+
+        <!-- driver -->
+        <rect x="270" y="92" width="180" height="60" rx="11" fill="#fff" stroke="#5A2DBA" stroke-width="1.6"/>
+        <use href="#ic-spark" x="282" y="104" width="24" height="24"/>
+        <text x="392" y="116" text-anchor="middle" font-size="12.5" font-weight="700" fill="#17130f">Driver</text>
+        <text x="392" y="133" text-anchor="middle" font-size="10.5" fill="#473d33">builds the DAG, schedules</text>
+
+        <!-- executors -->
+        <g>
+          <rect x="270" y="182" width="150" height="58" rx="10" fill="#fff" stroke="#8C4FFF" stroke-width="1.5"/>
+          <text x="345" y="206" text-anchor="middle" font-size="12" font-weight="600" fill="#17130f">Executor 1</text>
+          <text x="345" y="223" text-anchor="middle" font-size="10.5" fill="#473d33">partition A</text>
+
+          <rect x="437" y="182" width="150" height="58" rx="10" fill="#fff" stroke="#8C4FFF" stroke-width="1.5"/>
+          <text x="512" y="206" text-anchor="middle" font-size="12" font-weight="600" fill="#17130f">Executor 2</text>
+          <text x="512" y="223" text-anchor="middle" font-size="10.5" fill="#473d33">partition B</text>
+
+          <rect x="604" y="182" width="150" height="58" rx="10" fill="#fff" stroke="#8C4FFF" stroke-width="1.5"/>
+          <text x="679" y="206" text-anchor="middle" font-size="12" font-weight="600" fill="#17130f">Executor 3</text>
+          <text x="679" y="223" text-anchor="middle" font-size="10.5" fill="#473d33">partition C</text>
+        </g>
+        <text x="512" y="280" text-anchor="middle" font-size="11.5" fill="#5A2DBA" font-family="'JetBrains Mono',monospace">each executor transforms its slice in parallel, in memory</text>
+        <text x="512" y="316" text-anchor="middle" font-size="12.5" font-style="italic" font-family="'Fraunces',serif" fill="#473d33">EMR Serverless runs this exact job with no cluster to size or manage — you pay per vCPU-second.</text>
+
+        <!-- arrows driver to executors -->
+        <g stroke="#8C4FFF" stroke-width="1.5" fill="none">
+          <path d="M345,152 L345,180" marker-end="url(#e-arr)"/>
+          <path d="M392,152 L512,180" marker-end="url(#e-arr)"/>
+          <path d="M440,152 L679,180" marker-end="url(#e-arr)"/>
+        </g>
+
+        <!-- S3 sink -->
+        <rect x="906" y="150" width="150" height="80" rx="12" fill="#fbf8f2" stroke="#17130f" stroke-width="1.8"/>
+        <use href="#ic-s3" x="922" y="162" width="26" height="26"/>
+        <text x="981" y="200" text-anchor="middle" font-size="13" font-weight="700" fill="#17130f">S3 Silver</text>
+        <text x="981" y="218" text-anchor="middle" font-size="11" fill="#473d33">per-ride features</text>
+
+        <g stroke="#473d33" stroke-width="1.8" fill="none">
+          <path d="M174,190 L228,190" marker-end="url(#e-arr)"/>
+          <path d="M792,190 L902,190" marker-end="url(#e-arr)"/>
+        </g>
+      </svg>
+    </div>
+    <figcaption><b>Fig 1 — Distributed transformation</b> One logical job; the driver splits it into tasks that executors run in parallel over data partitions.</figcaption>
+  </figure>
+
+  <h3>Choosing your EMR flavor</h3>
+  <p>EMR comes in three deployment models, and the exam expects you to match them to a scenario:</p>
+
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr><th>Flavor</th><th>You manage</th><th>Reach for it when…</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>EMR on EC2</td><td>Cluster sizing, instance fleets, scaling policies</td><td>Long-running clusters, full control, custom bootstrap, spot-instance cost tuning</td></tr>
+      <tr><td>EMR Serverless</td><td>Nothing — just submit the job</td><td>Spiky or unpredictable workloads; you want per-job autoscaling and to pay only for what runs</td></tr>
+      <tr><td>EMR on EKS</td><td>Shared Kubernetes capacity</td><td>You already standardize on EKS and want Spark to share that infrastructure</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>For MetroPulse, the nightly ride-sessionization batch is steady, so <strong>EMR Serverless</strong> is the low-ops default; if we later add an always-on interactive analytics cluster for the data-science team, EMR on EC2 with spot instances becomes attractive. Notebooks and job authoring happen in <strong>EMR Studio</strong>.</p>
+
+  <div class="note gotcha">
+    <span class="tag">Common trap</span>
+    <strong>EMR vs Glue</strong> is the perennial exam fork. Both run managed Spark. Choose <strong>AWS Glue</strong> when you want serverless ETL tightly integrated with the Data Catalog and minimal infrastructure thinking. Choose <strong>EMR</strong> when you need the broader Hadoop ecosystem (Hive, Presto, HBase, custom Spark versions), fine-grained cluster/cost control, or very large, long-running clusters. "Managed Spark with the least operational overhead and Catalog integration" → Glue. "Open-source big-data ecosystem with control" → EMR.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== CURSE OF DIMENSIONALITY ===================== -->
+  <h2 id="curse"><span class="num">03 / SIGNAL</span>Feature engineering &amp; the curse of dimensionality</h2>
+
+  <p>A <strong>feature</strong> is any measurable input the model learns from. <strong>Feature engineering</strong> is the craft of turning raw columns into features that actually carry signal — and it is, hands down, the highest-leverage work in classical ML. A mediocre algorithm on great features beats a great algorithm on raw junk almost every time. For MetroPulse, "timestamp" is raw; <em>hour-of-day</em>, <em>is-weekend</em>, <em>minutes-since-last-ride</em> are features.</p>
+
+  <p>But more features is not better. As you add dimensions, the volume of the feature space grows exponentially, and your fixed number of training rows spreads thinner and thinner across it. Points that should be "neighbors" drift apart, distance-based methods lose meaning, and models overfit the emptiness. That's the <strong>curse of dimensionality</strong>.</p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 1080 300" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <!-- 1D -->
+        <text x="170" y="40" text-anchor="middle" font-family="'Fraunces',serif" font-size="20" font-weight="600" fill="#1E7A64">1 feature</text>
+        <line x1="40" y1="150" x2="300" y2="150" stroke="#385a7a" stroke-width="2"/>
+        <g fill="#BE4A2C"><circle cx="78" cy="150" r="5"/><circle cx="120" cy="150" r="5"/><circle cx="165" cy="150" r="5"/><circle cx="205" cy="150" r="5"/><circle cx="250" cy="150" r="5"/></g>
+        <text x="170" y="210" text-anchor="middle" font-size="12.5" fill="#473d33">5 points densely cover a line</text>
+
+        <!-- 2D -->
+        <text x="540" y="40" text-anchor="middle" font-family="'Fraunces',serif" font-size="20" font-weight="600" fill="#D98A2B">2 features</text>
+        <rect x="430" y="70" width="220" height="150" fill="none" stroke="#385a7a" stroke-width="2"/>
+        <g fill="#BE4A2C"><circle cx="470" cy="110" r="5"/><circle cx="600" cy="95" r="5"/><circle cx="520" cy="170" r="5"/><circle cx="460" cy="200" r="5"/><circle cx="620" cy="195" r="5"/></g>
+        <text x="540" y="248" text-anchor="middle" font-size="12.5" fill="#473d33">same 5 points, now spread out</text>
+
+        <!-- 3D -->
+        <text x="880" y="40" text-anchor="middle" font-family="'Fraunces',serif" font-size="20" font-weight="600" fill="#BE4A2C">3 features</text>
+        <g stroke="#385a7a" stroke-width="2" fill="none">
+          <rect x="800" y="80" width="140" height="120"/>
+          <path d="M800,80 L840,55 L980,55 L940,80 M940,200 L980,175 L980,55 M940,80 L940,200"/>
+        </g>
+        <g fill="#BE4A2C"><circle cx="835" cy="120" r="5"/><circle cx="915" cy="95" r="5"/><circle cx="870" cy="175" r="5"/><circle cx="955" cy="150" r="5"/><circle cx="890" cy="70" r="5"/></g>
+        <text x="880" y="248" text-anchor="middle" font-size="12.5" fill="#473d33">same 5 points, mostly empty space</text>
+
+        <text x="540" y="285" text-anchor="middle" font-size="13" font-style="italic" font-family="'Fraunces',serif" fill="#9c3a22">More dimensions, same data → sparsity. The model has less to learn from per unit of space.</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig 2 — The curse of dimensionality</b> Fix the number of samples and add features: the space empties out and distances stop being meaningful.</figcaption>
+  </figure>
+
+  <p>The defenses fall into two buckets. <strong>Feature selection</strong> keeps a subset of the original features (filter methods by correlation, wrapper methods like recursive elimination, or embedded methods like L1 regularization). <strong>Dimensionality reduction</strong> creates new, fewer features that preserve most of the variance — <strong>PCA</strong> being the workhorse (a SageMaker built-in algorithm we'll meet in Part 3). The practical rule for MetroPulse: don't one-hot-encode a 500-value categorical column without asking whether grouping, target encoding, or an embedding would carry the same signal in far fewer dimensions.</p>
+
+  <div class="note exam">
+    <span class="tag">Exam lens</span>
+    If a scenario describes a model that trains fine but generalizes terribly, with "hundreds of features" and "not that many rows," the curse of dimensionality is the intended diagnosis — and PCA / feature selection is the intended fix. Pair the symptom (sparse, high-dimensional, overfitting) with the remedy.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== FEATURE GAUNTLET ===================== -->
+  <h2 id="gauntlet"><span class="num">04 / THE GAUNTLET</span>Cleaning &amp; transforming: the feature engineering gauntlet</h2>
+
+  <p>Every raw dataset has to run a gauntlet before a model should ever see it. These are the bread-and-butter techniques the exam tests directly, and they apply whether you implement them in Spark, Glue, or SageMaker Data Wrangler. Here's the MetroPulse run through each station.</p>
+
+  <figure class="bleed">
+    <div class="diagram">
+      <svg viewBox="0 0 1080 230" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <marker id="g-arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#BE4A2C"/></marker>
+        </defs>
+        <rect x="20" y="80" width="120" height="70" rx="11" fill="#fff" stroke="#9c3a22" stroke-width="1.6" stroke-dasharray="5 3"/>
+        <text x="80" y="110" text-anchor="middle" font-size="13" font-weight="700" fill="#9c3a22">Raw rows</text>
+        <text x="80" y="128" text-anchor="middle" font-size="10.5" fill="#473d33">messy, mixed</text>
+
+        <g>
+          <rect x="172" y="78" width="132" height="74" rx="11" fill="#fae6d8" stroke="#BE4A2C" stroke-width="1.6"/>
+          <text x="238" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#17130f">Impute</text>
+          <text x="238" y="122" text-anchor="middle" font-size="10" fill="#473d33">fill missing</text>
+          <text x="238" y="137" text-anchor="middle" font-size="10" fill="#473d33">values</text>
+
+          <rect x="336" y="78" width="132" height="74" rx="11" fill="#f6ddc6" stroke="#D98A2B" stroke-width="1.6"/>
+          <text x="402" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#17130f">De-outlier</text>
+          <text x="402" y="122" text-anchor="middle" font-size="10" fill="#473d33">cap / drop</text>
+          <text x="402" y="137" text-anchor="middle" font-size="10" fill="#473d33">extremes</text>
+
+          <rect x="500" y="78" width="132" height="74" rx="11" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.6"/>
+          <text x="566" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#17130f">Balance</text>
+          <text x="566" y="122" text-anchor="middle" font-size="10" fill="#473d33">fix class</text>
+          <text x="566" y="137" text-anchor="middle" font-size="10" fill="#473d33">imbalance</text>
+
+          <rect x="664" y="78" width="132" height="74" rx="11" fill="#f3edf9" stroke="#5A2DBA" stroke-width="1.6"/>
+          <text x="730" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#17130f">Encode</text>
+          <text x="730" y="122" text-anchor="middle" font-size="10" fill="#473d33">categoricals</text>
+          <text x="730" y="137" text-anchor="middle" font-size="10" fill="#473d33">→ numbers</text>
+
+          <rect x="828" y="78" width="132" height="74" rx="11" fill="#fae6d8" stroke="#BE4A2C" stroke-width="1.6"/>
+          <text x="894" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#17130f">Scale</text>
+          <text x="894" y="122" text-anchor="middle" font-size="10" fill="#473d33">normalize /</text>
+          <text x="894" y="137" text-anchor="middle" font-size="10" fill="#473d33">standardize</text>
+        </g>
+
+        <rect x="992" y="80" width="68" height="70" rx="11" fill="#17130f"/>
+        <text x="1026" y="110" text-anchor="middle" font-size="11" font-weight="700" fill="#F3EDE3">Feature</text>
+        <text x="1026" y="126" text-anchor="middle" font-size="11" font-weight="700" fill="#F3EDE3">matrix</text>
+
+        <g stroke="#BE4A2C" stroke-width="1.7" fill="none">
+          <path d="M140,115 L170,115" marker-end="url(#g-arr)"/>
+          <path d="M304,115 L334,115" marker-end="url(#g-arr)"/>
+          <path d="M468,115 L498,115" marker-end="url(#g-arr)"/>
+          <path d="M632,115 L662,115" marker-end="url(#g-arr)"/>
+          <path d="M796,115 L826,115" marker-end="url(#g-arr)"/>
+          <path d="M960,115 L990,115" marker-end="url(#g-arr)"/>
+        </g>
+        <text x="540" y="195" text-anchor="middle" font-size="12.5" font-style="italic" font-family="'Fraunces',serif" fill="#473d33">Order matters: impute and de-outlier before you scale, and balance only the training split.</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig 3 — The feature gauntlet</b> A typical preparation pipeline. Each station maps to a transform you can do in Spark, Glue, or Data Wrangler.</figcaption>
+  </figure>
+
+  <h3>Missing data</h3>
+  <p>MetroPulse scooters in parking-garage dead zones drop GPS for a few pings. Options, in rough order of sophistication: <strong>drop</strong> rows/columns (fine if missingness is tiny and random; dangerous otherwise), <strong>simple imputation</strong> (mean/median for numerics, mode for categoricals — median resists outliers), or <strong>model-based imputation</strong> (KNN or regression imputation that predicts the missing value from the other columns). The why behind the missingness matters: data missing completely at random is safe to impute simply; data missing <em>because</em> of the thing you're predicting needs care or it bakes in bias.</p>
+
+  <h3>Outliers</h3>
+  <p>A scooter reporting 300 km/h is a sensor glitch, not a feature. Detect with the <strong>Z-score</strong> (how many standard deviations from the mean) or the <strong>IQR method</strong> (points beyond 1.5× the interquartile range). Then decide: <strong>cap/winsorize</strong> to a sane bound, <strong>remove</strong>, or <strong>transform</strong> (a log transform tames long right tails). Don't reflexively delete — sometimes the outlier is the fraud you're trying to catch.</p>
+
+  <h3>Imbalanced classes</h3>
+  <p>Payment fraud is maybe 0.3% of rides. Train naively and the model hits 99.7% accuracy by predicting "never fraud" — useless. Fixes: <strong>oversample</strong> the minority (including synthetic samples via <strong>SMOTE</strong>), <strong>undersample</strong> the majority, apply <strong>class weights</strong> so errors on the rare class cost more, or generate more data. And critically, judge the model on precision/recall/AUC, not raw accuracy.</p>
+
+  <h3>Encoding categoricals</h3>
+  <p>Models eat numbers, not strings. <strong>One-hot encoding</strong> turns <code>vehicle_type ∈ {scooter, bike, van}</code> into three 0/1 columns — great for low-cardinality, no false ordering. <strong>Label/ordinal encoding</strong> maps categories to integers — only valid when there's a real order (e.g. <code>small &lt; medium &lt; large</code>), otherwise the model invents a ranking that isn't there. High-cardinality columns (like <code>station_id</code>) are where one-hot explodes dimensionality — reach for grouping, target encoding, or embeddings.</p>
+
+  <h3>Scaling numerics</h3>
+  <p>Battery percentage (0–100) and ride distance (0–40000 m) live on wildly different scales; distance- and gradient-based models will let the big-magnitude feature dominate. <strong>Standardization</strong> (z-score: mean 0, std 1) suits roughly Gaussian features and is the common default; <strong>normalization</strong> (min-max to [0,1]) suits bounded features. Tree-based models don't need scaling; most everything else does.</p>
+
+  <h3>Binning, transforms &amp; shuffling</h3>
+  <p><strong>Binning</strong> buckets a continuous feature into ranges (turn exact age into age-bands) to reduce noise and capture non-linear effects. <strong>Log/power transforms</strong> reshape skewed distributions. <strong>Shuffling</strong> randomizes row order so training batches aren't accidentally sorted by time or label — essential when your raw data arrived in chronological order, as MetroPulse's always does.</p>
+
+  <div class="note gotcha">
+    <span class="tag">The #1 leakage trap</span>
+    Fit your scalers, imputers, and encoders on the <strong>training set only</strong>, then apply those fitted parameters to validation/test. Computing the mean for standardization over the whole dataset — before splitting — leaks test information into training and inflates your scores. Same rule for SMOTE: oversample <em>after</em> the split, on the training fold only.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== TF-IDF ===================== -->
+  <h2 id="tfidf"><span class="num">05 / TEXT</span>Turning support tickets into features: TF-IDF</h2>
+
+  <p>Our new ticket stream is free text: "App charged me twice for one ride." To route tickets automatically, a model needs numbers, not sentences. The classic, exam-relevant technique is <strong>TF-IDF</strong> — and it's a perfect Spark-on-EMR job because we have a lot of tickets.</p>
+
+  <p>The pipeline is always the same: <strong>tokenize</strong> (split into words), drop <strong>stop words</strong> ("the", "a"), then weight each term. <strong>Term Frequency (TF)</strong> counts how often a word appears in one ticket. <strong>Inverse Document Frequency (IDF)</strong> downweights words that appear in <em>every</em> ticket (uninformative) and boosts rare, distinctive ones. Multiply them: <em>"refund"</em> and <em>"brakes"</em> get high TF-IDF scores and become strong routing signals, while <em>"the"</em> and <em>"ride"</em> fade to near zero. Each ticket becomes a sparse numeric vector — exactly what a classifier wants.</p>
+
+  <p class="code-label">// TF-IDF on MetroPulse tickets — PySpark on EMR Serverless</p>
+<pre><code><span class="k">from</span> pyspark.ml.feature <span class="k">import</span> Tokenizer, StopWordsRemover, HashingTF, IDF
+
+<span class="cmt"># tickets_df has a "text" column of raw ticket bodies</span>
+tokens   = Tokenizer(inputCol=<span class="s">"text"</span>, outputCol=<span class="s">"words"</span>).transform(tickets_df)
+cleaned  = StopWordsRemover(inputCol=<span class="s">"words"</span>, outputCol=<span class="s">"kept"</span>).transform(tokens)
+
+<span class="cmt"># term frequency, then inverse document frequency</span>
+tf       = HashingTF(inputCol=<span class="s">"kept"</span>, outputCol=<span class="s">"tf"</span>, numFeatures=<span class="n">4096</span>).transform(cleaned)
+idf_model = IDF(inputCol=<span class="s">"tf"</span>, outputCol=<span class="s">"features"</span>).fit(tf)
+features = idf_model.transform(tf)   <span class="cmt"># -> sparse TF-IDF vector per ticket</span>
+</code></pre>
+
+  <div class="note exam">
+    <span class="tag">Exam lens</span>
+    Know <strong>TF-IDF</strong> as the bag-of-words baseline for text features, and know its limitation: it captures word importance but not <em>meaning</em> or word order — "not broken" and "broken" look almost identical. The modern alternative is <strong>embeddings</strong> (dense vectors that capture semantics), which we'll reach for with Amazon Bedrock and Titan/Comprehend in Part 4. If a question stresses semantic similarity or context, the answer is embeddings, not TF-IDF.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== LABELING ===================== -->
+  <h2 id="labeling"><span class="num">06 / LABELS</span>Labeling the damage photos: Ground Truth &amp; Mechanical Turk</h2>
+
+  <p>Supervised learning needs labeled examples, and our field-reported damage photos arrive with none. To train a damage-triage model, a human has to draw a bounding box around each crack or bent fork. <strong>Amazon SageMaker Ground Truth</strong> is the managed service that orchestrates exactly this: it presents unlabeled data to a workforce, collects annotations, and produces a clean labeled dataset in S3.</p>
+
+  <figure class="bleed">
+    <div class="diagram">
+      <svg viewBox="0 0 1080 320" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <marker id="l-arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#473d33"/></marker>
+        </defs>
+        <!-- unlabeled -->
+        <rect x="24" y="120" width="150" height="80" rx="12" fill="#fff" stroke="#385a7a" stroke-width="1.6"/>
+        <use href="#ic-image" x="40" y="132" width="26" height="26"/>
+        <text x="99" y="172" text-anchor="middle" font-size="13" font-weight="700" fill="#17130f">Unlabeled</text>
+        <text x="99" y="190" text-anchor="middle" font-size="10.5" fill="#473d33">damage photos (S3)</text>
+
+        <!-- Ground Truth -->
+        <rect x="226" y="92" width="190" height="136" rx="14" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.8"/>
+        <use href="#ic-groundtruth" x="244" y="104" width="28" height="28"/>
+        <text x="321" y="124" text-anchor="middle" font-size="13" font-weight="700" fill="#1E7A64">SageMaker</text>
+        <text x="321" y="141" text-anchor="middle" font-size="13" font-weight="700" fill="#1E7A64">Ground Truth</text>
+        <text x="321" y="166" text-anchor="middle" font-size="10.5" fill="#473d33">bounding-box job</text>
+        <text x="321" y="184" text-anchor="middle" font-size="10.5" fill="#473d33">+ active learning</text>
+        <text x="321" y="202" text-anchor="middle" font-size="10.5" fill="#473d33">auto-labels easy ones</text>
+
+        <!-- workforces -->
+        <text x="620" y="58" text-anchor="middle" font-size="12" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#BE4A2C" letter-spacing="1">CHOOSE A WORKFORCE</text>
+        <rect x="486" y="74" width="268" height="52" rx="10" fill="#fff" stroke="#2c4763" stroke-width="1.5"/>
+        <use href="#ic-mturk" x="498" y="81" width="24" height="24"/>
+        <text x="540" y="96" font-size="12.5" font-weight="700" fill="#17130f">Mechanical Turk</text>
+        <text x="540" y="113" font-size="10.5" fill="#473d33">public crowd · scale · non-sensitive</text>
+
+        <rect x="486" y="134" width="268" height="52" rx="10" fill="#fff" stroke="#2c4763" stroke-width="1.5"/>
+        <use href="#ic-mturk" x="498" y="141" width="24" height="24"/>
+        <text x="540" y="156" font-size="12.5" font-weight="700" fill="#17130f">Private workforce</text>
+        <text x="540" y="173" font-size="10.5" fill="#473d33">your staff · sensitive data</text>
+
+        <rect x="486" y="194" width="268" height="52" rx="10" fill="#fff" stroke="#2c4763" stroke-width="1.5"/>
+        <use href="#ic-mturk" x="498" y="201" width="24" height="24"/>
+        <text x="540" y="216" font-size="12.5" font-weight="700" fill="#17130f">Vendor workforce</text>
+        <text x="540" y="233" font-size="10.5" fill="#473d33">Marketplace · specialized skills</text>
+
+        <!-- labeled -->
+        <rect x="824" y="120" width="232" height="80" rx="12" fill="#17130f"/>
+        <text x="940" y="156" text-anchor="middle" font-size="13" font-weight="700" fill="#F3EDE3">Labeled dataset</text>
+        <text x="940" y="176" text-anchor="middle" font-size="10.5" fill="#d8cdbb">augmented manifest → training</text>
+
+        <g stroke="#473d33" stroke-width="1.7" fill="none">
+          <path d="M174,160 L222,160" marker-end="url(#l-arr)"/>
+          <path d="M416,135 L484,110" marker-end="url(#l-arr)"/>
+          <path d="M416,160 L484,160" marker-end="url(#l-arr)"/>
+          <path d="M416,185 L484,210" marker-end="url(#l-arr)"/>
+          <path d="M754,150 C790,150 790,160 822,160" marker-end="url(#l-arr)"/>
+        </g>
+      </svg>
+    </div>
+    <figcaption><b>Fig 4 — Labeling workflow</b> Ground Truth routes unlabeled data to a workforce and returns a labeled manifest; active learning auto-labels the easy cases to cut cost.</figcaption>
+  </figure>
+
+  <p>The decision the exam cares about is <strong>which workforce</strong>. <strong>Amazon Mechanical Turk</strong> is a public, on-demand crowd — cheapest and most scalable, but you should never send it sensitive or private data. A <strong>private workforce</strong> (your own employees) is the right call when photos might contain license plates, faces, or anything confidential. A <strong>vendor workforce</strong> from AWS Marketplace fits when labeling needs specialized expertise. Ground Truth's <strong>automated data labeling</strong> (active learning) trains a model on the human-labeled examples and uses it to auto-label the confident cases, sending only the ambiguous ones to humans — meaningfully cutting cost on large datasets.</p>
+
+  <div class="note">
+    <span class="tag">Worth knowing</span>
+    Mechanical Turk is a general crowdsourcing marketplace (work is posted as "HITs") and can be used directly, not only through Ground Truth. And for teams that want labeling fully managed end-to-end, <strong>Ground Truth Plus</strong> provides a turnkey, AWS-run labeling operation. For routine in-house labeling, Data Wrangler and Canvas can also handle simpler annotation needs.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== SAGEMAKER AI ===================== -->
+  <h2 id="sagemaker"><span class="num">07 / THE SUITE</span>SageMaker AI &amp; the no/low-code data-prep tools</h2>
+
+  <p>Spark and Glue are the heavy machinery. But a lot of MetroPulse feature work is faster in SageMaker's visual tools — and this is the area with the most naming churn, so let's pin it down first.</p>
+
+  <div class="note gotcha">
+    <span class="tag">Two renames the exam will test</span>
+    On <strong>December 3, 2024</strong>, the original Amazon SageMaker was renamed <strong>Amazon SageMaker AI</strong>. The "next generation" <strong>Amazon SageMaker</strong> is now a <em>unified</em> platform — <strong>SageMaker Unified Studio</strong> — that brings EMR, Glue, Athena, Redshift, MWAA, Bedrock, and SageMaker AI into one governed workspace. Existing API namespaces (the <code>sagemaker</code> SDK) are unchanged for backward compatibility. Second: <strong>SageMaker Data Wrangler</strong> no longer has a standalone console — it now lives <em>inside</em> <strong>SageMaker Canvas</strong>. If a question (or a colleague) says "open Data Wrangler," the answer is "it's under Canvas now."
+  </div>
+
+  <p>A SageMaker AI <strong>Domain</strong> is the top-level workspace that ties together users, their storage, and permissions — the boundary your team's notebooks, jobs, and apps live inside. With that vocabulary set, here's the data-prep toolkit and what each is for.</p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 1080 300" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <marker id="s-arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#473d33"/></marker>
+        </defs>
+        <!-- sources -->
+        <rect x="24" y="110" width="140" height="80" rx="12" fill="#fbf8f2" stroke="#17130f" stroke-width="1.6"/>
+        <use href="#ic-s3" x="40" y="122" width="24" height="24"/>
+        <text x="94" y="160" text-anchor="middle" font-size="12.5" font-weight="700" fill="#17130f">S3 · Athena</text>
+        <text x="94" y="178" text-anchor="middle" font-size="10.5" fill="#473d33">50+ sources</text>
+
+        <!-- Canvas / Data Wrangler -->
+        <rect x="210" y="56" width="300" height="190" rx="16" fill="#dcefe9" stroke="#1E7A64" stroke-width="2"/>
+        <use href="#ic-canvas" x="228" y="68" width="26" height="26"/>
+        <text x="270" y="86" font-size="13" font-weight="700" fill="#1E7A64">SageMaker Canvas</text>
+        <rect x="230" y="104" width="260" height="56" rx="10" fill="#fff" stroke="#1E7A64" stroke-width="1.4"/>
+        <use href="#ic-datawrangler" x="242" y="116" width="24" height="24"/>
+        <text x="360" y="128" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Data Wrangler (inside Canvas)</text>
+        <text x="360" y="146" text-anchor="middle" font-size="10" fill="#473d33">300+ transforms · SQL · NL chat · Spark-scale</text>
+        <rect x="230" y="170" width="125" height="58" rx="10" fill="#fff" stroke="#1E7A64" stroke-width="1.2"/>
+        <text x="292" y="194" text-anchor="middle" font-size="11" font-weight="600" fill="#17130f">Data Quality</text>
+        <text x="292" y="210" text-anchor="middle" font-size="10" fill="#473d33">&amp; Insights report</text>
+        <rect x="365" y="170" width="125" height="58" rx="10" fill="#fff" stroke="#1E7A64" stroke-width="1.2"/>
+        <text x="427" y="194" text-anchor="middle" font-size="11" font-weight="600" fill="#17130f">No-code</text>
+        <text x="427" y="210" text-anchor="middle" font-size="10" fill="#473d33">build/predict</text>
+
+        <!-- exports -->
+        <text x="700" y="44" text-anchor="middle" font-size="12" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#BE4A2C" letter-spacing="1">EXPORT TO</text>
+        <rect x="566" y="64" width="270" height="52" rx="10" fill="#fff" stroke="#0B7E6E" stroke-width="1.5"/>
+        <use href="#ic-featurestore" x="578" y="71" width="24" height="24"/>
+        <text x="620" y="86" font-size="12.5" font-weight="700" fill="#17130f">Feature Store</text>
+        <text x="620" y="103" font-size="10.5" fill="#473d33">curated, reusable features</text>
+
+        <rect x="566" y="124" width="270" height="52" rx="10" fill="#fff" stroke="#385a7a" stroke-width="1.5"/>
+        <use href="#ic-stepfn" x="578" y="131" width="24" height="24"/>
+        <text x="620" y="146" font-size="12.5" font-weight="700" fill="#17130f">SageMaker Pipelines</text>
+        <text x="620" y="163" font-size="10.5" fill="#473d33">repeatable prep step</text>
+
+        <rect x="566" y="184" width="270" height="52" rx="10" fill="#fff" stroke="#17130f" stroke-width="1.5"/>
+        <use href="#ic-s3" x="578" y="191" width="24" height="24"/>
+        <text x="620" y="206" font-size="12.5" font-weight="700" fill="#17130f">S3 / training job</text>
+        <text x="620" y="223" font-size="10.5" fill="#473d33">straight to model training</text>
+
+        <!-- notebook alt -->
+        <rect x="892" y="110" width="164" height="80" rx="12" fill="#fbf8f2" stroke="#5A2DBA" stroke-width="1.6"/>
+        <use href="#ic-spark" x="908" y="122" width="24" height="24"/>
+        <text x="974" y="160" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">…or code it</text>
+        <text x="974" y="178" text-anchor="middle" font-size="10.5" fill="#473d33">Studio notebooks</text>
+
+        <g stroke="#473d33" stroke-width="1.7" fill="none">
+          <path d="M164,150 L206,150" marker-end="url(#s-arr)"/>
+          <path d="M510,120 L562,100" marker-end="url(#s-arr)"/>
+          <path d="M510,150 L562,150" marker-end="url(#s-arr)"/>
+          <path d="M510,180 L562,205" marker-end="url(#s-arr)"/>
+          <path d="M836,150 L888,150" marker-end="url(#s-arr)" stroke-dasharray="4 3"/>
+        </g>
+      </svg>
+    </div>
+    <figcaption><b>Fig 5 — The SageMaker AI data-prep suite</b> Data Wrangler (now inside Canvas) visually prepares data, then exports to Feature Store, Pipelines, or straight to training.</figcaption>
+  </figure>
+
+  <p><strong>Data Wrangler</strong> is the visual workhorse: import from 50+ sources, apply any of 300+ built-in transforms (the exact impute/outlier/encode/scale operations from the gauntlet above), drive it with SQL or a natural-language chat, generate a <strong>Data Quality and Insights</strong> report that flags missing values and class imbalance automatically, and scale the whole flow onto Spark processing jobs. <strong>Canvas</strong> wraps it for fully no-code users who also want to build and use models without writing code. Both export cleanly into the rest of the ML lifecycle — most importantly, into the Feature Store.</p>
+
+  <hr class="rule">
+
+  <!-- ===================== FEATURE STORE ===================== -->
+  <h2 id="featurestore"><span class="num">08 / REUSE</span>SageMaker Feature Store: prepare once, serve everywhere</h2>
+
+  <p>Here's a problem that bites every growing ML team: the demand-forecasting model and the fraud model both need "rides in the last hour per station" — and two engineers compute it two slightly different ways. Now training and production disagree, and nobody can tell why. <strong>SageMaker Feature Store</strong> solves this by being the single, governed home for engineered features, organized into <strong>feature groups</strong>.</p>
+
+  <p>It has two faces. The <strong>online store</strong> serves single-digit-millisecond reads for real-time inference — when a ride is booked, the fraud endpoint pulls that rider's current features instantly. The <strong>offline store</strong> lands the full history in S3 for training and batch jobs. Crucially, Feature Store supports <strong>point-in-time (time-travel) retrieval</strong>: when building a training set, you fetch each feature's value <em>as it was</em> at the moment of the event — not today's value — which prevents a subtle but deadly form of data leakage.</p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 1080 270" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <marker id="f-arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#473d33"/></marker>
+        </defs>
+        <!-- prep -->
+        <rect x="24" y="100" width="160" height="70" rx="12" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.6"/>
+        <use href="#ic-datawrangler" x="40" y="110" width="24" height="24"/>
+        <text x="104" y="146" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Prepared features</text>
+        <text x="104" y="163" text-anchor="middle" font-size="10" fill="#473d33">Glue · Spark · Wrangler</text>
+
+        <!-- feature store -->
+        <rect x="244" y="56" width="300" height="158" rx="16" fill="#e6f6f1" stroke="#0B7E6E" stroke-width="2"/>
+        <use href="#ic-featurestore" x="262" y="68" width="26" height="26"/>
+        <text x="304" y="86" font-size="13" font-weight="700" fill="#0B7E6E">SageMaker Feature Store</text>
+        <rect x="266" y="104" width="256" height="44" rx="9" fill="#fff" stroke="#0B7E6E" stroke-width="1.4"/>
+        <text x="394" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Online store</text>
+        <text x="394" y="140" text-anchor="middle" font-size="10" fill="#473d33">low-latency · real-time reads</text>
+        <rect x="266" y="156" width="256" height="44" rx="9" fill="#fbf8f2" stroke="#385a7a" stroke-width="1.4"/>
+        <text x="394" y="176" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Offline store (S3)</text>
+        <text x="394" y="192" text-anchor="middle" font-size="10" fill="#473d33">history · point-in-time training sets</text>
+
+        <!-- consumers -->
+        <rect x="612" y="64" width="180" height="64" rx="12" fill="#fff" stroke="#1E7A64" stroke-width="1.6"/>
+        <use href="#ic-sagemaker" x="628" y="74" width="24" height="24"/>
+        <text x="712" y="92" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Real-time endpoint</text>
+        <text x="712" y="110" text-anchor="middle" font-size="10" fill="#473d33">fraud scoring</text>
+
+        <rect x="612" y="144" width="180" height="64" rx="12" fill="#fff" stroke="#385a7a" stroke-width="1.6"/>
+        <use href="#ic-sagemaker" x="628" y="154" width="24" height="24"/>
+        <text x="712" y="172" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Training jobs</text>
+        <text x="712" y="190" text-anchor="middle" font-size="10" fill="#473d33">demand forecasting</text>
+
+        <text x="940" y="120" text-anchor="middle" font-size="13" font-style="italic" font-family="'Fraunces',serif" fill="#473d33">One definition,</text>
+        <text x="940" y="142" text-anchor="middle" font-size="13" font-style="italic" font-family="'Fraunces',serif" fill="#473d33">no train/serve skew.</text>
+
+        <g stroke="#473d33" stroke-width="1.7" fill="none">
+          <path d="M184,135 C214,135 214,120 242,120" marker-end="url(#f-arr)"/>
+          <path d="M544,126 L610,100" marker-end="url(#f-arr)"/>
+          <path d="M544,178 L610,176" marker-end="url(#f-arr)"/>
+        </g>
+      </svg>
+    </div>
+    <figcaption><b>Fig 6 — Feature Store</b> Engineer a feature once; the online store serves inference, the offline store builds leak-free training sets.</figcaption>
+  </figure>
+
+  <div class="note exam">
+    <span class="tag">Exam lens</span>
+    Map the two stores to the two read patterns: <strong>online = real-time inference</strong> (low latency, latest value), <strong>offline = training/batch</strong> (full history in S3). And remember Feature Store's headline benefits: <strong>feature reuse</strong> across teams and <strong>eliminating training/serving skew</strong>. "How do we stop two teams computing the same feature differently?" → Feature Store.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== CLARIFY / EXPLAINABILITY ===================== -->
+  <h2 id="clarify"><span class="num">09 / TRUST</span>Integrity, bias &amp; explainability: Clarify, SHAP &amp; Model Monitor</h2>
+
+  <p>Task 1.3 isn't just "is the data clean" — it's "is the data <em>trustworthy</em>." A demand-forecasting model that quietly under-serves lower-income neighborhoods, or a fraud model nobody can explain to a disputing rider, is a liability. AWS gives us tooling to check this before and after training.</p>
+
+  <p><strong>SageMaker Clarify</strong> runs <strong>bias detection</strong> at two moments. <em>Pre-training</em>, it measures whether the data itself is skewed across sensitive groups — for example, whether damage labels or ride coverage are imbalanced by neighborhood. <em>Post-training</em>, it measures whether the model's predictions are skewed. Clarify also powers <strong>explainability</strong> using <strong>SHAP</strong> (SHapley Additive exPlanations) — a method rooted in the game-theory concept of <strong>Shapley values</strong> that assigns each feature a contribution to an individual prediction.</p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 1080 240" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <use href="#ic-clarify" x="24" y="20" width="28" height="28"/>
+        <text x="62" y="40" font-size="13" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#0B7E6E">WHY DID THE MODEL FLAG THIS RIDE AS FRAUD?</text>
+        <!-- baseline line -->
+        <line x1="540" y1="70" x2="540" y2="210" stroke="#385a7a" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <text x="540" y="228" text-anchor="middle" font-size="11" fill="#385a7a" font-family="'JetBrains Mono',monospace">base value</text>
+        <!-- positive contributions (push toward fraud) -->
+        <rect x="540" y="80" width="300" height="22" rx="4" fill="#BE4A2C"/>
+        <text x="852" y="96" font-size="12" fill="#9c3a22" font-weight="600">+ new payment card (strong)</text>
+        <rect x="540" y="112" width="180" height="22" rx="4" fill="#D98A2B"/>
+        <text x="732" y="128" font-size="12" fill="#9c3a22" font-weight="600">+ 3am ride start</text>
+        <!-- negative contributions (push away) -->
+        <rect x="400" y="144" width="140" height="22" rx="4" fill="#1E7A64"/>
+        <text x="392" y="160" text-anchor="end" font-size="12" fill="#15604f" font-weight="600">long-tenured rider −</text>
+        <rect x="452" y="176" width="88" height="22" rx="4" fill="#1E7A64" opacity="0.7"/>
+        <text x="444" y="192" text-anchor="end" font-size="12" fill="#15604f" font-weight="600">familiar route −</text>
+        <text x="270" y="60" font-size="11.5" fill="#473d33" font-style="italic" font-family="'Fraunces',serif">each bar = one feature's SHAP contribution</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig 7 — SHAP explanation</b> Features push an individual prediction above or below the base value; the sum is the model's output for that ride.</figcaption>
+  </figure>
+
+  <p>The related tool you'll see named is the <strong>Partial Dependence Plot (PDP)</strong>, which shows how predictions change <em>on average</em> as one feature varies across its range — a global view, where SHAP gives the local, per-prediction view. Together they answer "what does the model rely on, overall?" and "why this specific decision?"</p>
+
+  <div class="note">
+    <span class="tag">Honest scope note</span>
+    <strong>SageMaker Model Monitor</strong> watches a <em>deployed</em> model for drift — data-quality drift, model-quality drift, bias drift, and feature-attribution drift — by comparing live traffic against a baseline you capture during data prep. That baselining belongs here in Domain 1; the ongoing monitoring is really Domain 4 (Task 4.1), so we'll go deep on it in the MLOps post. I'm flagging it now because the exam sometimes places the <em>baseline creation</em> step in the data-preparation context.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== GLUE ===================== -->
+  <h2 id="glue"><span class="num">10 / GLUE</span>AWS Glue for transformation: Studio, Data Quality &amp; DataBrew</h2>
+
+  <p>In Part 1, Glue catalogued our lake. In Part 2 it does the transforming. Three Glue capabilities matter here, and they map neatly to three different users.</p>
+
+  <p><strong>AWS Glue Studio</strong> is the visual job authoring tool: drag source, transform, and target nodes onto a canvas and Glue generates the underlying serverless Spark job. It's the data engineer's tool for production ETL — promoting MetroPulse telemetry from Bronze to Silver, joining partner feeds, repartitioning to Parquet. <strong>AWS Glue DataBrew</strong> is the analyst's tool: a fully no-code, point-and-click interface with 250+ transforms and rich data profiling, perfect for letting an ops analyst clean a partner CSV without writing Spark.</p>
+
+  <p>The integrity piece is <strong>AWS Glue Data Quality</strong>. You declare rules in <strong>DQDL</strong> (Data Quality Definition Language) and Glue evaluates them against Catalog tables or inside ETL jobs — exactly the Task 1.3 work of guaranteeing the data is fit before models depend on it.</p>
+
+  <p class="code-label">// Glue Data Quality — DQDL ruleset guarding the Silver ride table</p>
+<pre><code><span class="n">Rules</span> = [
+    <span class="cmt"># every ride must have an id and a vehicle</span>
+    IsComplete <span class="s">"ride_id"</span>,
+    IsComplete <span class="s">"vehicle_id"</span>,
+    Uniqueness <span class="s">"ride_id"</span> > <span class="n">0.99</span>,
+    <span class="cmt"># physically plausible values only</span>
+    ColumnValues <span class="s">"avg_speed_kmh"</span> between <span class="n">0</span> and <span class="n">80</span>,
+    ColumnValues <span class="s">"battery_pct"</span> between <span class="n">0</span> and <span class="n">100</span>,
+    <span class="cmt"># freshness: data should be recent</span>
+    ColumnValues <span class="s">"event_date"</span> > (now() - <span class="n">2</span> days)
+]
+</code></pre>
+
+  <h3>PII: find it and mask it before it spreads</h3>
+  <p>Our support tickets are full of personal data — names, emails, phone numbers, the occasional card fragment. That cannot flow into a TF-IDF model or a shared training set unmasked. AWS gives you layered options: <strong>DataBrew PII transforms</strong> and <strong>Glue's PII detection</strong> can detect and then mask, hash, encrypt, or redact sensitive fields during transformation; <strong>Amazon Comprehend</strong> detects PII entities in free text (its <code>DetectPiiEntities</code> capability is what powers redaction in ticket bodies); and <strong>Amazon Macie</strong> scans S3 at large to discover where sensitive data is hiding in the first place.</p>
+
+  <div class="note exam">
+    <span class="tag">Exam lens</span>
+    Match the PII tool to the surface: <strong>Macie</strong> = discover sensitive data sitting in <em>S3</em>; <strong>Comprehend</strong> = detect/redact PII entities in <em>text</em>; <strong>Glue/DataBrew PII transforms</strong> = mask or hash PII <em>during ETL</em>. "Find PII across the data lake" is Macie; "redact names from support tickets" is Comprehend; "hash emails as part of the prep job" is Glue/DataBrew.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== ATHENA ===================== -->
+  <h2 id="athena"><span class="num">11 / ATHENA</span>Athena: query, materialize &amp; govern the curated layer</h2>
+
+  <p>The last mile is turning prepared data into clean, fast, governed tables the modeling team can actually query. <strong>Amazon Athena</strong> is serverless SQL straight over S3, using the Glue Data Catalog as its schema. Beyond ad-hoc queries, it has three features that matter for Task 1.2/1.3.</p>
+
+  <p>First, <strong>CTAS (CREATE TABLE AS SELECT)</strong> materializes a query result as a new table — the idiomatic way to build a curated, partitioned, columnar Gold feature table from messier Silver inputs, in one statement.</p>
+
+  <p class="code-label">// Athena CTAS — build the model-ready Gold feature table</p>
+<pre><code><span class="k">CREATE TABLE</span> metropulse.gold_ride_features
+<span class="k">WITH</span> (
+    format = <span class="s">'PARQUET'</span>,
+    parquet_compression = <span class="s">'SNAPPY'</span>,
+    partitioned_by = <span class="k">ARRAY</span>[<span class="s">'event_date'</span>]
+) <span class="k">AS</span>
+<span class="k">SELECT</span> ride_id, vehicle_type, hour_of_day, is_weekend,
+       avg_speed_kmh, battery_drain_rate, station_demand_1h,
+       event_date
+<span class="k">FROM</span>   metropulse.silver_rides
+<span class="k">WHERE</span>  avg_speed_kmh <span class="k">BETWEEN</span> <span class="n">0</span> <span class="k">AND</span> <span class="n">80</span>;
+</code></pre>
+
+  <p>Second, <strong>performance</strong> is mostly about scanning less, because Athena bills by data scanned. The big levers: store as <strong>columnar Parquet</strong> (read only the columns you need), <strong>partition</strong> by a common filter like <code>event_date</code>, <strong>compress</strong>, use <strong>partition projection</strong> to skip slow partition lookups on huge tables, and never <code>SELECT *</code> when you need three columns. These are the same wins that made our Part 1 format choices (Parquet over JSON) pay off.</p>
+
+  <p>Third, <strong>governance</strong>. <strong>Athena ACID transactions</strong> — backed by <strong>Apache Iceberg</strong> tables — bring <code>INSERT</code>/<code>UPDATE</code>/<code>DELETE</code>/<code>MERGE</code> and time travel to the lake, so late-arriving fare corrections can be upserted safely instead of rewriting whole partitions. And <strong>Athena fine-grained access control</strong> via <strong>AWS Lake Formation</strong> enforces column-, row-, and cell-level permissions — so analysts can query ride features while the PII-bearing columns from our tickets stay locked to authorized roles only.</p>
+
+  <div class="note gotcha">
+    <span class="tag">Lakehouse callback</span>
+    Notice this is the <strong>lakehouse</strong> from Part 1 made concrete: S3 + Iceberg (ACID, time travel) + Lake Formation (governance) + Athena (SQL) gives warehouse-grade behavior on lake-grade economics — one copy of the data, queried by both BI and ML.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== WHOLE PICTURE ===================== -->
+  <h2 id="whole"><span class="num">12 / THE WHOLE</span>The complete Part 2 picture</h2>
+
+  <p>Step back and the whole transformation-and-integrity layer snaps together. Part 1's raw lake and our two new facets flow left to right: get transformed and feature-engineered, get validated and governed, and land as curated tables and a feature store that Part 3's models will train on.</p>
+
+  <figure class="bleed">
+    <div class="diagram">
+      <svg viewBox="0 0 1120 470" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <marker id="w-arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#473d33"/></marker>
+        </defs>
+        <g font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" letter-spacing="1.2" fill="#BE4A2C" text-anchor="middle">
+          <text x="105" y="26">FROM PART 1 + NEW</text>
+          <text x="405" y="26">TRANSFORM &amp; ENGINEER</text>
+          <text x="700" y="26">VALIDATE &amp; GOVERN</text>
+          <text x="985" y="26">SERVE TO MODELING</text>
+        </g>
+
+        <!-- SOURCES -->
+        <g>
+          <rect x="28" y="56" width="156" height="56" rx="10" fill="#fbf8f2" stroke="#17130f" stroke-width="1.6"/>
+          <use href="#ic-s3" x="40" y="70" width="26" height="26"/>
+          <text x="76" y="80" font-size="12" font-weight="700" fill="#17130f">S3 Bronze</text>
+          <text x="76" y="96" font-size="10" fill="#473d33">raw telemetry</text>
+
+          <rect x="28" y="124" width="156" height="56" rx="10" fill="#fff" stroke="#2c4763" stroke-width="1.6"/>
+          <use href="#ic-text" x="40" y="138" width="26" height="26"/>
+          <text x="76" y="148" font-size="12" font-weight="700" fill="#17130f">Support tickets</text>
+          <text x="76" y="164" font-size="10" fill="#473d33">text (new)</text>
+
+          <rect x="28" y="192" width="156" height="56" rx="10" fill="#fff" stroke="#2c4763" stroke-width="1.6"/>
+          <use href="#ic-image" x="40" y="206" width="26" height="26"/>
+          <text x="76" y="216" font-size="12" font-weight="700" fill="#17130f">Damage photos</text>
+          <text x="76" y="232" font-size="10" fill="#473d33">images (new)</text>
+        </g>
+
+        <!-- TRANSFORM panel -->
+        <rect x="248" y="44" width="318" height="320" rx="16" fill="#f3edf9" stroke="#5A2DBA" stroke-width="1.8"/>
+        <text x="407" y="66" text-anchor="middle" font-size="11" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#5A2DBA" letter-spacing="1">DISTRIBUTED + VISUAL PREP</text>
+        <g>
+          <rect x="266" y="80" width="138" height="56" rx="10" fill="#fff" stroke="#5A2DBA" stroke-width="1.4"/>
+          <use href="#ic-emr" x="276" y="92" width="22" height="22"/><use href="#ic-spark" x="300" y="92" width="22" height="22"/>
+          <text x="335" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#17130f">EMR · Spark</text>
+
+          <rect x="412" y="80" width="138" height="56" rx="10" fill="#fff" stroke="#8C4FFF" stroke-width="1.4"/>
+          <use href="#ic-glue" x="422" y="92" width="22" height="22"/>
+          <text x="492" y="104" text-anchor="middle" font-size="11.5" font-weight="700" fill="#17130f">Glue Studio</text>
+          <text x="492" y="122" text-anchor="middle" font-size="9.5" fill="#473d33">+ DataBrew</text>
+
+          <rect x="266" y="148" width="138" height="56" rx="10" fill="#fff" stroke="#1E7A64" stroke-width="1.4"/>
+          <use href="#ic-datawrangler" x="276" y="160" width="22" height="22"/>
+          <text x="345" y="172" text-anchor="middle" font-size="11" font-weight="700" fill="#17130f">Data Wrangler</text>
+          <text x="345" y="190" text-anchor="middle" font-size="9.5" fill="#473d33">(in Canvas)</text>
+
+          <rect x="412" y="148" width="138" height="56" rx="10" fill="#fff" stroke="#1E7A64" stroke-width="1.4"/>
+          <use href="#ic-comprehend" x="422" y="160" width="22" height="22"/>
+          <text x="492" y="172" text-anchor="middle" font-size="11" font-weight="700" fill="#17130f">Comprehend</text>
+          <text x="492" y="190" text-anchor="middle" font-size="9.5" fill="#473d33">PII + TF-IDF prep</text>
+
+          <rect x="266" y="216" width="138" height="56" rx="10" fill="#fff" stroke="#1E7A64" stroke-width="1.4"/>
+          <use href="#ic-groundtruth" x="276" y="228" width="22" height="22"/>
+          <text x="345" y="240" text-anchor="middle" font-size="11" font-weight="700" fill="#17130f">Ground Truth</text>
+          <text x="345" y="258" text-anchor="middle" font-size="9.5" fill="#473d33">label images</text>
+
+          <rect x="412" y="216" width="138" height="56" rx="10" fill="#fff" stroke="#5A2DBA" stroke-width="1.4"/>
+          <use href="#ic-spark" x="422" y="228" width="22" height="22"/>
+          <text x="492" y="240" text-anchor="middle" font-size="11" font-weight="700" fill="#17130f">Encode · scale</text>
+          <text x="492" y="258" text-anchor="middle" font-size="9.5" fill="#473d33">impute · balance</text>
+        </g>
+        <text x="407" y="300" text-anchor="middle" font-size="10.5" fill="#5A2DBA" font-family="'JetBrains Mono',monospace">the feature gauntlet, at scale</text>
+        <text x="407" y="346" text-anchor="middle" font-size="12" font-style="italic" font-family="'Fraunces',serif" fill="#473d33">raw events → engineered features</text>
+
+        <!-- VALIDATE -->
+        <g>
+          <rect x="624" y="64" width="156" height="58" rx="11" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.6"/>
+          <use href="#ic-glue" x="636" y="78" width="24" height="24"/>
+          <text x="700" y="88" font-size="11.5" font-weight="700" fill="#17130f">Glue Data Quality</text>
+          <text x="700" y="105" font-size="9.5" fill="#473d33">DQDL rules</text>
+
+          <rect x="624" y="138" width="156" height="58" rx="11" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.6"/>
+          <use href="#ic-clarify" x="636" y="152" width="24" height="24"/>
+          <text x="700" y="162" font-size="11.5" font-weight="700" fill="#17130f">Clarify</text>
+          <text x="700" y="179" font-size="9.5" fill="#473d33">bias + SHAP</text>
+
+          <rect x="624" y="212" width="156" height="58" rx="11" fill="#fff" stroke="#0B7E6E" stroke-width="1.6"/>
+          <use href="#ic-lakeformation" x="636" y="226" width="24" height="24"/>
+          <text x="700" y="236" font-size="11.5" font-weight="700" fill="#17130f">Lake Formation</text>
+          <text x="700" y="253" font-size="9.5" fill="#473d33">fine-grained access</text>
+        </g>
+
+        <!-- SERVE -->
+        <g>
+          <rect x="836" y="56" width="256" height="64" rx="12" fill="#fbf8f2" stroke="#17130f" stroke-width="1.8"/>
+          <use href="#ic-s3" x="852" y="68" width="24" height="24"/><use href="#ic-athena" x="878" y="68" width="24" height="24"/>
+          <text x="980" y="82" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">S3 Gold · Athena CTAS</text>
+          <text x="980" y="100" text-anchor="middle" font-size="10" fill="#473d33">Iceberg curated tables</text>
+
+          <rect x="836" y="134" width="256" height="76" rx="12" fill="#e6f6f1" stroke="#0B7E6E" stroke-width="1.8"/>
+          <use href="#ic-featurestore" x="852" y="146" width="24" height="24"/>
+          <text x="980" y="160" text-anchor="middle" font-size="12" font-weight="700" fill="#0B7E6E">Feature Store</text>
+          <text x="980" y="178" text-anchor="middle" font-size="10" fill="#473d33">online (real-time)</text>
+          <text x="980" y="194" text-anchor="middle" font-size="10" fill="#473d33">offline (training, S3)</text>
+
+          <rect x="836" y="224" width="256" height="60" rx="12" fill="#17130f"/>
+          <use href="#ic-sagemaker" x="852" y="236" width="24" height="24"/>
+          <text x="982" y="250" text-anchor="middle" font-size="12" font-weight="700" fill="#F3EDE3">Part 3 → SageMaker</text>
+          <text x="982" y="268" text-anchor="middle" font-size="10" fill="#d8cdbb">model training</text>
+        </g>
+
+        <!-- arrows between bands -->
+        <g stroke="#473d33" stroke-width="1.8" fill="none">
+          <path d="M184,150 L244,150" marker-end="url(#w-arr)"/>
+          <path d="M566,170 L622,150" marker-end="url(#w-arr)"/>
+          <path d="M780,150 L834,130" marker-end="url(#w-arr)"/>
+          <path d="M964,210 L964,222" marker-end="url(#w-arr)"/>
+        </g>
+        <!-- orchestration band -->
+        <rect x="248" y="392" width="844" height="40" rx="10" fill="#fff" stroke="#385a7a" stroke-width="1.4" stroke-dasharray="3 3"/>
+        <use href="#ic-stepfn" x="262" y="401" width="22" height="22"/>
+        <text x="300" y="417" font-size="12" font-weight="600" fill="#385a7a">Orchestrated &amp; repeatable: SageMaker Pipelines · Step Functions · EventBridge schedules</text>
+        <path d="M407,364 L407,390 M700,278 L700,390 M964,284 L964,390" stroke="#385a7a" stroke-width="1.2" fill="none" stroke-dasharray="3 3"/>
+      </svg>
+    </div>
+    <figcaption><b>Fig 8 — The Part 2 reference architecture</b> The transformation, integrity, and feature layer sitting on top of Part 1's lake — output: model-ready data.</figcaption>
+  </figure>
+
+  <p>That's Domain 1, complete. The data is ingested and stored (Part 1), then transformed, validated, and turned into governed, reusable features (Part 2). It's now genuinely ready for a model — which is exactly where Part 3 begins.</p>
+
+  <hr class="rule">
+
+  <!-- ===================== CHEAT-SHEET ===================== -->
+  <h2 id="cheatsheet"><span class="num">13 / RECALL</span>Which tool when &amp; the Part 2 cheat-sheet</h2>
+
+  <p>The overlapping data-prep tools are where MLA-C01 sets its traps — several services can do "clean and transform," and the question is always which one <em>fits the scenario</em>. Here's the decision guide I keep in my head.</p>
+
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr><th>Reach for…</th><th>When the scenario says…</th><th>Who uses it</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>EMR + Spark</td><td>Huge data, the Hadoop ecosystem, custom Spark, cluster/cost control</td><td>Data engineers</td></tr>
+      <tr><td>AWS Glue (Studio)</td><td>Serverless production ETL, tight Data Catalog integration, least ops</td><td>Data engineers</td></tr>
+      <tr><td>Glue DataBrew</td><td>No-code visual cleaning &amp; profiling of a dataset</td><td>Analysts</td></tr>
+      <tr><td>SageMaker Data Wrangler (in Canvas)</td><td>Visual ML feature prep with 300+ transforms, quality reports, export to Feature Store</td><td>ML practitioners</td></tr>
+      <tr><td>Athena</td><td>Serverless SQL over S3; materialize curated tables with CTAS</td><td>Analysts / engineers</td></tr>
+      <tr><td>Ground Truth</td><td>You need humans to label data (images, text)</td><td>ML teams</td></tr>
+      <tr><td>Feature Store</td><td>Reuse features across models; kill train/serve skew</td><td>ML teams</td></tr>
+      <tr><td>Macie / Comprehend / Glue&nbsp;PII</td><td>PII in S3 / PII in text / mask PII during ETL</td><td>Security + data</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="takeaways">
+    <h3>Part 2 revision cheat-sheet</h3>
+    <ul>
+      <li><strong>Domain 1 = three tasks.</strong> 1.1 ingest/store (Part 1); 1.2 transform &amp; feature-engineer; 1.3 ensure integrity &amp; prepare. This post = 1.2 + 1.3.</li>
+      <li><strong>EMR vs Glue:</strong> Glue for serverless, Catalog-integrated ETL with least ops; EMR for the Hadoop ecosystem, custom Spark, and cluster control. EMR Serverless for spiky jobs.</li>
+      <li><strong>The gauntlet:</strong> impute (mean/median/mode, KNN) → handle outliers (Z-score/IQR, cap or log) → balance (SMOTE/under/over/class weights) → encode (one-hot vs ordinal-only-when-ordered) → scale (standardize vs normalize) → bin/transform/shuffle.</li>
+      <li><strong>The #1 leakage rule:</strong> fit scalers/imputers/encoders on the training split only; oversample (SMOTE) after the split.</li>
+      <li><strong>Curse of dimensionality:</strong> too many features + too few rows → sparsity &amp; overfitting → fix with feature selection or PCA.</li>
+      <li><strong>TF-IDF</strong> = bag-of-words importance weighting; no semantics → use <strong>embeddings</strong> when meaning/context matters.</li>
+      <li><strong>Labeling workforce:</strong> Mechanical Turk = public/scale/non-sensitive; private = sensitive data; vendor = specialist skills. Active learning auto-labels the easy cases.</li>
+      <li><strong>SageMaker renames:</strong> SageMaker → <strong>SageMaker AI</strong> (Dec 3 2024); the unified Amazon SageMaker / <strong>Unified Studio</strong> is the umbrella; <strong>Data Wrangler lives inside Canvas</strong>.</li>
+      <li><strong>Feature Store:</strong> online = real-time/low-latency; offline = training/history in S3; point-in-time retrieval prevents leakage.</li>
+      <li><strong>Clarify</strong> = pre- &amp; post-training bias + <strong>SHAP</strong> (local, per-prediction) vs <strong>PDP</strong> (global). Model Monitor baselines here, monitors in Domain 4.</li>
+      <li><strong>PII mapping:</strong> Macie (discover in S3) · Comprehend (detect/redact in text) · Glue/DataBrew (mask during ETL).</li>
+      <li><strong>Athena:</strong> CTAS to materialize Parquet/partitioned tables; scan less (columnar, partition, compress, partition projection); ACID via <strong>Apache Iceberg</strong>; fine-grained access via <strong>Lake Formation</strong>.</li>
+    </ul>
+  </div>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="cta">
+      <h3>Next up: teaching MetroPulse to predict</h3>
+      <p>Domain 1 is done — the data is finally model-ready. In Part 3 we move into Domain 2 and actually build models: choosing an approach, the SageMaker built-in algorithms and managed AI services, and training, tuning &amp; evaluation.</p>
+    </div>
+    <p class="next-up">The next four are coming · Up next — <b>#3 · Domain 2, Part 1 — Model Development: Managed AI Services, Built-in Algorithms &amp; Training/Tuning/Evaluation</b></p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Md. Shahriar Bin Mohsin | AI/ML Engineer & Data Engineer | Surrey, BC Canada</title>
+  <meta name="description" content="AI/ML Engineer with 10+ years building intelligent systems — GenAI, LLM apps, and cloud-native ML pipelines on AWS, Microsoft Fabric, and Snowflake. Open to roles in Canada (BC/AB/ON).">
+  <meta name="keywords" content="AI ML Engineer, Data Engineer, Machine Learning, LLM, Generative AI, AWS SageMaker, Python, Surrey BC, Vancouver Canada, Shahriar Bin Mohsin">
+  <meta name="author" content="Md. Shahriar Bin Mohsin">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Md. Shahriar Bin Mohsin | AI/ML Engineer & Data Engineer">
+  <meta property="og:description" content="AI/ML Engineer with 10+ years building intelligent systems — GenAI, LLMs, and cloud-native data platforms. Based in Surrey, BC, Canada.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sbmsoikot.github.io/">
+  <meta property="og:image" content="https://sbmsoikot.github.io/Images/HeadShotClean.png">
+  <meta property="og:image:alt" content="Md. Shahriar Bin Mohsin — AI/ML Engineer, Surrey BC Canada">
+  <meta property="og:locale" content="en_CA">
+  <meta property="og:site_name" content="Shahriar Bin Mohsin — The ML Engineering Notebook">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Md. Shahriar Bin Mohsin | AI/ML Engineer">
+  <meta name="twitter:description" content="AI/ML Engineer with 10+ years — GenAI, LLMs, cloud-native ML pipelines. Open to roles in Canada.">
+  <meta name="twitter:image" content="https://sbmsoikot.github.io/Images/HeadShotClean.png">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://sbmsoikot.github.io/">
+
+  <!-- Google Fonts (same as blog) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Spline+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===================== DESIGN TOKENS ===================== */
+    :root {
+      --paper:    #F3EDE3;
+      --paper-2:  #FBF8F2;
+      --ink:      #17130F;
+      --ink-soft: #473d33;
+      --rust:     #BE4A2C;
+      --amber:    #D98A2B;
+      --teal:     #1E7A64;
+      --slate:    #385a7a;
+      --line:     #D9CFBE;
+      --line-2:   #cbbfa9;
+      --max:      1100px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Spline Sans', system-ui, sans-serif;
+      font-size: 18px;
+      line-height: 1.72;
+      -webkit-font-smoothing: antialiased;
+      background-image:
+        radial-gradient(circle at 5% 4%,  rgba(190,74,44,.055), transparent 36%),
+        radial-gradient(circle at 95% 9%,  rgba(217,138,43,.07),  transparent 42%);
+    }
+    ::selection { background: var(--amber); color: var(--ink); }
+    img { display: block; max-width: 100%; }
+    a { color: var(--rust); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { list-style: none; }
+
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+
+    /* ===================== NAV ===================== */
+    .site-nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(243,237,227,.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      max-width: var(--max); margin: 0 auto; padding: 14px 28px;
+    }
+    .nav-logo {
+      font-family: 'Fraunces', serif;
+      font-size: 20px; font-weight: 600; letter-spacing: -.02em;
+      color: var(--ink); white-space: nowrap;
+    }
+    .nav-logo span { color: var(--rust); }
+    .nav-links { display: flex; align-items: center; gap: 26px; }
+    .nav-links a { font-size: 15px; font-weight: 500; color: var(--ink-soft); }
+    .nav-links a:hover { color: var(--rust); text-decoration: none; }
+    .nav-cta {
+      background: var(--rust) !important; color: #fff !important;
+      padding: 8px 20px; border-radius: 9px;
+      font-weight: 600 !important; font-size: 14px !important;
+      transition: background .2s;
+    }
+    .nav-cta:hover { background: #a33c24 !important; }
+
+    /* ===================== HERO ===================== */
+    .hero { padding: 90px 0 76px; border-bottom: 3px solid var(--ink); }
+    .hero-inner {
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 64px; align-items: center;
+    }
+    .avail-pill {
+      display: inline-flex; align-items: center; gap: 9px;
+      border: 1px solid var(--line); border-radius: 100px;
+      padding: 7px 18px; font-size: 13.5px; color: var(--ink-soft);
+      margin-bottom: 22px; background: var(--paper-2);
+    }
+    .avail-pill .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #22c55e; flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(34,197,94,.25);
+    }
+    .avail-pill strong { color: var(--ink); }
+    .hero-kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--rust); font-weight: 700; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .hero-kicker::before {
+      content: ''; display: block; width: 24px; height: 2px;
+      background: var(--rust); flex-shrink: 0;
+    }
+    .hero h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(46px, 6.5vw, 80px); font-weight: 600;
+      line-height: 1.0; letter-spacing: -.022em; margin-bottom: 18px;
+    }
+    .hero h1 em { font-style: italic; color: var(--rust); }
+    .hero-dek {
+      font-size: clamp(17px, 2vw, 20px); color: var(--ink-soft);
+      max-width: 50ch; line-height: 1.6; margin-bottom: 36px;
+    }
+    .hero-dek strong { color: var(--ink); }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 12px 22px; border-radius: 10px;
+      font-size: 15px; font-weight: 600; transition: all .18s; white-space: nowrap;
+    }
+    .btn:hover { text-decoration: none; }
+    .btn-primary { background: var(--ink); color: var(--paper); }
+    .btn-primary:hover { background: var(--rust); color: #fff; }
+    .btn-outline { border: 2px solid var(--line-2); color: var(--ink-soft); }
+    .btn-outline:hover { border-color: var(--rust); color: var(--rust); }
+    .hero-photo {
+      width: 270px; height: 330px; border-radius: 22px; overflow: hidden;
+      border: 3px solid var(--ink); box-shadow: 7px 7px 0 var(--rust); flex-shrink: 0;
+    }
+    .hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+
+    /* ===================== STATS BAR ===================== */
+    .stats-bar { background: var(--paper-2); border-bottom: 1px solid var(--line); }
+    .stats-inner {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      max-width: var(--max); margin: 0 auto; padding: 0 28px;
+    }
+    .stat-item {
+      text-align: center; padding: 28px 16px;
+      border-right: 1px solid var(--line);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Fraunces', serif;
+      font-size: 34px; font-weight: 600; color: var(--rust); line-height: 1; display: block;
+    }
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ink-soft); margin-top: 7px; display: block;
+    }
+
+    /* ===================== SECTIONS ===================== */
+    section { padding: 80px 0; }
+    section + section { border-top: 1px solid var(--line); }
+    .sec-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--rust); font-weight: 700; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sec-label::before {
+      content: ''; display: block; width: 20px; height: 2px; background: var(--rust);
+    }
+    .sec-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(28px, 4vw, 46px); font-weight: 600;
+      line-height: 1.1; letter-spacing: -.015em; margin-bottom: 14px;
+    }
+    .sec-dek {
+      font-size: 18px; color: var(--ink-soft); max-width: 54ch; line-height: 1.6; margin-bottom: 48px;
+    }
+
+    /* ===================== ABOUT ===================== */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+    .about-body p { color: var(--ink-soft); margin-bottom: 18px; font-size: 17.5px; line-height: 1.7; }
+    .about-body p:last-child { margin-bottom: 0; }
+    .about-body strong { color: var(--ink); }
+    .highlight-list { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+    .highlight {
+      background: var(--paper-2); border: 1px solid var(--line);
+      border-left: 4px solid var(--rust); border-radius: 11px; padding: 18px 20px;
+    }
+    .highlight.teal  { border-left-color: var(--teal); }
+    .highlight.slate { border-left-color: var(--slate); }
+    .highlight h4 {
+      font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600;
+      margin-bottom: 5px; color: var(--ink);
+    }
+    .highlight p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.55; }
+
+    /* ===================== EXPERTISE ===================== */
+    .expertise-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .exp-card {
+      background: var(--paper-2); border: 1px solid var(--line);
+      border-radius: 16px; padding: 28px 26px 24px;
+      position: relative; overflow: hidden;
+    }
+    .exp-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rust);
+    }
+    .exp-card.teal::before  { background: var(--teal); }
+    .exp-card.slate::before { background: var(--slate); }
+    .exp-card-icon { font-size: 26px; margin-bottom: 14px; display: block; line-height: 1; }
+    .exp-card h3 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; margin-bottom: 10px; }
+    .exp-card p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 18px; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+      font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+      padding: 4px 9px; border-radius: 6px;
+    }
+    .chip-rust  { background: rgba(190,74,44,.1);  color: var(--rust); }
+    .chip-teal  { background: rgba(30,122,100,.1); color: var(--teal); }
+    .chip-slate { background: rgba(56,90,122,.1);  color: var(--slate); }
+
+    /* ===================== EXPERIENCE TIMELINE ===================== */
+    .timeline { position: relative; padding-left: 48px; }
+    .timeline::before {
+      content: ''; position: absolute; left: 14px; top: 14px; bottom: 30px;
+      width: 2px; background: var(--line);
+    }
+    .tl-item { position: relative; padding-bottom: 44px; }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-dot {
+      position: absolute; left: -42px; top: 6px;
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--paper); border: 2px solid var(--rust);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tl-dot::after {
+      content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--rust);
+    }
+    .tl-item.muted .tl-dot { border-color: var(--line-2); }
+    .tl-item.muted .tl-dot::after { background: var(--line-2); }
+    .tl-period {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--rust); font-weight: 700; margin-bottom: 4px;
+    }
+    .tl-item.muted .tl-period { color: var(--ink-soft); }
+    .tl-role {
+      font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600;
+      color: var(--ink); line-height: 1.15; margin-bottom: 2px;
+    }
+    .tl-company { font-size: 15px; color: var(--ink-soft); margin-bottom: 14px; }
+    .tl-bullets { padding-left: 0; }
+    .tl-bullets li {
+      font-size: 15.5px; color: var(--ink-soft); margin-bottom: 8px;
+      line-height: 1.6; padding-left: 22px; position: relative;
+    }
+    .tl-bullets li::before {
+      content: '→'; position: absolute; left: 0;
+      color: var(--rust); font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    }
+    .tl-bullets li strong { color: var(--ink); }
+
+    /* ===================== CREDENTIALS ===================== */
+    .cred-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+    .cred-block-title {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--rust); font-weight: 700; margin-bottom: 22px;
+    }
+    .edu-item { padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .edu-item:first-of-type { padding-top: 0; }
+    .edu-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .edu-degree { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; margin-bottom: 3px; }
+    .edu-school { font-size: 14.5px; color: var(--ink-soft); }
+    .cert-list { display: flex; flex-direction: column; gap: 12px; }
+    .cert-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: var(--paper-2); border: 1px solid var(--line);
+      border-radius: 12px; padding: 16px 18px;
+    }
+    .cert-badge {
+      width: 40px; height: 40px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; flex-shrink: 0;
+    }
+    .cert-badge.aws { background: linear-gradient(135deg, #c25a12, #ed7100); }
+    .cert-badge.edu { background: linear-gradient(135deg, var(--slate), #4a6685); }
+    .cert-badge.biz { background: linear-gradient(135deg, var(--teal), #12b5a0); }
+    .cert-name { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; line-height: 1.4; }
+    .cert-issuer { font-size: 12.5px; color: var(--ink-soft); }
+    .cert-year {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--rust); margin-top: 5px;
+    }
+
+    /* ===================== BLOG ===================== */
+    .blog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 28px; }
+    .blog-card {
+      display: block; background: var(--paper-2); border: 1px solid var(--line);
+      border-radius: 16px; padding: 28px; color: var(--ink);
+      transition: border-color .2s, transform .18s;
+    }
+    .blog-card:hover { border-color: var(--rust); transform: translateY(-2px); text-decoration: none; }
+    .blog-series {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      letter-spacing: .16em; text-transform: uppercase;
+      color: var(--rust); font-weight: 700; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .blog-series::before { content: ''; display: block; width: 16px; height: 2px; background: var(--rust); }
+    .blog-card h3 {
+      font-family: 'Fraunces', serif; font-size: 21px; font-weight: 600;
+      line-height: 1.2; letter-spacing: -.01em; margin-bottom: 12px;
+    }
+    .blog-card p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 20px; }
+    .blog-card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 13px; color: var(--ink-soft);
+      border-top: 1px solid var(--line); padding-top: 16px;
+    }
+    .blog-read { color: var(--rust); font-weight: 600; font-size: 13px; }
+    .blog-note { text-align: center; font-size: 15px; color: var(--ink-soft); font-style: italic; font-family: 'Fraunces', serif; }
+    .blog-note a { color: var(--rust); }
+
+    /* ===================== CONTACT ===================== */
+    .contact-section { background: var(--ink); padding: 80px 0; }
+    .contact-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+      max-width: var(--max); margin: 0 auto; padding: 0 28px;
+    }
+    .contact-text .sec-label { color: var(--amber); }
+    .contact-text .sec-label::before { background: var(--amber); }
+    .contact-title {
+      font-family: 'Fraunces', serif; font-size: clamp(26px, 4vw, 42px);
+      font-weight: 600; line-height: 1.1; letter-spacing: -.015em;
+      color: var(--paper); margin-bottom: 14px;
+    }
+    .contact-dek { font-size: 17px; color: rgba(243,237,227,.7); line-height: 1.6; }
+    .contact-links { display: flex; flex-direction: column; gap: 14px; }
+    .contact-link {
+      display: flex; align-items: center; gap: 16px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 13px; padding: 18px 20px; color: var(--paper); transition: background .2s;
+    }
+    .contact-link:hover { background: rgba(255,255,255,.1); text-decoration: none; }
+    .cl-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: rgba(255,255,255,.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .cl-text strong { display: block; font-size: 14.5px; font-weight: 600; margin-bottom: 1px; }
+    .cl-text span { font-size: 13px; color: rgba(243,237,227,.55); }
+
+    /* ===================== FOOTER ===================== */
+    .site-footer { border-top: 3px solid var(--ink); padding: 32px 0; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-brand { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; color: var(--ink); }
+    .footer-brand span { color: var(--rust); }
+    .footer-links { display: flex; gap: 22px; }
+    .footer-links a { font-size: 14px; color: var(--ink-soft); }
+    .footer-links a:hover { color: var(--rust); text-decoration: none; }
+    .footer-copy { font-size: 13px; color: var(--line-2); }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 960px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-photo { order: -1; width: 190px; height: 235px; }
+      .about-grid { grid-template-columns: 1fr; gap: 36px; }
+      .expertise-grid { grid-template-columns: 1fr 1fr; }
+      .blog-grid { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3) { border-top: 1px solid var(--line); }
+      .stat-item:nth-child(4) { border-top: 1px solid var(--line); border-right: none; }
+      .cred-grid { grid-template-columns: 1fr; }
+      .contact-inner { grid-template-columns: 1fr; gap: 40px; }
+    }
+    @media (max-width: 640px) {
+      body { font-size: 17px; }
+      section, .contact-section { padding: 56px 0; }
+      .hero { padding: 60px 0 52px; }
+      .hero-photo { width: 150px; height: 185px; }
+      .expertise-grid { grid-template-columns: 1fr; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      .footer-inner { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- JSON-LD structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Md. Shahriar Bin Mohsin",
+  "jobTitle": "AI/ML Engineer",
+  "description": "AI/ML Engineer with 10+ years building intelligent systems — GenAI, LLM applications, and cloud-native data pipelines on AWS, Microsoft Fabric, and Snowflake.",
+  "url": "https://sbmsoikot.github.io/",
+  "image": "https://sbmsoikot.github.io/Images/HeadShotClean.png",
+  "email": "shahriarbm@gmail.com",
+  "telephone": "+17789154109",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Surrey",
+    "addressRegion": "BC",
+    "addressCountry": "CA"
+  },
+  "alumniOf": [
+    { "@type": "CollegeOrUniversity", "name": "Northeastern University", "address": "Vancouver, BC, Canada" },
+    { "@type": "CollegeOrUniversity", "name": "East West University", "address": "Dhaka, Bangladesh" }
+  ],
+  "hasCredential": [
+    { "@type": "EducationalOccupationalCredential", "name": "AWS Certified Machine Learning Engineer – Associate" },
+    { "@type": "EducationalOccupationalCredential", "name": "AWS Certified AI Practitioner" },
+    { "@type": "EducationalOccupationalCredential", "name": "Master of Science, Data Analytics Engineering — Northeastern University" }
+  ],
+  "knowsAbout": [
+    "Machine Learning Engineering", "Generative AI", "LLM Applications",
+    "Retrieval-Augmented Generation", "Data Engineering", "MLOps",
+    "AWS SageMaker", "AWS Bedrock", "Microsoft Fabric", "Snowflake", "dbt",
+    "Apache Spark", "PySpark", "Python", "AI Strategy"
+  ],
+  "sameAs": ["https://linkedin.com/in/sbmsoikot"]
+}
+</script>
+
+<!-- NAVIGATION -->
+<nav class="site-nav" role="navigation" aria-label="Site navigation">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#top">SBM<span>.</span></a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#expertise">Expertise</a>
+      <a href="#experience">Experience</a>
+      <a href="#blog">Blog</a>
+      <a href="#contact" class="nav-cta">Hire Me</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top" role="banner">
+  <div class="wrap">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="avail-pill">
+          <span class="dot" aria-hidden="true"></span>
+          <strong>Open to opportunities</strong>&ensp;—&ensp;BC · AB · ON, Canada
+        </div>
+        <p class="hero-kicker">AI/ML Engineer · Data Engineer · 10+ Years</p>
+        <h1>Md. Shahriar<br><em>Bin Mohsin</em></h1>
+        <p class="hero-dek">Building production ML systems and intelligent applications — from data ingestion to deployed LLMs. Sharing the architecture behind it all through <strong>The ML Engineering Notebook</strong>.</p>
+        <div class="hero-btns">
+          <a href="#contact" class="btn btn-primary">Get in Touch</a>
+          <a href="#blog" class="btn btn-outline">Read the Blog</a>
+          <a href="Resume/Shahriar_Bin_Mohsin_Resume_Master_AI_ML_2026.pdf" class="btn btn-outline" download>Resume ↓</a>
+        </div>
+      </div>
+      <div class="hero-photo" aria-hidden="true">
+        <img
+          src="Images/HeadShotClean.png"
+          alt="Md. Shahriar Bin Mohsin — AI/ML Engineer, Surrey BC Canada"
+          width="270" height="330"
+          loading="eager"
+        >
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- STATS BAR -->
+<div class="stats-bar" role="region" aria-label="Career highlights">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <span class="stat-num">10+</span>
+      <span class="stat-label">Years in Tech</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">2×</span>
+      <span class="stat-label">AWS Certified</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">MSc</span>
+      <span class="stat-label">Data Analytics Eng · Northeastern</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">$150M</span>
+      <span class="stat-label">Program Delivered · Huawei</span>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" aria-labelledby="about-title">
+  <div class="wrap">
+    <div class="sec-label">About me</div>
+    <div class="about-grid">
+      <div class="about-body">
+        <h2 class="sec-title" id="about-title">I build the full stack of production AI.</h2>
+        <p>I'm an AI/ML Engineer and data professional with over a decade of experience shipping intelligent systems — from telecom network automation at global scale to LLM-powered enterprise applications. Currently consulting at <strong>NeuNov Technologies</strong>, I design and deliver end-to-end ML solutions on AWS and help leadership teams translate AI trade-offs into strategy.</p>
+        <p>My foundation spans data engineering (dbt, Snowflake, Microsoft Fabric, Databricks), ML lifecycle (SageMaker AI, Bedrock, LangChain, MLOps), and product management. I've led teams, won $150M programs, and co-founded a consumer AI startup. I hold a <strong>Master of Science in Data Analytics Engineering from Northeastern University</strong>, and I'm AWS certified in both Machine Learning Engineering and AI Practitioner.</p>
+        <p>I'm actively seeking senior roles as an <strong>AI/ML Engineer</strong>, <strong>Data Engineer</strong>, or <strong>Technical Product Manager</strong> at companies doing serious work with data and AI — primarily in British Columbia, Alberta, or Ontario.</p>
+      </div>
+      <div class="highlight-list" aria-label="Core strengths">
+        <div class="highlight">
+          <h4>End-to-end ML systems</h4>
+          <p>LLM applications, RAG pipelines, model fine-tuning, evaluation, and monitoring on AWS — from raw data to production inference.</p>
+        </div>
+        <div class="highlight teal">
+          <h4>Modern data platforms</h4>
+          <p>Medallion-architecture lakehouses on Snowflake, Microsoft Fabric, and Databricks; real-time streaming with Kinesis and Apache Flink.</p>
+        </div>
+        <div class="highlight slate">
+          <h4>Strategy &amp; leadership</h4>
+          <p>10+ years of executive stakeholder engagement, AI advisory for government, and cross-functional delivery across enterprise SaaS and telecom.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERTISE -->
+<section id="expertise" aria-labelledby="expertise-title">
+  <div class="wrap">
+    <div class="sec-label">What I do</div>
+    <h2 class="sec-title" id="expertise-title">Core Expertise</h2>
+    <p class="sec-dek">Spanning the full AI/ML lifecycle — from data architecture through deployed, monitored models — plus the product thinking to ship what actually matters.</p>
+    <div class="expertise-grid">
+
+      <div class="exp-card">
+        <span class="exp-card-icon" aria-hidden="true">🤖</span>
+        <h3>AI &amp; ML Engineering</h3>
+        <p>Designing and deploying production ML systems: LLM applications, retrieval-augmented generation (RAG), model fine-tuning, inference APIs, and full MLOps pipelines with evaluation and monitoring.</p>
+        <div class="tag-row">
+          <span class="chip chip-rust">SageMaker AI</span>
+          <span class="chip chip-rust">AWS Bedrock</span>
+          <span class="chip chip-rust">LangChain</span>
+          <span class="chip chip-rust">RAG</span>
+          <span class="chip chip-rust">Fine-tuning</span>
+          <span class="chip chip-rust">MLOps</span>
+        </div>
+      </div>
+
+      <div class="exp-card teal">
+        <span class="exp-card-icon" aria-hidden="true">🏗️</span>
+        <h3>Data Engineering</h3>
+        <p>Building lakehouse architectures, streaming pipelines, and scalable batch ETL — medallion architecture (bronze → silver → gold) applied to real enterprise data stacks at scale.</p>
+        <div class="tag-row">
+          <span class="chip chip-teal">dbt</span>
+          <span class="chip chip-teal">Snowflake</span>
+          <span class="chip chip-teal">Microsoft Fabric</span>
+          <span class="chip chip-teal">Azure Databricks</span>
+          <span class="chip chip-teal">Apache Spark</span>
+          <span class="chip chip-teal">PySpark</span>
+        </div>
+      </div>
+
+      <div class="exp-card slate">
+        <span class="exp-card-icon" aria-hidden="true">☁️</span>
+        <h3>AWS Cloud Architecture</h3>
+        <p>Architecting cost-efficient, production-grade AWS data and ML platforms — S3 lakehouses, Kinesis streaming, Apache Flink, Glue ETL, Athena, Lambda, and Lake Formation governance.</p>
+        <div class="tag-row">
+          <span class="chip chip-slate">S3 Lakehouse</span>
+          <span class="chip chip-slate">Kinesis / MSK</span>
+          <span class="chip chip-slate">EMR</span>
+          <span class="chip chip-slate">AWS Glue</span>
+          <span class="chip chip-slate">Athena</span>
+          <span class="chip chip-slate">Lambda</span>
+        </div>
+      </div>
+
+      <div class="exp-card">
+        <span class="exp-card-icon" aria-hidden="true">🧬</span>
+        <h3>Generative AI &amp; LLMs</h3>
+        <p>Building intelligent automation workflows — prompt engineering, agent design, knowledge-grounded RAG systems, and responsible AI evaluation with bias detection and safety frameworks.</p>
+        <div class="tag-row">
+          <span class="chip chip-rust">Generative AI</span>
+          <span class="chip chip-rust">Prompt Eng.</span>
+          <span class="chip chip-rust">AI Agents</span>
+          <span class="chip chip-rust">PyTorch</span>
+          <span class="chip chip-rust">LLM Evaluation</span>
+        </div>
+      </div>
+
+      <div class="exp-card teal">
+        <span class="exp-card-icon" aria-hidden="true">📊</span>
+        <h3>BI &amp; Data Science</h3>
+        <p>Feature engineering, model-ready dataset preparation, and executive dashboards — translating raw data into actionable insight from the data lake to the boardroom.</p>
+        <div class="tag-row">
+          <span class="chip chip-teal">Power BI</span>
+          <span class="chip chip-teal">Tableau</span>
+          <span class="chip chip-teal">Python / pandas</span>
+          <span class="chip chip-teal">SQL</span>
+          <span class="chip chip-teal">Scikit-learn</span>
+        </div>
+      </div>
+
+      <div class="exp-card slate">
+        <span class="exp-card-icon" aria-hidden="true">🧭</span>
+        <h3>Product &amp; AI Strategy</h3>
+        <p>Translating technical trade-offs into roadmap decisions — AI strategy advisory, build-vs-buy analysis, cross-functional delivery, and executive stakeholder communication from startup to $150M programs.</p>
+        <div class="tag-row">
+          <span class="chip chip-slate">Technical PM</span>
+          <span class="chip chip-slate">AI Advisory</span>
+          <span class="chip chip-slate">Roadmapping</span>
+          <span class="chip chip-slate">Agile / Scrum</span>
+          <span class="chip chip-slate">Stakeholder Eng.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" aria-labelledby="experience-title">
+  <div class="wrap">
+    <div class="sec-label">Career history</div>
+    <h2 class="sec-title" id="experience-title">Experience</h2>
+    <p class="sec-dek">Over two decades shipping data systems, ML solutions, and digital products — from startup co-founder to $150M enterprise programs.</p>
+
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot" aria-hidden="true"></div>
+        <div class="tl-period">May 2026 – Present</div>
+        <div class="tl-role">AI/ML Engineer Consultant</div>
+        <div class="tl-company">NeuNov Technologies &nbsp;·&nbsp; Remote</div>
+        <ul class="tl-bullets">
+          <li>Building <strong>LLM-enabled applications</strong> using retrieval-augmented generation, prompt engineering, and agent workflows to automate knowledge-heavy business processes.</li>
+          <li>Developing and deploying ML models on <strong>AWS (SageMaker AI, Bedrock, Lambda)</strong> with attention to evaluation, monitoring, and responsible AI practices across the full model lifecycle.</li>
+          <li>Scoping AI/ML use cases for enterprise clients and advising leadership on <strong>AI strategy, build-vs-buy decisions, and roadmap prioritization</strong>, translating technical trade-offs into business language.</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" aria-hidden="true"></div>
+        <div class="tl-period">Nov 2025 – May 2026</div>
+        <div class="tl-role">Data Engineer Consultant</div>
+        <div class="tl-company">Allied Global (Daxko Account) &nbsp;·&nbsp; Remote</div>
+        <ul class="tl-bullets">
+          <li>Modernized <strong>legacy SSIS ETL pipelines into dbt models on Snowflake</strong> for a multi-product SaaS analytics ecosystem, applying medallion architecture (bronze → silver → gold).</li>
+          <li>Leveraged <strong>Microsoft Fabric (Lakehouse, Data Factory)</strong> and <strong>Azure Databricks</strong> for data preparation and orchestration as part of an on-premises-to-cloud migration.</li>
+          <li>Documented data contracts, lineage, and quality tests; partnered with product owners and platform engineers to align architecture with reporting and governance standards.</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" aria-hidden="true"></div>
+        <div class="tl-period">Jul 2018 – Sep 2023</div>
+        <div class="tl-role">Product Leader</div>
+        <div class="tl-company">Nitto Digital Service and Analytics &nbsp;·&nbsp; Dhaka</div>
+        <ul class="tl-bullets">
+          <li>Designed AI-powered automation and intelligent alerting for <strong>telecom network operations</strong>, cutting average incident resolution time by roughly <strong>35%</strong> and improving SLA compliance.</li>
+          <li>Directed end-to-end development of <strong>B2B SaaS platforms</strong> for the RMG sector — payment gateway integrations, partner APIs, and multi-stakeholder rollout.</li>
+          <li>Designed and delivered <strong>AI and automation training for government organizations</strong> under a national capacity-building project; advised industry leaders and policymakers on AI-enabled digital transformation.</li>
+          <li>Ran quarterly reviews with client executives and CXO sponsors, translating delivery progress into business KPIs.</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" aria-hidden="true"></div>
+        <div class="tl-period">Jul 2018 – Jul 2021</div>
+        <div class="tl-role">Co-Founder &amp; Product Leader</div>
+        <div class="tl-company">Fordo &nbsp;·&nbsp; Dhaka, Bangladesh</div>
+        <ul class="tl-bullets">
+          <li>Co-founded and launched a consumer mobile app for personal data and spending analytics, implementing <strong>AI-driven recommendation logic</strong> based on user behavior patterns.</li>
+          <li>Iterated UX through four major versions — user interviews, wireframes, and testing — lifting <strong>30-day retention by ~40%</strong>.</li>
+          <li>Secured investor funding; led partner API integrations across financial, retail, and social platforms.</li>
+        </ul>
+      </div>
+
+      <div class="tl-item muted">
+        <div class="tl-dot" aria-hidden="true"></div>
+        <div class="tl-period">Aug 2005 – Jul 2018 &nbsp;·&nbsp; 13 years</div>
+        <div class="tl-role">Solution Manager / Product Manager</div>
+        <div class="tl-company">Huawei Technologies &nbsp;·&nbsp; Dhaka, Bangladesh</div>
+        <ul class="tl-bullets">
+          <li>Managed a portfolio of four product lines hitting <strong>US$100M annual sales</strong> in two consecutive years at the country-level account.</li>
+          <li>Won and delivered a <strong>US$150M network modernization program</strong> for Orascom Telecom Bangladesh, coordinating a delivery team of <strong>200+ engineers</strong>.</li>
+          <li>Sponsored early analytics-driven network optimization initiatives; awarded <strong>Huawei Global Gold Medal</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="tl-item muted">
+        <div class="tl-dot" aria-hidden="true"></div>
+        <div class="tl-period">Dec 2003 – Sep 2004</div>
+        <div class="tl-role">Database Engineer</div>
+        <div class="tl-company">Grameenphone Ltd. (Telenor) &nbsp;·&nbsp; Dhaka, Bangladesh</div>
+        <ul class="tl-bullets">
+          <li>Built internal tools in VB6 and SQL Server for the customer service team, streamlining data lookups used daily in call handling.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CREDENTIALS -->
+<section id="credentials" aria-labelledby="credentials-title">
+  <div class="wrap">
+    <div class="sec-label">Education &amp; Certifications</div>
+    <h2 class="sec-title" id="credentials-title">Credentials</h2>
+    <div class="cred-grid">
+
+      <div>
+        <div class="cred-block-title">Education</div>
+        <div class="edu-item">
+          <div class="edu-degree">M.Sc. Data Analytics Engineering</div>
+          <div class="edu-school">Northeastern University &nbsp;·&nbsp; Vancouver, BC, Canada</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-degree">MBA, Finance</div>
+          <div class="edu-school">East West University &nbsp;·&nbsp; Dhaka, Bangladesh</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-degree">B.Sc. Computer Science &amp; Engineering</div>
+          <div class="edu-school">Asian University of Bangladesh &nbsp;·&nbsp; Dhaka, Bangladesh</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="cred-block-title">Certifications</div>
+        <div class="cert-list">
+          <div class="cert-item">
+            <div class="cert-badge aws" aria-hidden="true">☁️</div>
+            <div>
+              <div class="cert-name">AWS Certified Machine Learning Engineer – Associate</div>
+              <div class="cert-issuer">Amazon Web Services &nbsp;·&nbsp; MLA-C01</div>
+              <div class="cert-year">2026</div>
+            </div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-badge aws" aria-hidden="true">☁️</div>
+            <div>
+              <div class="cert-name">AWS Certified AI Practitioner</div>
+              <div class="cert-issuer">Amazon Web Services</div>
+              <div class="cert-year">Sep 2024</div>
+            </div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-badge edu" aria-hidden="true">🎓</div>
+            <div>
+              <div class="cert-name">Diploma in AI Applications</div>
+              <div class="cert-issuer">Northeastern University</div>
+              <div class="cert-year">Dec 2025</div>
+            </div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-badge edu" aria-hidden="true">🎓</div>
+            <div>
+              <div class="cert-name">Applying AI Technologies to the Workplace</div>
+              <div class="cert-issuer">Northeastern University</div>
+              <div class="cert-year">Sep 2024</div>
+            </div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-badge biz" aria-hidden="true">🏛️</div>
+            <div>
+              <div class="cert-name">Digital Transformation</div>
+              <div class="cert-issuer">Boston Consulting Group (BCG)</div>
+              <div class="cert-year">Aug 2021</div>
+            </div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-badge biz" aria-hidden="true">🎯</div>
+            <div>
+              <div class="cert-name">Entrepreneurship</div>
+              <div class="cert-issuer">Harvard Business School</div>
+              <div class="cert-year">Sep 2018</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section id="blog" aria-labelledby="blog-title">
+  <div class="wrap">
+    <div class="sec-label">The ML Engineering Notebook</div>
+    <h2 class="sec-title" id="blog-title">Latest Writing</h2>
+    <p class="sec-dek">Deep-dive posts on building real ML systems on AWS — explained through one realistic project, end to end. Currently covering the AWS MLA-C01 certification series.</p>
+
+    <div class="blog-grid">
+      <a href="Blogs/D1P1-data-ingestion-storage-blog.html" class="blog-card">
+        <div class="blog-series">AWS MLA-C01 · Series #1 of 6 · Domain 1 Part 1</div>
+        <h3>Where ML Really Begins: Data Ingestion &amp; Storage on AWS</h3>
+        <p>No model survives bad plumbing. Here's how to architect the ingestion and storage layer — Kinesis, MSK, Apache Flink, S3 lakehouse, Glue — through the MetroPulse city-scale mobility platform.</p>
+        <div class="blog-card-footer">
+          <span>~22 min read &nbsp;·&nbsp; 2026</span>
+          <span class="blog-read">Read article →</span>
+        </div>
+      </a>
+
+      <a href="Blogs/D1P2-data-ransformation-ntegrity-feature-engineering.html" class="blog-card">
+        <div class="blog-series">AWS MLA-C01 · Series #2 of 6 · Domain 1 Part 2</div>
+        <h3>From Raw to Ready: Data Transformation, Integrity &amp; Feature Engineering</h3>
+        <p>The lake is full — and useless. Turning MetroPulse's messy data into model-ready signal with EMR, Spark, SageMaker Data Wrangler, Ground Truth, and AWS Glue.</p>
+        <div class="blog-card-footer">
+          <span>~24 min read &nbsp;·&nbsp; 2026</span>
+          <span class="blog-read">Read article →</span>
+        </div>
+      </a>
+    </div>
+
+    <p class="blog-note">More in the series: Domain 2 (EDA &amp; Visualization), Domain 3 (Modeling), Domain 4 (Deployment &amp; Monitoring) — <a href="#contact">get notified when they publish</a>.</p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact" role="region" aria-label="Contact information">
+  <div class="contact-inner">
+    <div class="contact-text">
+      <div class="sec-label">Let's talk</div>
+      <h2 class="contact-title">Open to AI/ML, Data&nbsp;Engineering, and Product roles in Canada.</h2>
+      <p class="contact-dek">Based in Surrey, BC. Available for full-time positions, contract engagements, and AI consulting. Targeting BC, AB, and ON.</p>
+    </div>
+    <div class="contact-links">
+      <a href="mailto:shahriarbm@gmail.com" class="contact-link">
+        <div class="cl-icon" aria-hidden="true">✉️</div>
+        <div class="cl-text">
+          <strong>Email</strong>
+          <span>shahriarbm@gmail.com</span>
+        </div>
+      </a>
+      <a href="https://linkedin.com/in/sbmsoikot" class="contact-link" target="_blank" rel="noopener noreferrer">
+        <div class="cl-icon" aria-hidden="true">💼</div>
+        <div class="cl-text">
+          <strong>LinkedIn</strong>
+          <span>linkedin.com/in/sbmsoikot</span>
+        </div>
+      </a>
+      <a href="https://github.com/sbmsoikot" class="contact-link" target="_blank" rel="noopener noreferrer">
+        <div class="cl-icon" aria-hidden="true">🐙</div>
+        <div class="cl-text">
+          <strong>GitHub</strong>
+          <span>github.com/sbmsoikot</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-brand">SBM<span>.</span> Shahriar Bin Mohsin</div>
+      <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="#expertise">Expertise</a>
+        <a href="#experience">Experience</a>
+        <a href="#blog">Blog</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <p class="footer-copy">© 2026 Md. Shahriar Bin Mohsin</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
