@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building MetroPulse: Choosing a Modeling Approach — Managed AI Services &amp; Built-in Algorithms on AWS — MLA-C01 Series #3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Spline+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EDE3;
+    --paper-2:#FBF8F2;
+    --ink:#17130F;
+    --ink-soft:#473d33;
+    --rust:#BE4A2C;
+    --amber:#D98A2B;
+    --teal:#1E7A64;
+    --slate:#385a7a;
+    --line:#D9CFBE;
+    --line-2:#cbbfa9;
+    --code-bg:#1c1814;
+    --code-fg:#e9e0d0;
+    --max:880px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Spline Sans',system-ui,sans-serif;
+    font-size:18px;
+    line-height:1.72;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(190,74,44,.05), transparent 38%),
+      radial-gradient(circle at 88% 22%, rgba(217,138,43,.06), transparent 40%);
+  }
+  ::selection{background:var(--amber);color:var(--ink);}
+
+  /* ---------- Layout ---------- */
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px;}
+  .full{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- Masthead ---------- */
+  header.hero{
+    border-bottom:3px solid var(--ink);
+    padding:46px 0 38px;
+    margin-bottom:6px;
+  }
+  .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--rust);font-weight:700;margin:0 0 18px;
+    display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+  }
+  .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--rust);display:inline-block;}
+  .kicker .muted{color:var(--ink-soft);font-weight:500;letter-spacing:.14em;}
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(34px,6vw,62px);
+    line-height:1.02;
+    letter-spacing:-.015em;
+    margin:0 0 22px;
+  }
+  h1 em{font-style:italic;color:var(--rust);}
+  .dek{
+    font-size:clamp(18px,2.4vw,22px);
+    color:var(--ink-soft);
+    max-width:46ch;
+    margin:0 0 26px;
+    line-height:1.5;
+  }
+  .byline{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    font-size:14.5px;color:var(--ink-soft);
+    border-top:1px solid var(--line);padding-top:20px;
+  }
+  .byline .av{
+    width:42px;height:42px;border-radius:50%;
+    background:linear-gradient(135deg,var(--rust),var(--amber));
+    display:grid;place-items:center;color:#fff;font-weight:700;font-family:'Fraunces',serif;font-size:15px;letter-spacing:-0.3px;
+    flex:none;
+  }
+  .byline b{color:var(--ink);}
+  .byline .sep{color:var(--line-2);}
+
+  /* ---------- Body typography ---------- */
+  main{padding:42px 0 10px;}
+  p{margin:0 0 20px;}
+  main h2{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(26px,3.6vw,38px);line-height:1.1;letter-spacing:-.01em;
+    margin:60px 0 8px;scroll-margin-top:20px;
+  }
+  main h2 .num{
+    font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--rust);
+    display:block;letter-spacing:.18em;margin-bottom:10px;font-weight:700;
+  }
+  main h3{
+    font-family:'Spline Sans',sans-serif;font-weight:700;
+    font-size:21px;margin:38px 0 6px;letter-spacing:-.01em;
+  }
+  main h2 + p, main h3 + p{margin-top:14px;}
+  a{color:var(--rust);text-decoration:none;border-bottom:1.5px solid var(--line-2);transition:border-color .2s;}
+  a:hover{border-color:var(--rust);}
+  strong{font-weight:700;color:var(--ink);}
+  em{font-style:italic;}
+  code{
+    font-family:'JetBrains Mono',monospace;font-size:.86em;
+    background:rgba(190,74,44,.08);color:#9c3a22;
+    padding:.12em .42em;border-radius:5px;
+  }
+  hr.rule{border:none;border-top:1px solid var(--line);margin:54px 0;}
+  .lead-line{
+    border-left:3px solid var(--rust);
+    padding-left:22px;font-size:21px;line-height:1.6;color:var(--ink);
+    font-family:'Fraunces',serif;font-weight:400;font-style:italic;
+    margin:8px 0 30px;
+  }
+
+  /* ---------- Callouts ---------- */
+  .note{
+    background:var(--paper-2);border:1px solid var(--line);
+    border-left:4px solid var(--amber);
+    border-radius:10px;padding:18px 22px;margin:28px 0;font-size:16.5px;line-height:1.62;
+  }
+  .note .tag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--amber);font-weight:700;display:block;margin-bottom:6px;
+  }
+  .note.exam{border-left-color:var(--teal);}
+  .note.exam .tag{color:var(--teal);}
+  .note.gotcha{border-left-color:var(--rust);}
+  .note.gotcha .tag{color:var(--rust);}
+
+  /* ---------- Code ---------- */
+  pre{
+    background:var(--code-bg);color:var(--code-fg);
+    border-radius:12px;padding:22px 22px;overflow-x:auto;
+    font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.65;
+    margin:24px 0;border:1px solid #000;
+    box-shadow:0 14px 30px -18px rgba(0,0,0,.5);
+  }
+  pre .cmt{color:#8c8275;font-style:italic;}
+  pre .k{color:#e9a23b;}
+  pre .s{color:#9ccc8f;}
+  pre .n{color:#e3a6f0;}
+  pre code{background:none;color:inherit;padding:0;font-size:inherit;}
+  .code-label{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-soft);margin:24px 0 -14px;font-weight:700;
+  }
+
+  /* ---------- Figures / diagrams ---------- */
+  figure{margin:38px 0;}
+  figure.bleed{margin:46px 0;}
+  .diagram{
+    background:var(--paper-2);border:1px solid var(--line);border-radius:16px;
+    padding:26px 20px 14px;box-shadow:0 18px 40px -28px rgba(20,15,10,.4);
+  }
+  .diagram svg{display:block;width:100%;height:auto;}
+  figcaption{
+    font-size:14px;color:var(--ink-soft);margin-top:14px;text-align:center;
+    font-style:italic;font-family:'Fraunces',serif;
+  }
+  figcaption b{font-style:normal;color:var(--rust);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;}
+
+  /* ---------- Tables ---------- */
+  .table-scroll{overflow-x:auto;margin:28px 0;-webkit-overflow-scrolling:touch;}
+  table{border-collapse:collapse;width:100%;font-size:15px;min-width:560px;}
+  th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top;}
+  thead th{
+    background:var(--ink);color:var(--paper);font-weight:600;font-size:13px;
+    letter-spacing:.04em;border-bottom:none;
+  }
+  thead th:first-child{border-top-left-radius:9px;}
+  thead th:last-child{border-top-right-radius:9px;}
+  tbody tr:nth-child(even){background:rgba(217,138,43,.05);}
+  tbody td:first-child{font-weight:600;}
+
+  /* ---------- TOC ---------- */
+  nav.toc{
+    background:var(--paper-2);border:1px solid var(--line);border-radius:14px;
+    padding:24px 28px;margin:14px 0 8px;
+  }
+  nav.toc .toc-h{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--rust);font-weight:700;margin-bottom:14px;
+  }
+  nav.toc ol{margin:0;padding:0;list-style:none;counter-reset:toc;
+    columns:2;column-gap:36px;}
+  nav.toc li{counter-increment:toc;margin:0 0 9px;font-size:15px;break-inside:avoid;}
+  nav.toc li a{
+    border:none;color:var(--ink);display:flex;gap:12px;align-items:baseline;
+  }
+  nav.toc li a:hover{color:var(--rust);}
+  nav.toc li a::before{
+    content:counter(toc,decimal-leading-zero);
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--amber);font-weight:700;flex:none;
+  }
+
+  /* ---------- Pull / project card ---------- */
+  .project-card{
+    background:var(--ink);color:var(--paper);border-radius:18px;
+    padding:34px 34px 30px;margin:40px 0;position:relative;overflow:hidden;
+  }
+  .project-card::after{
+    content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;
+    background:radial-gradient(circle,rgba(217,138,43,.28),transparent 70%);
+  }
+  .project-card .tag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--amber);font-weight:700;
+  }
+  .project-card h3{color:var(--paper);font-size:26px;margin:8px 0 14px;font-family:'Fraunces',serif;font-weight:600;}
+  .project-card p{color:#d8cdbb;margin-bottom:14px;position:relative;z-index:1;}
+  .project-card ul{margin:0;padding-left:20px;color:#d8cdbb;position:relative;z-index:1;}
+  .project-card li{margin-bottom:7px;}
+  .project-card b{color:var(--amber);}
+
+  /* ---------- Key takeaways ---------- */
+  .takeaways{
+    background:var(--paper-2);border:2px solid var(--ink);border-radius:16px;padding:28px 30px;margin:36px 0;
+  }
+  .takeaways h3{margin-top:0;}
+  .takeaways ul{margin:0;padding-left:0;list-style:none;}
+  .takeaways li{padding-left:30px;position:relative;margin-bottom:13px;font-size:16px;}
+  .takeaways li::before{
+    content:"→";position:absolute;left:0;color:var(--rust);font-weight:700;font-family:'JetBrains Mono',monospace;
+  }
+
+  /* ---------- Footer / CTA ---------- */
+  footer{
+    border-top:3px solid var(--ink);margin-top:64px;padding:46px 0 60px;
+  }
+  .cta{
+    background:linear-gradient(135deg,var(--rust),var(--amber));
+    border-radius:18px;padding:36px;color:#fff;text-align:center;
+  }
+  .cta h3{font-family:'Fraunces',serif;font-size:28px;margin:0 0 12px;color:#fff;}
+  .cta p{color:rgba(255,255,255,.92);margin:0 auto 8px;max-width:48ch;}
+  .next-up{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-soft);margin-top:34px;text-align:center;font-weight:700;
+  }
+  .next-up b{color:var(--rust);}
+
+  @media (max-width:680px){
+    body{font-size:17px;}
+    nav.toc ol{columns:1;}
+    .project-card,.takeaways,.cta{padding:24px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SITE NAV ===== -->
+<nav style="position:sticky;top:0;z-index:999;background:rgba(243,237,227,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #D9CFBE;display:flex;align-items:center;justify-content:space-between;padding:13px 28px;font-family:'Spline Sans',system-ui,sans-serif;" role="navigation" aria-label="Site navigation">
+  <a href="../index.html" style="font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:500;color:#17130F;text-decoration:none;border:none;letter-spacing:-.025em;">SBM<span style="color:#BE4A2C;">.</span></a>
+  <div style="display:flex;align-items:center;gap:24px;">
+    <a href="../index.html" style="font-size:13.5px;font-weight:500;color:#473d33;text-decoration:none;border:none;">← Home</a>
+    <a href="../index.html#notebook" style="font-size:13.5px;font-weight:500;color:#473d33;text-decoration:none;border:none;">All Writing</a>
+    <a href="../index.html#connect" style="font-size:13px;font-weight:500;color:#473d33;text-decoration:none;border:none;">Connect</a>
+  </div>
+</nav>
+
+<!-- ===================== AWS-STYLE ICON SPRITE (custom SVG renditions) ===================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="g-storage" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B7A1E"/><stop offset="1" stop-color="#6BA53A"/></linearGradient>
+    <linearGradient id="g-analytics" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2DBA"/><stop offset="1" stop-color="#8C4FFF"/></linearGradient>
+    <linearGradient id="g-compute" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C25A12"/><stop offset="1" stop-color="#ED7100"/></linearGradient>
+    <linearGradient id="g-ml" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B7E6E"/><stop offset="1" stop-color="#12B5A0"/></linearGradient>
+    <linearGradient id="g-appint" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B30D5E"/><stop offset="1" stop-color="#E7157B"/></linearGradient>
+    <linearGradient id="g-security" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B41F32"/><stop offset="1" stop-color="#DD344C"/></linearGradient>
+    <linearGradient id="g-neutral" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2C4763"/><stop offset="1" stop-color="#4A6685"/></linearGradient>
+  </defs>
+
+  <symbol id="ic-s3" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-storage)"/>
+    <path d="M15 18h18l-1.6 15.4a2 2 0 0 1-2 1.8H18.6a2 2 0 0 1-2-1.8z" fill="#fff"/>
+    <ellipse cx="24" cy="18" rx="9" ry="2.6" fill="#fff" stroke="#2E6B1B" stroke-width="0.7"/>
+  </symbol>
+  <symbol id="ic-kinesis" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <g fill="#fff"><circle cx="15" cy="17" r="2.2"/><rect x="19" y="15.6" width="15" height="2.8" rx="1.4"/><circle cx="15" cy="24" r="2.2"/><rect x="19" y="22.6" width="15" height="2.8" rx="1.4"/><circle cx="15" cy="31" r="2.2"/><rect x="19" y="29.6" width="15" height="2.8" rx="1.4"/></g>
+  </symbol>
+  <symbol id="ic-firehose" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M14 15h20l-7.5 9.5V32l-5 2.5V24.5z" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-flink" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M31.5 19.5A9 9 0 1 0 33 25" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M27.2 14.2l5.6 4.8-5.8 2.6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-msk" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <g stroke="#fff" stroke-width="2"><line x1="18" y1="17" x2="31" y2="24"/><line x1="18" y1="31" x2="31" y2="24"/></g>
+    <g fill="#fff"><circle cx="18" cy="17" r="3.4"/><circle cx="18" cy="31" r="3.4"/><circle cx="32" cy="24" r="3.6"/></g>
+  </symbol>
+  <symbol id="ic-sagemaker" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M24 13l9.5 5.5v11L24 35l-9.5-5.5v-11z" fill="none" stroke="#fff" stroke-width="2.4"/>
+    <circle cx="24" cy="24" r="3.4" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-glue" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M20 14h8M21.5 14v6l-5.2 11.4a2 2 0 0 0 1.8 2.9h11.8a2 2 0 0 0 1.8-2.9L26.5 20v-6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-eventbridge" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-appint)"/>
+    <path d="M24 12.5l11.5 11.5L24 35.5 12.5 24z" fill="none" stroke="#fff" stroke-width="2.4"/>
+    <circle cx="24" cy="24" r="2.8" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-stepfn" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-appint)"/>
+    <path d="M21 18h5a4 4 0 0 1 4 4v3" fill="none" stroke="#fff" stroke-width="2"/>
+    <g fill="#fff"><rect x="12.5" y="13.5" width="9" height="9" rx="2.2"/><rect x="26.5" y="25.5" width="9" height="9" rx="2.2"/></g>
+  </symbol>
+  <symbol id="ic-ebs" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-storage)"/>
+    <rect x="13" y="18" width="22" height="12" rx="2.5" fill="#fff"/>
+    <circle cx="30" cy="24" r="1.9" fill="#3B7A1E"/>
+    <rect x="16" y="22.5" width="8" height="3" rx="1.5" fill="#3B7A1E" opacity="0.5"/>
+  </symbol>
+  <symbol id="ic-efs" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-storage)"/>
+    <rect x="13.5" y="15" width="13" height="17" rx="2" fill="#fff" opacity="0.55"/>
+    <rect x="20" y="18" width="13" height="17" rx="2" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-fsx" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-storage)"/>
+    <rect x="15" y="13" width="18" height="22" rx="2.5" fill="#fff"/>
+    <path d="M25 17l-4.5 8h3.2l-1.7 6 5.5-8.5h-3.3z" fill="#3B7A1E"/>
+  </symbol>
+  <symbol id="ic-kms" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-security)"/>
+    <circle cx="20" cy="20" r="6" fill="none" stroke="#fff" stroke-width="2.6"/>
+    <path d="M23.6 23.6L33 33M30 33l3-3M27 33l3-3" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-athena" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <circle cx="22" cy="22" r="6.5" fill="none" stroke="#fff" stroke-width="2.6"/>
+    <line x1="27" y1="27" x2="33.5" y2="33.5" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-quicksight" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <g fill="#fff"><rect x="14" y="25" width="4.5" height="9" rx="1.2"/><rect x="21.7" y="19" width="4.5" height="15" rx="1.2"/><rect x="29.5" y="14" width="4.5" height="20" rx="1.2"/></g>
+  </symbol>
+  <symbol id="ic-redshift" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M24 13l10 5.5v11L24 35 14 29.5v-11z" fill="none" stroke="#fff" stroke-width="2"/>
+    <path d="M14 18.5l10 5.5 10-5.5M24 24v11" fill="none" stroke="#fff" stroke-width="2"/>
+  </symbol>
+  <symbol id="ic-lakeformation" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M24 13l10 4.5v7c0 6-4.3 9.3-10 11-5.7-1.7-10-5-10-11v-7z" fill="none" stroke="#fff" stroke-width="2.2"/>
+    <path d="M20 24l3 3 5.5-5.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-lambda" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-compute)"/>
+    <path d="M16 34l8-20 9 20" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-sns" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-appint)"/>
+    <path d="M24 13a7 7 0 0 0-7 7c0 7-3 8-3 10h20c0-2-3-3-3-10a7 7 0 0 0-7-7z" fill="#fff"/>
+    <path d="M21.4 33.5a2.7 2.7 0 0 0 5.2 0z" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-iot" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <circle cx="24" cy="29" r="3" fill="#fff"/>
+    <path d="M18.5 25a8 8 0 0 1 11 0M15 21a13 13 0 0 1 18 0" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-mobile" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <rect x="17.5" y="12.5" width="13" height="23" rx="3" fill="#fff"/>
+    <circle cx="24" cy="32" r="1.4" fill="#2C4763"/>
+  </symbol>
+  <symbol id="ic-api" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <path d="M21 14c-3 0-3 4-3 5s0 5-3 5c3 0 3 4 3 5s0 5 3 5" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>
+    <path d="M27 14c3 0 3 4 3 5s0 5 3 5c-3 0-3 4-3 5s0 5-3 5" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- ===== Part 2 additions ===== -->
+  <symbol id="ic-emr" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <g fill="#fff"><rect x="14" y="14" width="20" height="6" rx="2"/><rect x="14" y="22" width="20" height="6" rx="2"/><rect x="14" y="30" width="20" height="6" rx="2"/></g>
+    <g fill="#5A2DBA"><circle cx="18" cy="17" r="1.4"/><circle cx="18" cy="25" r="1.4"/><circle cx="18" cy="33" r="1.4"/></g>
+  </symbol>
+  <symbol id="ic-spark" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M24 12l2.7 8.3 8.3 2.7-8.3 2.7L24 34l-2.7-8.3L13 23l8.3-2.7z" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-datawrangler" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M14 15h20l-7.5 9.5V32l-5 2.5V24.5z" fill="#fff"/>
+    <circle cx="33" cy="31" r="3.4" fill="#fff"/><path d="M33 29.4v3.2M31.4 31h3.2" stroke="#0B7E6E" stroke-width="1.4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-featurestore" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <rect x="13" y="14" width="22" height="20" rx="2.5" fill="none" stroke="#fff" stroke-width="2"/>
+    <line x1="13" y1="21" x2="35" y2="21" stroke="#fff" stroke-width="2"/>
+    <line x1="20.5" y1="21" x2="20.5" y2="34" stroke="#fff" stroke-width="2"/>
+    <line x1="27.5" y1="21" x2="27.5" y2="34" stroke="#fff" stroke-width="2"/>
+  </symbol>
+  <symbol id="ic-clarify" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <line x1="24" y1="14" x2="24" y2="34" stroke="#fff" stroke-width="2.4"/>
+    <line x1="15" y1="19" x2="33" y2="19" stroke="#fff" stroke-width="2.4"/>
+    <path d="M15 19l-3.2 6h6.4z" fill="#fff"/><path d="M33 19l-3.2 6h6.4z" fill="#fff"/>
+    <rect x="18.5" y="33" width="11" height="2.6" rx="1.3" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-groundtruth" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M15 16v-1h6M33 16v-1h-6M15 32v1h6M33 32v1h-6M14 18v12M34 18v12" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <path d="M19 24l3.2 3.2L29 20" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-canvas" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <rect x="13" y="13" width="22" height="17" rx="2.5" fill="none" stroke="#fff" stroke-width="2"/>
+    <circle cx="20" cy="20" r="2.3" fill="#fff"/>
+    <path d="M16 29l5-6 4 4 3-3 4 5" stroke="#fff" stroke-width="2" fill="none" stroke-linejoin="round"/>
+    <line x1="24" y1="30" x2="24" y2="35" stroke="#fff" stroke-width="2"/>
+    <line x1="19" y1="35" x2="29" y2="35" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-modelmonitor" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <circle cx="24" cy="24" r="11" fill="none" stroke="#fff" stroke-width="2.2"/>
+    <path d="M15 24h3.5l2-5 3.2 10 2.3-5H33" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-databrew" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-analytics)"/>
+    <path d="M15 22h15v6a6 6 0 0 1-6 6h-3a6 6 0 0 1-6-6z" fill="#fff"/>
+    <path d="M30 23.5h3a3 3 0 0 1 0 6h-3" fill="none" stroke="#fff" stroke-width="2"/>
+    <path d="M19 13.5c0 2-1.4 2.2-1.4 4M24.5 13.5c0 2-1.4 2.2-1.4 4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-comprehend" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M14 16h20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H23l-6 4.5V29h-3a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2z" fill="#fff"/>
+    <g stroke="#0B7E6E" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20.5" x2="30" y2="20.5"/><line x1="18" y1="25" x2="27" y2="25"/></g>
+  </symbol>
+  <symbol id="ic-mturk" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <g fill="#fff"><circle cx="19" cy="19" r="4.2"/><path d="M11 34a8 8 0 0 1 16 0z"/></g>
+    <g fill="#fff" opacity="0.82"><circle cx="31" cy="20.5" r="3.4"/><path d="M26.5 34a6.5 6.5 0 0 1 11.5 0z"/></g>
+  </symbol>
+  <symbol id="ic-text" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <rect x="15" y="13" width="18" height="22" rx="2.5" fill="#fff"/>
+    <g stroke="#2C4763" stroke-width="2" stroke-linecap="round"><line x1="19" y1="19" x2="29" y2="19"/><line x1="19" y1="24" x2="29" y2="24"/><line x1="19" y1="29" x2="25" y2="29"/></g>
+  </symbol>
+  <symbol id="ic-image" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <rect x="13" y="15" width="22" height="18" rx="2.5" fill="#fff"/>
+    <circle cx="19" cy="21" r="2.1" fill="#2C4763"/>
+    <path d="M15 31l6-7 4 4 3-3 5 6z" fill="#2C4763"/>
+  </symbol>
+
+  <!-- ===== Part 3 additions (managed AI services + hardware + generic algo) ===== -->
+  <symbol id="ic-translate" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M13 19h13M13 19l4-4M13 19l4 4" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M35 29H22M35 29l-4-4M35 29l-4 4" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-transcribe" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <rect x="20" y="13" width="8" height="15" rx="4" fill="#fff"/>
+    <path d="M16 25a8 8 0 0 0 16 0" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <line x1="24" y1="33" x2="24" y2="37" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-polly" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M14 21h5l6-5v16l-6-5h-5z" fill="#fff"/>
+    <path d="M29 20a6 6 0 0 1 0 8M32.5 17a10 10 0 0 1 0 14" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-rekognition" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M14 18v-4h4M34 18v-4h-4M14 30v4h4M34 30v4h-4" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M16 24c3-5 13-5 16 0c-3 5-13 5-16 0z" fill="#fff"/>
+    <circle cx="24" cy="24" r="2.7" fill="#0B7E6E"/>
+  </symbol>
+  <symbol id="ic-lex" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <path d="M14 16h20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H23l-6 4.5V29h-3a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2z" fill="#fff"/>
+    <circle cx="20.5" cy="22" r="1.7" fill="#0B7E6E"/><circle cx="27.5" cy="22" r="1.7" fill="#0B7E6E"/>
+    <path d="M20 26c2 2 6 2 8 0" stroke="#0B7E6E" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-personalize" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <circle cx="20" cy="20" r="4.6" fill="#fff"/>
+    <path d="M11 34a9 9 0 0 1 18 0z" fill="#fff"/>
+    <path d="M33 13l1.4 2.9 3.2.4-2.3 2.2.6 3.2-2.9-1.5-2.9 1.5.6-3.2-2.3-2.2 3.2-.4z" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-textract" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <rect x="13" y="13" width="16" height="22" rx="2.5" fill="#fff"/>
+    <g stroke="#0B7E6E" stroke-width="1.9" stroke-linecap="round"><line x1="17" y1="19" x2="25" y2="19"/><line x1="17" y1="24" x2="25" y2="24"/><line x1="17" y1="29" x2="22" y2="29"/></g>
+    <path d="M30 29h7M37 29l-3.2-3M37 29l-3.2 3" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-kendra" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <circle cx="22" cy="22" r="7.5" fill="none" stroke="#fff" stroke-width="2.6"/>
+    <line x1="27.5" y1="27.5" x2="34" y2="34" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-a2i" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <circle cx="22" cy="19" r="4.4" fill="#fff"/>
+    <path d="M13 34a9 9 0 0 1 18 0z" fill="#fff"/>
+    <circle cx="34" cy="15" r="5.2" fill="#fff"/>
+    <path d="M31.4 15l1.8 1.8 3.4-3.6" stroke="#0B7E6E" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-q" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-ml)"/>
+    <circle cx="23" cy="23" r="10.5" fill="none" stroke="#fff" stroke-width="3.2"/>
+    <line x1="28" y1="28" x2="35" y2="35" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-chip" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-compute)"/>
+    <rect x="16" y="16" width="16" height="16" rx="2.5" fill="#fff"/>
+    <rect x="20" y="20" width="8" height="8" rx="1.5" fill="#E8821E"/>
+    <g stroke="#fff" stroke-width="2" stroke-linecap="round">
+      <line x1="20" y1="12.5" x2="20" y2="16"/><line x1="24" y1="12.5" x2="24" y2="16"/><line x1="28" y1="12.5" x2="28" y2="16"/>
+      <line x1="20" y1="32" x2="20" y2="35.5"/><line x1="24" y1="32" x2="24" y2="35.5"/><line x1="28" y1="32" x2="28" y2="35.5"/>
+      <line x1="12.5" y1="20" x2="16" y2="20"/><line x1="12.5" y1="24" x2="16" y2="24"/><line x1="12.5" y1="28" x2="16" y2="28"/>
+      <line x1="32" y1="20" x2="35.5" y2="20"/><line x1="32" y1="24" x2="35.5" y2="24"/><line x1="32" y1="28" x2="35.5" y2="28"/>
+    </g>
+  </symbol>
+  <symbol id="ic-algorithm" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="10" fill="url(#g-neutral)"/>
+    <g stroke="#fff" stroke-width="2"><line x1="16" y1="17" x2="30" y2="24"/><line x1="16" y1="31" x2="30" y2="24"/><line x1="30" y1="24" x2="38" y2="24"/></g>
+    <g fill="#fff"><circle cx="16" cy="17" r="3.2"/><circle cx="16" cy="31" r="3.2"/><circle cx="30" cy="24" r="3.4"/><circle cx="38" cy="24" r="2.6"/></g>
+  </symbol>
+</svg>
+
+<!-- ===================== MASTHEAD ===================== -->
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">
+      <span class="dot"></span> AWS ML Engineer · Associate (MLA-C01)
+      <span class="muted">— Series #3 of 7 · Domain 2, Part 1 (26%)</span>
+    </p>
+    <h1>Buy, Configure, or Build: <em>Choosing a Modeling Approach</em></h1>
+    <p class="dek">The data is finally model-ready. Now the highest-leverage decision in the whole project: should MetroPulse call a pre-trained API, train an AWS-provided algorithm, or build something custom? Get this fork right and everything downstream is easier.</p>
+    <div class="byline">
+      <span class="av">SBM</span>
+      <span>By <b>Shahriar Bin Mohsin</b><br><span style="color:var(--ink-soft)"><b style="color:var(--ink)">The ML Engineering Notebook</b> — AWS Certified Machine Learning Engineer – Associate</span></span>
+      <span class="sep">·</span>
+      <span>~26 min read</span>
+      <span class="sep">·</span>
+      <span>Updated 2026</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc">
+    <div class="toc-h">In this build · Domain 2, Part 1</div>
+    <ol>
+      <li><a href="#spectrum">The spectrum: buy, configure, build</a></li>
+      <li><a href="#whybuy">Why buy: the case for managed AI services</a></li>
+      <li><a href="#talk">Talk &amp; listen: language, speech &amp; chat</a></li>
+      <li><a href="#see">See, extract, recommend &amp; review</a></li>
+      <li><a href="#q">Amazon Q &amp; the AI hardware</a></li>
+      <li><a href="#configure">Why configure: SageMaker built-in algorithms</a></li>
+      <li><a href="#catalog">The built-in algorithm catalog</a></li>
+      <li><a href="#mapping">Mapping MetroPulse to algorithms</a></li>
+      <li><a href="#decide">Buy vs configure vs build: deciding</a></li>
+      <li><a href="#landscape">The complete model landscape</a></li>
+      <li><a href="#cheatsheet">Which-when &amp; cheat-sheet</a></li>
+    </ol>
+  </nav>
+</div>
+
+<main class="wrap">
+
+  <p class="lead-line">Domain 2 (ML Model Development, 26%) opens with Task 2.1: <strong>choose a modeling approach</strong>. Before anyone tunes a hyperparameter, you decide <em>what kind of model this even is</em> — a pre-built AWS service, an AWS-provided algorithm you train, or something custom. This post is that decision, made concrete on MetroPulse.</p>
+
+  <div class="note">
+    <span class="tag">Previously on MetroPulse</span>
+    Across Domain 1 we built the data foundation for <strong>MetroPulse</strong>, a city-scale mobility platform. <strong>Part 1</strong> set up ingestion &amp; storage — Kinesis → Managed Service for Apache Flink → Amazon Data Firehose into an S3 Bronze/Silver/Gold lake. <strong>Part 2</strong> turned that raw data into model-ready features — EMR/Spark and Glue transforms, the cleaning gauntlet, TF-IDF on support tickets, Ground Truth labeling of damage photos, a Feature Store, and Athena-curated tables. The data is prepared. Now we choose how to model it.
+  </div>
+
+  <!-- ===================== SPECTRUM ===================== -->
+  <h2 id="spectrum"><span class="num">01 / THE FORK</span>The modeling spectrum — and why the project doesn't need to change</h2>
+
+  <p>Quick honesty check first, the same one I did before each previous post: does MetroPulse still fit the syllabus? This time the answer is an emphatic <em>yes, and then some</em>. The two data facets I added in Part 2 — <strong>support-ticket text</strong> and <strong>damage photos</strong> — were partly a bet on this exact domain. They pay off now: they unlock most of the managed AI services (Comprehend, Translate, Transcribe, Lex, Rekognition, Textract) and several built-in algorithms (BlazingText, Object Detection, topic models). Combined with the original telemetry and payments data, MetroPulse can legitimately exercise nearly every modeling option AWS offers. <strong>No project change needed</strong> — the groundwork was laid deliberately.</p>
+
+  <p>Task 2.1 is really about placing each business problem on a spectrum. At one end you <strong>buy</strong>: call a fully-managed AI service and let AWS's pre-trained model do the work. In the middle you <strong>configure</strong>: bring your own data to a SageMaker built-in algorithm — proven, optimized, no model code required. At the far end you <strong>build</strong>: write custom training code, or customize a foundation model. As you move right, you gain control and customization but take on more effort, cost, and ML expertise.</p>
+
+  <figure class="bleed">
+    <div class="diagram">
+      <svg viewBox="0 0 1080 360" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <linearGradient id="spec-grad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#1E7A64"/><stop offset="0.5" stop-color="#5A2DBA"/><stop offset="1" stop-color="#BE4A2C"/>
+          </linearGradient>
+          <marker id="sp-arr" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#473d33"/></marker>
+        </defs>
+
+        <!-- BUY -->
+        <rect x="28" y="60" width="320" height="180" rx="16" fill="#dcefe9" stroke="#1E7A64" stroke-width="2"/>
+        <text x="48" y="92" font-size="14" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#1E7A64">BUY</text>
+        <text x="48" y="116" font-size="15" font-weight="700" fill="#17130f">Managed AI services</text>
+        <text x="48" y="138" font-size="12" fill="#473d33">Pre-trained. Call an API.</text>
+        <use href="#ic-comprehend" x="48" y="156" width="30" height="30"/>
+        <use href="#ic-rekognition" x="86" y="156" width="30" height="30"/>
+        <use href="#ic-lex" x="124" y="156" width="30" height="30"/>
+        <use href="#ic-personalize" x="162" y="156" width="30" height="30"/>
+        <text x="48" y="212" font-size="11.5" fill="#15604f">No ML expertise · fastest · pay-per-call</text>
+        <text x="48" y="230" font-size="11.5" fill="#15604f">Least control over the model</text>
+
+        <!-- CONFIGURE -->
+        <rect x="380" y="60" width="320" height="180" rx="16" fill="#f3edf9" stroke="#5A2DBA" stroke-width="2"/>
+        <text x="400" y="92" font-size="14" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#5A2DBA">CONFIGURE</text>
+        <text x="400" y="116" font-size="15" font-weight="700" fill="#17130f">Built-in algorithms</text>
+        <text x="400" y="138" font-size="12" fill="#473d33">Your data + AWS's algorithm.</text>
+        <use href="#ic-sagemaker" x="400" y="156" width="30" height="30"/>
+        <use href="#ic-algorithm" x="438" y="156" width="30" height="30"/>
+        <text x="400" y="212" font-size="11.5" fill="#5A2DBA">Train on your data · no model code</text>
+        <text x="400" y="230" font-size="11.5" fill="#5A2DBA">Tune hyperparameters · more control</text>
+
+        <!-- BUILD -->
+        <rect x="732" y="60" width="320" height="180" rx="16" fill="#fae6d8" stroke="#BE4A2C" stroke-width="2"/>
+        <text x="752" y="92" font-size="14" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#BE4A2C">BUILD</text>
+        <text x="752" y="116" font-size="15" font-weight="700" fill="#17130f">Custom &amp; foundation models</text>
+        <text x="752" y="138" font-size="12" fill="#473d33">Your code, or a tuned FM.</text>
+        <use href="#ic-spark" x="752" y="156" width="30" height="30"/>
+        <use href="#ic-q" x="790" y="156" width="30" height="30"/>
+        <text x="752" y="212" font-size="11.5" fill="#9c3a22">Full control · maximum effort &amp; cost</text>
+        <text x="752" y="230" font-size="11.5" fill="#9c3a22">Covered in Part 2 &amp; the GenAI post</text>
+
+        <!-- gradient axis -->
+        <rect x="28" y="276" width="1024" height="10" rx="5" fill="url(#spec-grad)"/>
+        <text x="40" y="312" font-size="12.5" font-weight="600" fill="#1E7A64">← less effort, less control</text>
+        <text x="1040" y="312" text-anchor="end" font-size="12.5" font-weight="600" fill="#9c3a22">more control, more effort →</text>
+        <text x="540" y="340" text-anchor="middle" font-size="13" font-style="italic" font-family="'Fraunces',serif" fill="#473d33">The right answer is usually the leftmost option that actually solves the problem.</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig 1 — The modeling spectrum</b> Buy, configure, or build. Move right for control and customization; move left for speed and simplicity.</figcaption>
+  </figure>
+
+  <div class="project-card">
+    <span class="tag">The brief · Domain 2, Part 1</span>
+    <h3>One platform, many model decisions</h3>
+    <p>MetroPulse has a dozen problems that each want a model. The job for this post isn't to train them — it's to <b>place each one on the spectrum</b> and justify the call:</p>
+    <ul>
+      <li><b>Ticket sentiment &amp; PII, transcription, translation, chatbot</b> → almost certainly <b>buy</b> (these are solved problems).</li>
+      <li><b>Demand forecasting, predictive maintenance, anomaly detection, segmentation, fraud</b> → likely <b>configure</b> with a built-in algorithm on our own data.</li>
+      <li><b>Anything genuinely novel or needing deep customization</b> → <b>build</b> (Part 2's custom training, or the GenAI post's foundation models).</li>
+    </ul>
+    <p>The golden rule, baked into Fig 1: <b>pick the leftmost option that actually solves the problem.</b> Don't train a model when an API will do; don't call a generic API when your data demands a tailored one.</p>
+  </div>
+
+  <div class="note exam">
+    <span class="tag">Exam lens</span>
+    Task 2.1 questions almost always describe a business problem and ask for the <em>most appropriate</em> (often "least operational overhead" or "fastest to deploy") approach. The trap is over-engineering: if Amazon Comprehend already does sentiment analysis, "train a custom model" is the wrong answer even though it would work. Read for the constraint — speed, cost, expertise, or customization — and let it point you along the spectrum.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== WHY BUY ===================== -->
+  <h2 id="whybuy"><span class="num">02 / WHY BUY</span>The case for managed AI services</h2>
+
+  <p>For a huge class of problems — recognizing objects in a photo, transcribing speech, detecting sentiment — the model has already been built, trained on more data than MetroPulse will ever have, and exposed as a simple API. <strong>AWS managed AI services</strong> let you consume that intelligence with a function call: no training, no infrastructure, no ML PhD. You pay per request, AWS keeps improving the model underneath, and it scales automatically.</p>
+
+  <p>The tradeoff is control. A managed service does what it does; you can't reshape its internals. For genuinely domain-specific needs, several services offer a middle path — <strong>Comprehend custom classification</strong>, <strong>Rekognition Custom Labels</strong>, <strong>Transcribe custom vocabulary</strong> — where you supply a little of your own data to specialize a managed model without building one from scratch. But the default instinct should be: if a managed service solves it, use it.</p>
+
+  <!-- ===================== TALK & LISTEN ===================== -->
+  <h2 id="talk"><span class="num">03 / TALK &amp; LISTEN</span>Language, speech &amp; conversation services</h2>
+
+  <p>MetroPulse generates a river of language: support tickets, call-center audio, in-app chat, multilingual riders. AWS has a managed service for each step, and they compose beautifully.</p>
+
+  <figure class="bleed">
+    <div class="diagram">
+      <svg viewBox="0 0 1080 300" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <marker id="t-arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#473d33"/></marker>
+        </defs>
+        <text x="540" y="30" text-anchor="middle" font-size="12" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#BE4A2C" letter-spacing="1">A RIDER SUPPORT INTERACTION, FULLY MANAGED</text>
+
+        <rect x="20" y="70" width="130" height="74" rx="11" fill="#fff" stroke="#385a7a" stroke-width="1.6"/>
+        <text x="85" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Rider call</text>
+        <text x="85" y="118" text-anchor="middle" font-size="10.5" fill="#473d33">audio</text>
+
+        <rect x="186" y="70" width="140" height="74" rx="11" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.6"/>
+        <use href="#ic-transcribe" x="198" y="80" width="24" height="24"/>
+        <text x="256" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Transcribe</text>
+        <text x="256" y="116" text-anchor="middle" font-size="10" fill="#473d33">speech → text</text>
+
+        <rect x="362" y="70" width="150" height="74" rx="11" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.6"/>
+        <use href="#ic-comprehend" x="374" y="80" width="24" height="24"/>
+        <text x="437" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Comprehend</text>
+        <text x="437" y="116" text-anchor="middle" font-size="10" fill="#473d33">sentiment · PII · intent</text>
+
+        <rect x="548" y="70" width="140" height="74" rx="11" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.6"/>
+        <use href="#ic-lex" x="560" y="80" width="24" height="24"/>
+        <text x="618" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Lex</text>
+        <text x="618" y="116" text-anchor="middle" font-size="10" fill="#473d33">bot resolves / routes</text>
+
+        <rect x="724" y="70" width="150" height="74" rx="11" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.6"/>
+        <use href="#ic-translate" x="736" y="80" width="24" height="24"/>
+        <text x="799" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Translate</text>
+        <text x="799" y="116" text-anchor="middle" font-size="10" fill="#473d33">rider's language</text>
+
+        <rect x="910" y="70" width="150" height="74" rx="11" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.6"/>
+        <use href="#ic-polly" x="922" y="80" width="24" height="24"/>
+        <text x="985" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Polly</text>
+        <text x="985" y="116" text-anchor="middle" font-size="10" fill="#473d33">text → voice reply</text>
+
+        <g stroke="#473d33" stroke-width="1.7" fill="none">
+          <path d="M150,107 L184,107" marker-end="url(#t-arr)"/>
+          <path d="M326,107 L360,107" marker-end="url(#t-arr)"/>
+          <path d="M512,107 L546,107" marker-end="url(#t-arr)"/>
+          <path d="M688,107 L722,107" marker-end="url(#t-arr)"/>
+          <path d="M874,107 L908,107" marker-end="url(#t-arr)"/>
+        </g>
+
+        <!-- kendra aside -->
+        <rect x="362" y="196" width="356" height="64" rx="11" fill="#fbf8f2" stroke="#0B7E6E" stroke-width="1.5"/>
+        <use href="#ic-kendra" x="376" y="208" width="26" height="26"/>
+        <text x="540" y="222" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Kendra — intelligent search over ops &amp; policy docs</text>
+        <text x="540" y="240" text-anchor="middle" font-size="10.5" fill="#473d33">agents ask in natural language; Kendra answers from internal knowledge</text>
+        <path d="M437,144 L470,194" stroke="#0B7E6E" stroke-width="1.4" fill="none" stroke-dasharray="4 3" marker-end="url(#t-arr)"/>
+      </svg>
+    </div>
+    <figcaption><b>Fig 2 — Composed AI services</b> A single support interaction chains five managed services — none of which MetroPulse had to train.</figcaption>
+  </figure>
+
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr><th>Service</th><th>What it does</th><th>MetroPulse use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><b>Comprehend</b></td><td>NLP: sentiment, entities, key phrases, language, PII; custom classification &amp; entities</td><td>Score ticket sentiment, redact PII, auto-tag ticket topics</td></tr>
+      <tr><td><b>Translate</b></td><td>Neural machine translation across languages</td><td>Serve support &amp; the app to a multilingual ridership</td></tr>
+      <tr><td><b>Transcribe</b></td><td>Speech-to-text; speaker labels, custom vocabulary, PII redaction</td><td>Turn support-hotline calls into searchable text</td></tr>
+      <tr><td><b>Polly</b></td><td>Text-to-speech with lifelike neural voices (SSML)</td><td>Spoken replies in the app and IVR</td></tr>
+      <tr><td><b>Lex</b></td><td>Conversational bots — intents &amp; slots; powers Amazon Connect IVR</td><td>Self-service "where's my refund / report a fault" bot</td></tr>
+      <tr><td><b>Kendra</b></td><td>ML-powered intelligent search with natural-language understanding</td><td>Let ops staff search policies, manuals &amp; runbooks by question</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note exam">
+    <span class="tag">Exam lens</span>
+    Memorize the one-line job of each: <strong>Transcribe</strong> = speech→text, <strong>Polly</strong> = text→speech, <strong>Translate</strong> = language→language, <strong>Comprehend</strong> = understand text (sentiment/entities/PII), <strong>Lex</strong> = build a chatbot, <strong>Kendra</strong> = intelligent search. Scenario questions hinge on matching the verb in the prompt to the right service.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== SEE / EXTRACT / RECOMMEND / REVIEW ===================== -->
+  <h2 id="see"><span class="num">04 / SEE &amp; EXTRACT</span>Vision, documents, recommendations &amp; human review</h2>
+
+  <p>Beyond language, MetroPulse has images, documents, and personalization needs — and again, mostly solved problems.</p>
+
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr><th>Service</th><th>What it does</th><th>MetroPulse use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><b>Rekognition</b></td><td>Image &amp; video analysis: objects, faces, text, moderation; <i>Custom Labels</i> for your own categories</td><td>First-pass triage of damage photos; flag unsafe/inappropriate uploads</td></tr>
+      <tr><td><b>Textract</b></td><td>Extract text, forms &amp; tables from documents (beyond plain OCR)</td><td>Pull data from partner contracts, insurance docs &amp; maintenance invoices</td></tr>
+      <tr><td><b>Personalize</b></td><td>Real-time recommendations from the same tech behind Amazon.com</td><td>Suggest nearby vehicles, routes &amp; promotions per rider</td></tr>
+      <tr><td><b>Augmented AI (A2I)</b></td><td>Human-in-the-loop review workflows for low-confidence predictions</td><td>Send uncertain damage classifications to a human reviewer</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>The one that deserves a picture is <strong>Amazon A2I</strong>, because it encodes a pattern the exam loves: don't choose between automation and humans — combine them by <em>confidence</em>. A model handles the confident cases; anything below a threshold is routed to a person, whose answer also becomes new training data.</p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 1080 250" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <marker id="a-arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#473d33"/></marker>
+        </defs>
+        <rect x="24" y="96" width="150" height="64" rx="11" fill="#fff" stroke="#385a7a" stroke-width="1.6"/>
+        <use href="#ic-image" x="38" y="108" width="24" height="24"/>
+        <text x="110" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Damage photo</text>
+        <text x="110" y="142" text-anchor="middle" font-size="10" fill="#473d33">incoming</text>
+
+        <rect x="214" y="96" width="160" height="64" rx="11" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.6"/>
+        <use href="#ic-rekognition" x="226" y="108" width="24" height="24"/>
+        <text x="302" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">Model scores it</text>
+        <text x="302" y="142" text-anchor="middle" font-size="10" fill="#473d33">confidence?</text>
+
+        <!-- decision -->
+        <path d="M470 128 l34 -26 34 26 -34 26 z" fill="#fbf8f2" stroke="#BE4A2C" stroke-width="1.6"/>
+        <text x="504" y="132" text-anchor="middle" font-size="11" font-weight="700" fill="#9c3a22">≥ thresh?</text>
+
+        <!-- high conf -->
+        <rect x="612" y="40" width="180" height="60" rx="11" fill="#17130f"/>
+        <text x="702" y="66" text-anchor="middle" font-size="12" font-weight="700" fill="#F3EDE3">Auto-accept</text>
+        <text x="702" y="84" text-anchor="middle" font-size="10" fill="#d8cdbb">confident → done</text>
+
+        <!-- low conf -->
+        <rect x="612" y="158" width="180" height="60" rx="11" fill="#dcefe9" stroke="#0B7E6E" stroke-width="1.8"/>
+        <use href="#ic-a2i" x="624" y="170" width="24" height="24"/>
+        <text x="712" y="184" text-anchor="middle" font-size="12" font-weight="700" fill="#17130f">A2I → human</text>
+        <text x="712" y="202" text-anchor="middle" font-size="10" fill="#473d33">reviewer decides</text>
+
+        <!-- feedback -->
+        <rect x="852" y="158" width="200" height="60" rx="11" fill="#fff" stroke="#385a7a" stroke-width="1.4" stroke-dasharray="4 3"/>
+        <text x="952" y="184" text-anchor="middle" font-size="11.5" font-weight="600" fill="#385a7a">label → new training data</text>
+        <text x="952" y="202" text-anchor="middle" font-size="10" fill="#473d33">model improves over time</text>
+
+        <g stroke="#473d33" stroke-width="1.7" fill="none">
+          <path d="M174,128 L212,128" marker-end="url(#a-arr)"/>
+          <path d="M374,128 L466,128" marker-end="url(#a-arr)"/>
+          <path d="M538,112 C575,90 580,75 610,70" marker-end="url(#a-arr)"/>
+          <path d="M538,144 C575,166 580,180 610,184" marker-end="url(#a-arr)"/>
+          <path d="M792,188 L850,188" marker-end="url(#a-arr)"/>
+        </g>
+      </svg>
+    </div>
+    <figcaption><b>Fig 3 — Human-in-the-loop with A2I</b> Confident predictions are auto-accepted; uncertain ones go to a human, whose answer feeds back as training data.</figcaption>
+  </figure>
+
+  <div class="note">
+    <span class="tag">Callback</span>
+    Notice A2I and Ground Truth (Part 2) both route work to human reviewers — but at different moments. <strong>Ground Truth</strong> labels a dataset <em>before</em> training; <strong>A2I</strong> reviews live, low-confidence predictions <em>after</em> deployment. Same workforces, different stage of the lifecycle.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== AMAZON Q & HARDWARE ===================== -->
+  <h2 id="q"><span class="num">05 / Q &amp; SILICON</span>Amazon Q and the AI hardware underneath</h2>
+
+  <p>Two more pieces round out the "buy" tier. <strong>Amazon Q</strong> is AWS's family of generative-AI assistants. <strong>Q Business</strong> connects to your enterprise systems and answers questions over your own content — MetroPulse could point it at ops runbooks, policies, and dashboards so staff get grounded answers instead of hunting through wikis. <strong>Q Apps</strong> lets non-developers turn a prompt into a lightweight internal app. <strong>Q Developer</strong> is the AI coding assistant (the successor to CodeWhisperer) that lives in the IDE, CLI, and Console. One thing worth knowing as of 2026: AWS is shifting Q Developer — new sign-ups are being curtailed and its newest coding models are moving to AWS's <em>Kiro</em> experience — so treat the conceptual role (an AWS-aware coding assistant) as the durable, exam-relevant idea rather than the exact packaging.</p>
+
+  <p>Underneath every training and inference job sits silicon, and AWS builds its own. <strong>AWS Trainium</strong> chips (now through Trainium2 and Trainium3) are purpose-built for <em>training</em> at lower cost than comparable GPU instances; <strong>AWS Inferentia</strong> chips (through Inferentia2) are optimized for <em>inference</em> — high throughput, low cost per prediction. You target both through the <strong>AWS Neuron SDK</strong>. For MetroPulse, the practical takeaway is cost: when our models graduate to heavy, steady workloads, Trainium/Inferentia instances can cut the bill substantially versus general-purpose GPUs.</p>
+
+  <div class="note exam">
+    <span class="tag">Exam lens</span>
+    Keep the chip split crisp: <strong>Trainium = training</strong>, <strong>Inferentia = inference</strong>, both accessed via the <strong>Neuron SDK</strong>, both chosen for <strong>price-performance</strong> over GPUs. If a question stresses "reduce training cost" → Trainium; "reduce inference cost at scale" → Inferentia.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== WHY CONFIGURE ===================== -->
+  <h2 id="configure"><span class="num">06 / CONFIGURE</span>When you need your own model: SageMaker built-in algorithms</h2>
+
+  <p>Managed services are perfect until your problem is <em>yours</em>. No API knows what "normal" battery drain looks like for MetroPulse scooters in winter, or how this city's demand curves bend on game nights. For those, you need a model trained on <strong>your</strong> data — but you almost never need to implement the algorithm yourself. <strong>SageMaker AI</strong> (the renamed core ML platform from Part 2) ships a catalog of <strong>built-in algorithms</strong>: AWS-implemented, performance-tuned, distributed-by-default versions of the workhorse ML algorithms. You bring data to S3, pick the algorithm, set a few hyperparameters, and launch a training job. No model code.</p>
+
+  <h3>SageMaker input modes — how data reaches the training job</h3>
+  <p>One small but testable detail: how the algorithm reads data from S3. <strong>File mode</strong> (the default) copies the entire dataset onto the training instance's disk before starting — simple, fine for datasets that fit. <strong>Pipe mode</strong> streams data directly from S3 as the job runs — lower startup time and no need to fit the data on disk, good for very large datasets. <strong>FastFile mode</strong> is the modern best-of-both: data is streamed on demand but accessed as if it were local files, so you get Pipe-like scalability with File-like simplicity. Built-in algorithms also favor efficient formats like <strong>RecordIO-protobuf</strong> alongside CSV.</p>
+
+  <div class="note gotcha">
+    <span class="tag">Common trap</span>
+    "The training dataset is hundreds of GB and won't fit on the instance volume." That's a <strong>Pipe mode</strong> (or <strong>FastFile mode</strong>) signal — stream from S3 rather than downloading. Don't reach for a bigger, pricier instance just to hold the whole file when streaming solves it.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== ALGORITHM CATALOG ===================== -->
+  <h2 id="catalog"><span class="num">07 / THE CATALOG</span>The built-in algorithm catalog, by problem type</h2>
+
+  <p>There are around eighteen built-in algorithms, and trying to memorize them as a flat list is hopeless. Group them by the <em>kind of problem</em> they solve and the picture gets manageable. Here's the full catalog, organized the way I actually think about it.</p>
+
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr><th>Problem type</th><th>Algorithm</th><th>What it's for</th></tr>
+    </thead>
+    <tbody>
+      <tr><td rowspan="5"><b>Tabular<br>(classify / regress)</b></td><td>XGBoost</td><td>Gradient-boosted trees — the go-to for structured/tabular data</td></tr>
+      <tr><td>Linear Learner</td><td>Fast linear models for classification &amp; regression</td></tr>
+      <tr><td>LightGBM</td><td>Gradient boosting tuned for speed on large datasets</td></tr>
+      <tr><td>K-Nearest Neighbors</td><td>Predict from the closest labeled points</td></tr>
+      <tr><td>Factorization Machines</td><td>High-dimensional <i>sparse</i> data; clicks &amp; recommendations</td></tr>
+      <tr><td><b>Time series</b></td><td>DeepAR</td><td>Probabilistic forecasting across many related series</td></tr>
+      <tr><td rowspan="5"><b>Text / NLP</b></td><td>BlazingText</td><td>Fast word embeddings (Word2Vec) &amp; text classification</td></tr>
+      <tr><td>Object2Vec</td><td>General-purpose embeddings of objects &amp; pairs</td></tr>
+      <tr><td>Seq2Seq</td><td>Sequence-to-sequence: translation, summarization</td></tr>
+      <tr><td>Neural Topic Model</td><td>Discover topics in documents (neural)</td></tr>
+      <tr><td>LDA</td><td>Discover topics in documents (probabilistic)</td></tr>
+      <tr><td rowspan="3"><b>Computer vision</b></td><td>Image Classification</td><td>Label the whole image</td></tr>
+      <tr><td>Object Detection</td><td>Locate &amp; classify objects (bounding boxes)</td></tr>
+      <tr><td>Semantic Segmentation</td><td>Classify every pixel</td></tr>
+      <tr><td rowspan="4"><b>Unsupervised<br>&amp; anomaly</b></td><td>K-Means</td><td>Cluster unlabeled data into groups</td></tr>
+      <tr><td>PCA</td><td>Reduce dimensionality while keeping variance</td></tr>
+      <tr><td>Random Cut Forest</td><td>Detect anomalies / outliers in data</td></tr>
+      <tr><td>IP Insights</td><td>Spot anomalous entity-to-IP usage (security)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>The selection logic behind that table is itself testable. The first fork is whether your data is <strong>labeled</strong> (supervised) or not (unsupervised); the next is the <em>shape</em> of the problem — tabular, sequence, text, image, or "find the weird one."</p>
+
+  <figure class="bleed">
+    <div class="diagram">
+      <svg viewBox="0 0 1080 360" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <marker id="c-arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#473d33"/></marker>
+        </defs>
+        <!-- root -->
+        <rect x="450" y="20" width="180" height="50" rx="11" fill="#17130f"/>
+        <text x="540" y="42" text-anchor="middle" font-size="12.5" font-weight="700" fill="#F3EDE3">What's the problem?</text>
+        <text x="540" y="59" text-anchor="middle" font-size="10" fill="#d8cdbb">labeled data?</text>
+
+        <!-- supervised branch -->
+        <rect x="120" y="110" width="170" height="44" rx="10" fill="#dcefe9" stroke="#1E7A64" stroke-width="1.6"/>
+        <text x="205" y="137" text-anchor="middle" font-size="12" font-weight="700" fill="#15604f">Supervised</text>
+        <!-- unsupervised branch -->
+        <rect x="790" y="110" width="170" height="44" rx="10" fill="#f3edf9" stroke="#5A2DBA" stroke-width="1.6"/>
+        <text x="875" y="137" text-anchor="middle" font-size="12" font-weight="700" fill="#5A2DBA">Unsupervised</text>
+
+        <g stroke="#473d33" stroke-width="1.6" fill="none">
+          <path d="M490,70 C400,90 300,95 240,108" marker-end="url(#c-arr)"/>
+          <path d="M590,70 C700,90 800,95 855,108" marker-end="url(#c-arr)"/>
+        </g>
+
+        <!-- supervised leaves -->
+        <g font-size="10.5" fill="#17130f">
+          <rect x="20" y="196" width="150" height="58" rx="9" fill="#fff" stroke="#1E7A64" stroke-width="1.3"/>
+          <text x="95" y="218" text-anchor="middle" font-weight="700">Tabular</text>
+          <text x="95" y="234" text-anchor="middle" fill="#473d33">XGBoost · Linear</text>
+          <text x="95" y="248" text-anchor="middle" fill="#473d33">LightGBM · KNN · FM</text>
+
+          <rect x="184" y="196" width="150" height="58" rx="9" fill="#fff" stroke="#1E7A64" stroke-width="1.3"/>
+          <text x="259" y="218" text-anchor="middle" font-weight="700">Time series</text>
+          <text x="259" y="238" text-anchor="middle" fill="#473d33">DeepAR</text>
+
+          <rect x="348" y="196" width="150" height="58" rx="9" fill="#fff" stroke="#1E7A64" stroke-width="1.3"/>
+          <text x="423" y="218" text-anchor="middle" font-weight="700">Vision</text>
+          <text x="423" y="234" text-anchor="middle" fill="#473d33">Image Class.</text>
+          <text x="423" y="248" text-anchor="middle" fill="#473d33">Obj Detect · Segment</text>
+
+          <rect x="512" y="196" width="150" height="58" rx="9" fill="#fff" stroke="#1E7A64" stroke-width="1.3"/>
+          <text x="587" y="218" text-anchor="middle" font-weight="700">Text</text>
+          <text x="587" y="234" text-anchor="middle" fill="#473d33">BlazingText</text>
+          <text x="587" y="248" text-anchor="middle" fill="#473d33">Seq2Seq · Object2Vec</text>
+        </g>
+        <!-- unsupervised leaves -->
+        <g font-size="10.5" fill="#17130f">
+          <rect x="700" y="196" width="150" height="58" rx="9" fill="#fff" stroke="#5A2DBA" stroke-width="1.3"/>
+          <text x="775" y="218" text-anchor="middle" font-weight="700">Group / reduce</text>
+          <text x="775" y="234" text-anchor="middle" fill="#473d33">K-Means · PCA</text>
+          <text x="775" y="248" text-anchor="middle" fill="#473d33">NTM · LDA</text>
+
+          <rect x="864" y="196" width="160" height="58" rx="9" fill="#fff" stroke="#5A2DBA" stroke-width="1.3"/>
+          <text x="944" y="218" text-anchor="middle" font-weight="700">Find anomalies</text>
+          <text x="944" y="234" text-anchor="middle" fill="#473d33">Random Cut Forest</text>
+          <text x="944" y="248" text-anchor="middle" fill="#473d33">IP Insights</text>
+        </g>
+
+        <g stroke="#473d33" stroke-width="1.4" fill="none" stroke-dasharray="3 3">
+          <path d="M180,154 L95,194" marker-end="url(#c-arr)"/>
+          <path d="M200,154 L259,194" marker-end="url(#c-arr)"/>
+          <path d="M230,154 L423,194" marker-end="url(#c-arr)"/>
+          <path d="M255,154 L587,194" marker-end="url(#c-arr)"/>
+          <path d="M870,154 L775,194" marker-end="url(#c-arr)"/>
+          <path d="M890,154 L944,194" marker-end="url(#c-arr)"/>
+        </g>
+        <text x="540" y="300" text-anchor="middle" font-size="13" font-style="italic" font-family="'Fraunces',serif" fill="#473d33">Labeled or not, then the shape of the problem — that's the whole selection logic.</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig 4 — Selecting a built-in algorithm</b> Start with supervised vs unsupervised, then match the problem shape to a family.</figcaption>
+  </figure>
+
+  <div class="note exam">
+    <span class="tag">Exam lens — the heavy hitters</span>
+    A handful come up far more than the rest: <strong>XGBoost</strong> (tabular default), <strong>DeepAR</strong> (time-series forecasting), <strong>Random Cut Forest</strong> (anomaly detection), <strong>K-Means</strong> (clustering), <strong>PCA</strong> (dimensionality reduction), <strong>BlazingText</strong> (text classification/embeddings), and <strong>Object Detection / Image Classification</strong> (vision). Know these cold and you'll answer most algorithm-matching questions.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== MAPPING ===================== -->
+  <h2 id="mapping"><span class="num">08 / THE MAP</span>Mapping MetroPulse's problems to approaches</h2>
+
+  <p>Here's where the spectrum earns its keep. Every MetroPulse problem gets placed, with a one-line justification — exactly the reasoning a Task 2.1 question wants from you.</p>
+
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr><th>MetroPulse problem</th><th>Approach</th><th>Service / algorithm</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Ticket sentiment &amp; PII</td><td><b style="color:var(--teal)">Buy</b></td><td>Comprehend</td><td>Solved problem; no training</td></tr>
+      <tr><td>Multilingual support</td><td><b style="color:var(--teal)">Buy</b></td><td>Translate</td><td>Pre-trained MT</td></tr>
+      <tr><td>Call transcription</td><td><b style="color:var(--teal)">Buy</b></td><td>Transcribe</td><td>Managed speech-to-text</td></tr>
+      <tr><td>Self-service support bot</td><td><b style="color:var(--teal)">Buy</b></td><td>Lex (+ Polly)</td><td>Build a bot, not a model</td></tr>
+      <tr><td>Ops knowledge search</td><td><b style="color:var(--teal)">Buy</b></td><td>Kendra</td><td>Intelligent search out of the box</td></tr>
+      <tr><td>Demand forecasting</td><td><b style="color:var(--rust)">Configure</b></td><td>DeepAR</td><td>Time series, on our own data</td></tr>
+      <tr><td>Predictive maintenance</td><td><b style="color:var(--rust)">Configure</b></td><td>XGBoost</td><td>Tabular telemetry features</td></tr>
+      <tr><td>Telemetry anomaly detection</td><td><b style="color:var(--rust)">Configure</b></td><td>Random Cut Forest</td><td>Unsupervised, our normal ≠ generic normal</td></tr>
+      <tr><td>Rider &amp; station segmentation</td><td><b style="color:var(--rust)">Configure</b></td><td>K-Means</td><td>Cluster unlabeled behavior</td></tr>
+      <tr><td>Ticket routing / topics</td><td><b style="color:var(--rust)">Configure</b></td><td>BlazingText / NTM</td><td>Classify &amp; topic-model our text</td></tr>
+      <tr><td>Suspicious account access</td><td><b style="color:var(--rust)">Configure</b></td><td>IP Insights</td><td>Anomalous entity-to-IP usage</td></tr>
+      <tr><td>Recommendations</td><td><b style="color:var(--teal)">Buy</b> → <b style="color:var(--rust)">Configure</b></td><td>Personalize → Factorization Machines</td><td>Start managed; tailor later if needed</td></tr>
+      <tr><td>Damage-photo triage</td><td><b style="color:var(--teal)">Buy</b> ⇄ <b style="color:var(--rust)">Configure</b></td><td>Rekognition Custom Labels ⇄ Object Detection</td><td>The interesting one — see below</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>The damage-photo case is the best teaching example, because it sits right on the buy/configure seam. <strong>Rekognition Custom Labels</strong> (buy, lightly specialized) gets you a working damage detector fast with relatively little labeled data — ideal for a first version. If accuracy demands grow and we want full control over the model and its bounding boxes, the built-in <strong>Object Detection</strong> algorithm (configure) trained on the dataset we labeled with Ground Truth in Part 2 becomes the better fit. Same problem, two valid answers — and the right one depends entirely on the constraints in the question.</p>
+
+  <div class="note">
+    <span class="tag">Series thread</span>
+    Every "configure" row above is a model we'll actually <em>train, tune, and evaluate</em> in Part 2 of Domain 2 (the next post). This post decided <em>which</em> algorithm; the next decides how to make it good.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== DECIDE ===================== -->
+  <h2 id="decide"><span class="num">09 / DECIDE</span>Buy vs configure vs build: the framework</h2>
+
+  <p>Strip away the service names and the decision comes down to a few questions. Ask them in order and the answer usually falls out.</p>
+
+  <p>First: <strong>is this a common, solved problem?</strong> Sentiment, transcription, translation, object recognition, search — if yes, <em>buy</em>. Second: <strong>does a managed service exist but not quite fit your data or accuracy bar?</strong> Try its customization feature (Comprehend custom, Rekognition Custom Labels) before escalating. Third: <strong>is the problem specific to your data but a standard ML shape</strong> (tabular prediction, forecasting, clustering, anomaly detection)? Then <em>configure</em> a built-in algorithm. Only when the problem is genuinely novel, needs full architectural control, or calls for generative capability do you <em>build</em> — custom training (Part 2) or a foundation model (the GenAI post).</p>
+
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr><th>If the scenario stresses…</th><th>Lean toward…</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>"Least operational overhead" / "fastest to deploy" / "no ML expertise"</td><td><b style="color:var(--teal)">Buy</b> — managed AI service</td></tr>
+      <tr><td>"Common task" (sentiment, OCR, speech, objects, search)</td><td><b style="color:var(--teal)">Buy</b></td></tr>
+      <tr><td>"Managed service, but our domain terms / categories"</td><td><b style="color:var(--teal)">Buy</b> + customization feature</td></tr>
+      <tr><td>"Train on our own data" + a standard ML shape</td><td><b style="color:var(--rust)">Configure</b> — built-in algorithm</td></tr>
+      <tr><td>"Full control of the model" / novel architecture</td><td><b style="color:var(--rust)">Build</b> — custom training</td></tr>
+      <tr><td>"Generate text / summarize / reason / chat"</td><td><b style="color:var(--rust)">Build</b> — foundation model (Bedrock)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note gotcha">
+    <span class="tag">The two classic traps</span>
+    <strong>Over-engineering:</strong> choosing "train a custom model" when a managed service already does the job — wrong whenever the prompt rewards speed or low overhead. <strong>Under-powering:</strong> forcing a generic API onto a problem that genuinely needs your data — a managed sentiment API won't learn MetroPulse's domain jargon the way a custom classifier will. The spectrum exists precisely so you don't default to either extreme.
+  </div>
+
+  <hr class="rule">
+
+  <!-- ===================== LANDSCAPE ===================== -->
+  <h2 id="landscape"><span class="num">10 / THE WHOLE</span>MetroPulse's complete model landscape</h2>
+
+  <p>One picture for the whole platform: every problem placed on the spectrum, with the service or algorithm that wins it. The left two columns are this post; the right column is the road ahead.</p>
+
+  <figure class="bleed">
+    <div class="diagram">
+      <svg viewBox="0 0 1120 470" xmlns="http://www.w3.org/2000/svg" font-family="'Spline Sans',sans-serif">
+        <defs>
+          <linearGradient id="land-grad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#1E7A64"/><stop offset="0.5" stop-color="#5A2DBA"/><stop offset="1" stop-color="#BE4A2C"/>
+          </linearGradient>
+        </defs>
+
+        <!-- BUY column -->
+        <rect x="24" y="44" width="350" height="372" rx="16" fill="#dcefe9" stroke="#1E7A64" stroke-width="2"/>
+        <text x="44" y="74" font-size="14" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#1E7A64">BUY · managed AI services</text>
+        <g font-size="11.5" fill="#17130f">
+          <use href="#ic-comprehend" x="44" y="90" width="22" height="22"/><text x="74" y="105">Comprehend — ticket sentiment &amp; PII</text>
+          <use href="#ic-translate" x="44" y="124" width="22" height="22"/><text x="74" y="139">Translate — multilingual support</text>
+          <use href="#ic-transcribe" x="44" y="158" width="22" height="22"/><text x="74" y="173">Transcribe — call → text</text>
+          <use href="#ic-polly" x="44" y="192" width="22" height="22"/><text x="74" y="207">Polly — voice replies</text>
+          <use href="#ic-lex" x="44" y="226" width="22" height="22"/><text x="74" y="241">Lex — self-service bot</text>
+          <use href="#ic-kendra" x="44" y="260" width="22" height="22"/><text x="74" y="275">Kendra — ops knowledge search</text>
+          <use href="#ic-rekognition" x="44" y="294" width="22" height="22"/><text x="74" y="309">Rekognition — first-pass damage</text>
+          <use href="#ic-personalize" x="44" y="328" width="22" height="22"/><text x="74" y="343">Personalize — recommendations</text>
+          <use href="#ic-textract" x="44" y="362" width="22" height="22"/><text x="74" y="377">Textract — partner documents</text>
+        </g>
+
+        <!-- CONFIGURE column -->
+        <rect x="392" y="44" width="350" height="372" rx="16" fill="#f3edf9" stroke="#5A2DBA" stroke-width="2"/>
+        <text x="412" y="74" font-size="14" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#5A2DBA">CONFIGURE · built-in algorithms</text>
+        <g font-size="11.5" fill="#17130f">
+          <use href="#ic-algorithm" x="412" y="90" width="22" height="22"/><text x="442" y="105">DeepAR — demand forecasting</text>
+          <use href="#ic-algorithm" x="412" y="124" width="22" height="22"/><text x="442" y="139">XGBoost — predictive maintenance</text>
+          <use href="#ic-algorithm" x="412" y="158" width="22" height="22"/><text x="442" y="173">Random Cut Forest — anomalies</text>
+          <use href="#ic-algorithm" x="412" y="192" width="22" height="22"/><text x="442" y="207">K-Means — rider/station segments</text>
+          <use href="#ic-algorithm" x="412" y="226" width="22" height="22"/><text x="442" y="241">BlazingText — ticket routing</text>
+          <use href="#ic-algorithm" x="412" y="260" width="22" height="22"/><text x="442" y="275">IP Insights — suspicious access</text>
+          <use href="#ic-algorithm" x="412" y="294" width="22" height="22"/><text x="442" y="309">Object Detection — damage v2</text>
+          <use href="#ic-algorithm" x="412" y="328" width="22" height="22"/><text x="442" y="343">PCA — dimensionality reduction</text>
+          <use href="#ic-algorithm" x="412" y="362" width="22" height="22"/><text x="442" y="377">Factorization Machines — recs v2</text>
+        </g>
+
+        <!-- BUILD column -->
+        <rect x="760" y="44" width="336" height="372" rx="16" fill="#fae6d8" stroke="#BE4A2C" stroke-width="2"/>
+        <text x="780" y="74" font-size="14" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#BE4A2C">BUILD · the road ahead</text>
+        <g font-size="12" fill="#17130f">
+          <use href="#ic-spark" x="780" y="100" width="24" height="24"/><text x="812" y="116" font-weight="700">Custom training</text>
+          <text x="780" y="138" font-size="11" fill="#473d33">bring-your-own script &amp; container</text>
+          <text x="780" y="156" font-size="11" fill="#9c3a22" font-style="italic">→ Domain 2, Part 2</text>
+
+          <use href="#ic-q" x="780" y="200" width="24" height="24"/><text x="812" y="216" font-weight="700">Foundation models</text>
+          <text x="780" y="238" font-size="11" fill="#473d33">Bedrock — generate, summarize, chat</text>
+          <text x="780" y="256" font-size="11" fill="#9c3a22" font-style="italic">→ the Generative AI post</text>
+
+          <text x="780" y="312" font-size="12" font-style="italic" font-family="'Fraunces',serif" fill="#473d33">Maximum control,</text>
+          <text x="780" y="332" font-size="12" font-style="italic" font-family="'Fraunces',serif" fill="#473d33">maximum responsibility.</text>
+        </g>
+
+        <!-- axis -->
+        <rect x="24" y="430" width="1072" height="9" rx="4.5" fill="url(#land-grad)"/>
+      </svg>
+    </div>
+    <figcaption><b>Fig 5 — The model landscape</b> MetroPulse's whole problem set, placed. Most problems are solved by buying or configuring — building is reserved for what truly needs it.</figcaption>
+  </figure>
+
+  <p>The shape of that picture is the lesson: a well-run ML platform buys what it can, configures what it must, and builds only what's genuinely differentiated. That discipline keeps cost, complexity, and maintenance burden down — which is exactly the operational judgment Domain 2 is checking for.</p>
+
+  <hr class="rule">
+
+  <!-- ===================== CHEAT-SHEET ===================== -->
+  <h2 id="cheatsheet"><span class="num">11 / RECALL</span>Which-when &amp; the Part 1 cheat-sheet</h2>
+
+  <p>The service-matching questions are pure recognition once you've drilled the one-liners. Here's the quick reference, then the revision sheet.</p>
+
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr><th>Need…</th><th>Reach for</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Understand text (sentiment, entities, PII)</td><td>Comprehend</td></tr>
+      <tr><td>Speech → text / text → speech</td><td>Transcribe / Polly</td></tr>
+      <tr><td>Translate languages</td><td>Translate</td></tr>
+      <tr><td>Build a chatbot / IVR</td><td>Lex</td></tr>
+      <tr><td>Intelligent document search</td><td>Kendra</td></tr>
+      <tr><td>Analyze images / video</td><td>Rekognition</td></tr>
+      <tr><td>Extract text, forms, tables from docs</td><td>Textract</td></tr>
+      <tr><td>Recommendations</td><td>Personalize</td></tr>
+      <tr><td>Human review of low-confidence predictions</td><td>Augmented AI (A2I)</td></tr>
+      <tr><td>Forecast time series on your data</td><td>DeepAR</td></tr>
+      <tr><td>Predict on tabular data</td><td>XGBoost</td></tr>
+      <tr><td>Detect anomalies</td><td>Random Cut Forest</td></tr>
+      <tr><td>Cluster / reduce dimensions</td><td>K-Means / PCA</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="takeaways">
+    <h3>Domain 2, Part 1 revision cheat-sheet</h3>
+    <ul>
+      <li><strong>Task 2.1 = choose a modeling approach.</strong> Spectrum: <b>buy</b> (managed AI services) → <b>configure</b> (built-in algorithms) → <b>build</b> (custom training + foundation models). Pick the leftmost option that solves the problem.</li>
+      <li><strong>AI service one-liners:</strong> Comprehend = understand text · Transcribe = speech→text · Polly = text→speech · Translate = languages · Lex = chatbot · Kendra = search · Rekognition = vision · Textract = documents · Personalize = recommendations · A2I = human-in-the-loop review.</li>
+      <li><strong>Customize a managed model</strong> before building one: Comprehend custom classification/entities, Rekognition Custom Labels, Transcribe custom vocabulary.</li>
+      <li><strong>Amazon Q:</strong> Q Business (answers over your enterprise data) · Q Developer (AWS-aware coding assistant, CodeWhisperer's successor) · Q Apps (prompt-to-app).</li>
+      <li><strong>AI hardware:</strong> Trainium = training, Inferentia = inference, both via the Neuron SDK, both chosen for price-performance vs GPUs.</li>
+      <li><strong>Input modes:</strong> File (download all) · Pipe (stream from S3) · FastFile (stream, accessed as local). Dataset too big for the volume → Pipe or FastFile.</li>
+      <li><strong>Built-in heavy hitters:</strong> XGBoost (tabular), DeepAR (forecasting), Random Cut Forest (anomaly), K-Means (cluster), PCA (dim-reduction), BlazingText (text), Object Detection / Image Classification (vision), IP Insights (security), Factorization Machines (sparse/recs), Seq2Seq (translation/summarization), LDA &amp; Neural Topic Model (topics).</li>
+      <li><strong>Algorithm selection logic:</strong> labeled? → supervised vs unsupervised → match the problem shape (tabular / time-series / text / vision / anomaly).</li>
+      <li><strong>Human review, two stages:</strong> Ground Truth labels data <em>before</em> training; A2I reviews predictions <em>after</em> deployment.</li>
+      <li><strong>The two traps:</strong> over-engineering (custom model when an API works) and under-powering (generic API on a domain-specific problem).</li>
+    </ul>
+  </div>
+
+</main>
+
+<!-- ===================== REACTIONS + COMMENTS ===================== -->
+<section style="border-top:1px solid var(--line);padding:48px 0 0;">
+  <div class="wrap">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust);font-weight:700;margin-bottom:18px;">Reactions</p>
+    <div class="reactions" data-post="d2p1" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:48px;"></div>
+
+    <!-- TO ENABLE: replace this block with your Giscus <script> tag from https://giscus.app -->
+    <p style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust);font-weight:700;margin-bottom:16px;">Discussion</p>
+    <div style="background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:28px 24px;text-align:center;">
+      <p style="font-family:'Fraunces',serif;font-size:18px;font-weight:500;margin:0 0 8px;color:var(--ink);">Comments coming soon.</p>
+      <p style="font-size:14px;color:var(--ink-soft);margin:0;">Reach me at <a href="mailto:shahriarbm@gmail.com" style="color:var(--rust);border-bottom:1px solid var(--line-2);">shahriarbm@gmail.com</a> in the meantime.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="cta">
+      <h3>Next up: making these models actually good</h3>
+      <p>We chose the approach for every MetroPulse problem. In Part 2 of Domain 2 we roll up our sleeves on the "configure" and "build" rows — training jobs, hyperparameter tuning, and the metrics that tell you whether a model is ready or just lucky.</p>
+    </div>
+    <p class="next-up">The next four are coming · Up next — <b>#4 · Domain 2, Part 2 — Training, Tuning &amp; Model Evaluation</b></p>
+    <p style="text-align:center;margin-top:24px;"><a href="../index.html" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);border-bottom:1px solid var(--line-2);padding-bottom:2px;">← Back to sbmsoikot.github.io</a></p>
+  </div>
+</footer>
+
+<style>
+  .rxn-btn{display:flex;align-items:center;gap:5px;background:var(--paper-2);border:1px solid var(--line);border-radius:100px;padding:6px 13px;cursor:pointer;font-size:13px;transition:all .15s;color:var(--ink-soft);font-family:'JetBrains Mono',monospace;user-select:none;}
+  .rxn-btn:hover{border-color:var(--rust);background:rgba(190,74,44,.07);color:var(--rust);}
+  .rxn-btn.on{border-color:var(--rust);background:rgba(190,74,44,.1);color:var(--rust);}
+  .rxn-btn.pop{animation:rxnPop .28s cubic-bezier(.22,.68,0,1.2);}
+  @keyframes rxnPop{0%{transform:scale(1)}45%{transform:scale(1.32)}100%{transform:scale(1)}}
+  .rxn-emoji{font-size:15px;line-height:1;}.rxn-n{font-size:12px;font-weight:700;min-width:8px;}
+</style>
+<script type="module">
+  import { initReactions } from '../js/reactions.js';
+  document.querySelectorAll('.reactions[data-post]').forEach(el => initReactions(el));
+</script>
+
+</body>
+</html>
