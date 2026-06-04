@@ -3,50 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Md. Shahriar Bin Mohsin | AI/ML Engineer & Data Engineer | Surrey, BC Canada</title>
-  <meta name="description" content="AI/ML Engineer with 10+ years building intelligent systems — GenAI, LLM apps, and cloud-native ML pipelines on AWS, Microsoft Fabric, and Snowflake. Open to roles in Canada (BC/AB/ON).">
-  <meta name="keywords" content="AI ML Engineer, Data Engineer, Machine Learning, LLM, Generative AI, AWS SageMaker, Python, Surrey BC, Vancouver Canada, Shahriar Bin Mohsin">
+  <title>Shahriar Bin Mohsin — AI Engineer &amp; Writer</title>
+  <meta name="description" content="AI/ML engineer and writer based in Surrey, BC. Building systems that learn — and writing about what I find. The ML Engineering Notebook.">
   <meta name="author" content="Md. Shahriar Bin Mohsin">
   <meta name="robots" content="index, follow">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Md. Shahriar Bin Mohsin | AI/ML Engineer & Data Engineer">
-  <meta property="og:description" content="AI/ML Engineer with 10+ years building intelligent systems — GenAI, LLMs, and cloud-native data platforms. Based in Surrey, BC, Canada.">
+  <meta property="og:title" content="Shahriar Bin Mohsin — AI Engineer &amp; Writer">
+  <meta property="og:description" content="Building systems that learn — and writing about what I discover. The ML Engineering Notebook.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sbmsoikot.github.io/">
   <meta property="og:image" content="https://sbmsoikot.github.io/Images/HeadShotClean.png">
-  <meta property="og:image:alt" content="Md. Shahriar Bin Mohsin — AI/ML Engineer, Surrey BC Canada">
   <meta property="og:locale" content="en_CA">
-  <meta property="og:site_name" content="Shahriar Bin Mohsin — The ML Engineering Notebook">
 
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Md. Shahriar Bin Mohsin | AI/ML Engineer">
-  <meta name="twitter:description" content="AI/ML Engineer with 10+ years — GenAI, LLMs, cloud-native ML pipelines. Open to roles in Canada.">
+  <meta name="twitter:title" content="Shahriar Bin Mohsin — AI Engineer &amp; Writer">
+  <meta name="twitter:description" content="Building systems that learn. Writing about what I discover.">
   <meta name="twitter:image" content="https://sbmsoikot.github.io/Images/HeadShotClean.png">
 
-  <!-- Canonical -->
   <link rel="canonical" href="https://sbmsoikot.github.io/">
 
-  <!-- Google Fonts (same as blog) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Spline+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Spline+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Md. Shahriar Bin Mohsin",
+    "jobTitle": "AI/ML Engineer",
+    "description": "AI/ML engineer and writer building intelligent systems and sharing discoveries through The ML Engineering Notebook.",
+    "url": "https://sbmsoikot.github.io/",
+    "image": "https://sbmsoikot.github.io/Images/HeadShotClean.png",
+    "email": "shahriarbm@gmail.com",
+    "address": { "@type": "PostalAddress", "addressLocality": "Surrey", "addressRegion": "BC", "addressCountry": "CA" },
+    "sameAs": ["https://linkedin.com/in/sbmsoikot", "https://github.com/sbmsoikot"]
+  }
+  </script>
 
   <style>
-    /* ===================== DESIGN TOKENS ===================== */
+    /* ── TOKENS ───────────────────────────────────────── */
     :root {
       --paper:    #F3EDE3;
-      --paper-2:  #FBF8F2;
+      --paper-2:  #EDE5D5;
       --ink:      #17130F;
       --ink-soft: #473d33;
       --rust:     #BE4A2C;
       --amber:    #D98A2B;
       --teal:     #1E7A64;
-      --slate:    #385a7a;
       --line:     #D9CFBE;
       --line-2:   #cbbfa9;
-      --max:      1100px;
+      --max:      1060px;
+      --spring:   cubic-bezier(.22,.68,0,1.2);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -55,835 +63,637 @@
       background: var(--paper);
       color: var(--ink);
       font-family: 'Spline Sans', system-ui, sans-serif;
-      font-size: 18px;
-      line-height: 1.72;
+      font-size: 18px; line-height: 1.72;
       -webkit-font-smoothing: antialiased;
-      background-image:
-        radial-gradient(circle at 5% 4%,  rgba(190,74,44,.055), transparent 36%),
-        radial-gradient(circle at 95% 9%,  rgba(217,138,43,.07),  transparent 42%);
+      overflow-x: hidden;
     }
     ::selection { background: var(--amber); color: var(--ink); }
     img { display: block; max-width: 100%; }
-    a { color: var(--rust); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    a { color: inherit; text-decoration: none; }
     ul { list-style: none; }
-
     .wrap { max-width: var(--max); margin: 0 auto; padding: 0 28px; }
 
-    /* ===================== NAV ===================== */
-    .site-nav {
-      position: sticky; top: 0; z-index: 200;
+    /* ── SCROLL PROGRESS BAR ──────────────────────────── */
+    #scroll-bar {
+      position: fixed; top: 0; left: 0; height: 2px;
+      width: 0%; z-index: 999;
+      background: linear-gradient(90deg, var(--rust), var(--amber));
+      transition: width .06s linear;
+      pointer-events: none;
+    }
+
+    /* ── NAV ──────────────────────────────────────────── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      padding: 22px 0;
+      transition: background .35s, border-color .35s, padding .3s;
+      border-bottom: 1px solid transparent;
+    }
+    .nav.solid {
       background: rgba(243,237,227,.96);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-color: var(--line); padding: 13px 0;
     }
     .nav-inner {
-      display: flex; align-items: center; justify-content: space-between; gap: 20px;
-      max-width: var(--max); margin: 0 auto; padding: 14px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: var(--max); margin: 0 auto; padding: 0 28px;
     }
     .nav-logo {
-      font-family: 'Fraunces', serif;
-      font-size: 20px; font-weight: 600; letter-spacing: -.02em;
-      color: var(--ink); white-space: nowrap;
+      font-family: 'Fraunces', serif; font-size: 20px; font-weight: 500;
+      letter-spacing: -.03em; color: rgba(243,237,227,.9);
+      transition: color .35s;
     }
-    .nav-logo span { color: var(--rust); }
-    .nav-links { display: flex; align-items: center; gap: 26px; }
-    .nav-links a { font-size: 15px; font-weight: 500; color: var(--ink-soft); }
-    .nav-links a:hover { color: var(--rust); text-decoration: none; }
-    .nav-cta {
-      background: var(--rust) !important; color: #fff !important;
-      padding: 8px 20px; border-radius: 9px;
-      font-weight: 600 !important; font-size: 14px !important;
-      transition: background .2s;
+    .nav-logo span { color: var(--amber); }
+    .nav.solid .nav-logo { color: var(--ink); }
+    .nav.solid .nav-logo span { color: var(--rust); }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a {
+      font-size: 14px; font-weight: 500;
+      color: rgba(243,237,227,.6);
+      transition: color .3s;
+      position: relative; padding-bottom: 3px;
     }
-    .nav-cta:hover { background: #a33c24 !important; }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 100%;
+      height: 1px; background: var(--amber);
+      transition: right .2s ease;
+    }
+    .nav-links a:hover { color: rgba(243,237,227,.95); }
+    .nav-links a:hover::after { right: 0; }
+    .nav.solid .nav-links a { color: var(--ink-soft); }
+    .nav.solid .nav-links a::after { background: var(--rust); }
+    .nav.solid .nav-links a:hover { color: var(--rust); }
 
-    /* ===================== HERO ===================== */
-    .hero { padding: 90px 0 76px; border-bottom: 3px solid var(--ink); }
-    .hero-inner {
-      display: grid; grid-template-columns: 1fr auto;
-      gap: 64px; align-items: center;
-    }
-    .avail-pill {
-      display: inline-flex; align-items: center; gap: 9px;
-      border: 1px solid var(--line); border-radius: 100px;
-      padding: 7px 18px; font-size: 13.5px; color: var(--ink-soft);
-      margin-bottom: 22px; background: var(--paper-2);
-    }
-    .avail-pill .dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #22c55e; flex-shrink: 0;
-      box-shadow: 0 0 0 3px rgba(34,197,94,.25);
-    }
-    .avail-pill strong { color: var(--ink); }
-    .hero-kicker {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px; letter-spacing: .22em; text-transform: uppercase;
-      color: var(--rust); font-weight: 700; margin-bottom: 18px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .hero-kicker::before {
-      content: ''; display: block; width: 24px; height: 2px;
-      background: var(--rust); flex-shrink: 0;
-    }
-    .hero h1 {
-      font-family: 'Fraunces', serif;
-      font-size: clamp(46px, 6.5vw, 80px); font-weight: 600;
-      line-height: 1.0; letter-spacing: -.022em; margin-bottom: 18px;
-    }
-    .hero h1 em { font-style: italic; color: var(--rust); }
-    .hero-dek {
-      font-size: clamp(17px, 2vw, 20px); color: var(--ink-soft);
-      max-width: 50ch; line-height: 1.6; margin-bottom: 36px;
-    }
-    .hero-dek strong { color: var(--ink); }
-    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 12px 22px; border-radius: 10px;
-      font-size: 15px; font-weight: 600; transition: all .18s; white-space: nowrap;
-    }
-    .btn:hover { text-decoration: none; }
-    .btn-primary { background: var(--ink); color: var(--paper); }
-    .btn-primary:hover { background: var(--rust); color: #fff; }
-    .btn-outline { border: 2px solid var(--line-2); color: var(--ink-soft); }
-    .btn-outline:hover { border-color: var(--rust); color: var(--rust); }
-    .hero-photo {
-      width: 270px; height: 330px; border-radius: 22px; overflow: hidden;
-      border: 3px solid var(--ink); box-shadow: 7px 7px 0 var(--rust); flex-shrink: 0;
-    }
-    .hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
-
-    /* ===================== STATS BAR ===================== */
-    .stats-bar { background: var(--paper-2); border-bottom: 1px solid var(--line); }
-    .stats-inner {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      max-width: var(--max); margin: 0 auto; padding: 0 28px;
-    }
-    .stat-item {
-      text-align: center; padding: 28px 16px;
-      border-right: 1px solid var(--line);
-    }
-    .stat-item:last-child { border-right: none; }
-    .stat-num {
-      font-family: 'Fraunces', serif;
-      font-size: 34px; font-weight: 600; color: var(--rust); line-height: 1; display: block;
-    }
-    .stat-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
-      color: var(--ink-soft); margin-top: 7px; display: block;
-    }
-
-    /* ===================== SECTIONS ===================== */
-    section { padding: 80px 0; }
-    section + section { border-top: 1px solid var(--line); }
-    .sec-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px; letter-spacing: .22em; text-transform: uppercase;
-      color: var(--rust); font-weight: 700; margin-bottom: 12px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .sec-label::before {
-      content: ''; display: block; width: 20px; height: 2px; background: var(--rust);
-    }
-    .sec-title {
-      font-family: 'Fraunces', serif;
-      font-size: clamp(28px, 4vw, 46px); font-weight: 600;
-      line-height: 1.1; letter-spacing: -.015em; margin-bottom: 14px;
-    }
-    .sec-dek {
-      font-size: 18px; color: var(--ink-soft); max-width: 54ch; line-height: 1.6; margin-bottom: 48px;
-    }
-
-    /* ===================== ABOUT ===================== */
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
-    .about-body p { color: var(--ink-soft); margin-bottom: 18px; font-size: 17.5px; line-height: 1.7; }
-    .about-body p:last-child { margin-bottom: 0; }
-    .about-body strong { color: var(--ink); }
-    .highlight-list { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
-    .highlight {
-      background: var(--paper-2); border: 1px solid var(--line);
-      border-left: 4px solid var(--rust); border-radius: 11px; padding: 18px 20px;
-    }
-    .highlight.teal  { border-left-color: var(--teal); }
-    .highlight.slate { border-left-color: var(--slate); }
-    .highlight h4 {
-      font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600;
-      margin-bottom: 5px; color: var(--ink);
-    }
-    .highlight p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.55; }
-
-    /* ===================== EXPERTISE ===================== */
-    .expertise-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-    .exp-card {
-      background: var(--paper-2); border: 1px solid var(--line);
-      border-radius: 16px; padding: 28px 26px 24px;
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      background: var(--ink);
+      display: flex; flex-direction: column; justify-content: flex-end;
       position: relative; overflow: hidden;
+      padding-bottom: 68px;
     }
-    .exp-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rust);
+    /* Dot-grid texture overlay */
+    .hero::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 30px 30px;
     }
-    .exp-card.teal::before  { background: var(--teal); }
-    .exp-card.slate::before { background: var(--slate); }
-    .exp-card-icon { font-size: 26px; margin-bottom: 14px; display: block; line-height: 1; }
-    .exp-card h3 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; margin-bottom: 10px; }
-    .exp-card p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 18px; }
-    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
-    .chip {
-      font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
-      font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-      padding: 4px 9px; border-radius: 6px;
+    /* Colour glows */
+    .hero::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 55% at 3%  95%, rgba(190,74,44,.22), transparent),
+        radial-gradient(ellipse 40% 40% at 97% 8%,  rgba(217,138,43,.11), transparent);
     }
-    .chip-rust  { background: rgba(190,74,44,.1);  color: var(--rust); }
-    .chip-teal  { background: rgba(30,122,100,.1); color: var(--teal); }
-    .chip-slate { background: rgba(56,90,122,.1);  color: var(--slate); }
-
-    /* ===================== EXPERIENCE TIMELINE ===================== */
-    .timeline { position: relative; padding-left: 48px; }
-    .timeline::before {
-      content: ''; position: absolute; left: 14px; top: 14px; bottom: 30px;
-      width: 2px; background: var(--line);
-    }
-    .tl-item { position: relative; padding-bottom: 44px; }
-    .tl-item:last-child { padding-bottom: 0; }
-    .tl-dot {
-      position: absolute; left: -42px; top: 6px;
-      width: 30px; height: 30px; border-radius: 50%;
-      background: var(--paper); border: 2px solid var(--rust);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .tl-dot::after {
-      content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--rust);
-    }
-    .tl-item.muted .tl-dot { border-color: var(--line-2); }
-    .tl-item.muted .tl-dot::after { background: var(--line-2); }
-    .tl-period {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px;
-      letter-spacing: .14em; text-transform: uppercase;
-      color: var(--rust); font-weight: 700; margin-bottom: 4px;
-    }
-    .tl-item.muted .tl-period { color: var(--ink-soft); }
-    .tl-role {
-      font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600;
-      color: var(--ink); line-height: 1.15; margin-bottom: 2px;
-    }
-    .tl-company { font-size: 15px; color: var(--ink-soft); margin-bottom: 14px; }
-    .tl-bullets { padding-left: 0; }
-    .tl-bullets li {
-      font-size: 15.5px; color: var(--ink-soft); margin-bottom: 8px;
-      line-height: 1.6; padding-left: 22px; position: relative;
-    }
-    .tl-bullets li::before {
-      content: '→'; position: absolute; left: 0;
-      color: var(--rust); font-family: 'JetBrains Mono', monospace; font-size: 13px;
-    }
-    .tl-bullets li strong { color: var(--ink); }
-
-    /* ===================== CREDENTIALS ===================== */
-    .cred-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-    .cred-block-title {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--rust); font-weight: 700; margin-bottom: 22px;
-    }
-    .edu-item { padding: 18px 0; border-bottom: 1px solid var(--line); }
-    .edu-item:first-of-type { padding-top: 0; }
-    .edu-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .edu-degree { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; margin-bottom: 3px; }
-    .edu-school { font-size: 14.5px; color: var(--ink-soft); }
-    .cert-list { display: flex; flex-direction: column; gap: 12px; }
-    .cert-item {
-      display: flex; gap: 14px; align-items: flex-start;
-      background: var(--paper-2); border: 1px solid var(--line);
-      border-radius: 12px; padding: 16px 18px;
-    }
-    .cert-badge {
-      width: 40px; height: 40px; border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 17px; flex-shrink: 0;
-    }
-    .cert-badge.aws { background: linear-gradient(135deg, #c25a12, #ed7100); }
-    .cert-badge.edu { background: linear-gradient(135deg, var(--slate), #4a6685); }
-    .cert-badge.biz { background: linear-gradient(135deg, var(--teal), #12b5a0); }
-    .cert-name { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; line-height: 1.4; }
-    .cert-issuer { font-size: 12.5px; color: var(--ink-soft); }
-    .cert-year {
-      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; color: var(--rust); margin-top: 5px;
-    }
-
-    /* ===================== BLOG ===================== */
-    .blog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 28px; }
-    .blog-card {
-      display: block; background: var(--paper-2); border: 1px solid var(--line);
-      border-radius: 16px; padding: 28px; color: var(--ink);
-      transition: border-color .2s, transform .18s;
-    }
-    .blog-card:hover { border-color: var(--rust); transform: translateY(-2px); text-decoration: none; }
-    .blog-series {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px;
-      letter-spacing: .16em; text-transform: uppercase;
-      color: var(--rust); font-weight: 700; margin-bottom: 12px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .blog-series::before { content: ''; display: block; width: 16px; height: 2px; background: var(--rust); }
-    .blog-card h3 {
-      font-family: 'Fraunces', serif; font-size: 21px; font-weight: 600;
-      line-height: 1.2; letter-spacing: -.01em; margin-bottom: 12px;
-    }
-    .blog-card p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 20px; }
-    .blog-card-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 13px; color: var(--ink-soft);
-      border-top: 1px solid var(--line); padding-top: 16px;
-    }
-    .blog-read { color: var(--rust); font-weight: 600; font-size: 13px; }
-    .blog-note { text-align: center; font-size: 15px; color: var(--ink-soft); font-style: italic; font-family: 'Fraunces', serif; }
-    .blog-note a { color: var(--rust); }
-
-    /* ===================== CONTACT ===================== */
-    .contact-section { background: var(--ink); padding: 80px 0; }
-    .contact-inner {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    .hero-inner {
+      position: relative; z-index: 2;
       max-width: var(--max); margin: 0 auto; padding: 0 28px;
     }
-    .contact-text .sec-label { color: var(--amber); }
-    .contact-text .sec-label::before { background: var(--amber); }
-    .contact-title {
-      font-family: 'Fraunces', serif; font-size: clamp(26px, 4vw, 42px);
-      font-weight: 600; line-height: 1.1; letter-spacing: -.015em;
-      color: var(--paper); margin-bottom: 14px;
+    .hero-statement {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(52px, 9.5vw, 118px);
+      font-weight: 300; line-height: .95; letter-spacing: -.038em;
+      color: var(--paper);
+      margin-bottom: 52px;
+      animation: heroIn 1.1s cubic-bezier(.16,1,.3,1) both;
     }
-    .contact-dek { font-size: 17px; color: rgba(243,237,227,.7); line-height: 1.6; }
-    .contact-links { display: flex; flex-direction: column; gap: 14px; }
-    .contact-link {
-      display: flex; align-items: center; gap: 16px;
-      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
-      border-radius: 13px; padding: 18px 20px; color: var(--paper); transition: background .2s;
+    .hero-statement em { font-style: italic; font-weight: 400; color: var(--amber); }
+    @keyframes heroIn {
+      from { opacity: 0; transform: translateY(36px); }
+      to   { opacity: 1; transform: none; }
     }
-    .contact-link:hover { background: rgba(255,255,255,.1); text-decoration: none; }
-    .cl-icon {
-      width: 42px; height: 42px; border-radius: 10px;
-      background: rgba(255,255,255,.1);
+    .hero-rule {
+      height: 1px; background: rgba(243,237,227,.15); margin-bottom: 28px;
+      animation: heroIn 1.1s cubic-bezier(.16,1,.3,1) .18s both;
+    }
+    .hero-byline {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 20px;
+      animation: heroIn 1.1s cubic-bezier(.16,1,.3,1) .32s both;
+    }
+    .hero-name {
+      font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500;
+      color: var(--paper); letter-spacing: -.01em;
+    }
+    .hero-role {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+      color: rgba(243,237,227,.45); margin-top: 5px;
+    }
+    .hero-socials { display: flex; align-items: center; gap: 16px; }
+    .hero-social {
+      width: 38px; height: 38px; border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 18px; flex-shrink: 0;
+      color: rgba(243,237,227,.5);
+      border: 1px solid rgba(243,237,227,.12);
+      transition: color .2s, border-color .2s, background .2s;
     }
-    .cl-text strong { display: block; font-size: 14.5px; font-weight: 600; margin-bottom: 1px; }
-    .cl-text span { font-size: 13px; color: rgba(243,237,227,.55); }
-
-    /* ===================== FOOTER ===================== */
-    .site-footer { border-top: 3px solid var(--ink); padding: 32px 0; }
-    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-    .footer-brand { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; color: var(--ink); }
-    .footer-brand span { color: var(--rust); }
-    .footer-links { display: flex; gap: 22px; }
-    .footer-links a { font-size: 14px; color: var(--ink-soft); }
-    .footer-links a:hover { color: var(--rust); text-decoration: none; }
-    .footer-copy { font-size: 13px; color: var(--line-2); }
-
-    /* ===================== RESPONSIVE ===================== */
-    @media (max-width: 960px) {
-      .hero-inner { grid-template-columns: 1fr; }
-      .hero-photo { order: -1; width: 190px; height: 235px; }
-      .about-grid { grid-template-columns: 1fr; gap: 36px; }
-      .expertise-grid { grid-template-columns: 1fr 1fr; }
-      .blog-grid { grid-template-columns: 1fr; }
-      .stats-inner { grid-template-columns: repeat(2, 1fr); }
-      .stat-item:nth-child(2) { border-right: none; }
-      .stat-item:nth-child(3) { border-top: 1px solid var(--line); }
-      .stat-item:nth-child(4) { border-top: 1px solid var(--line); border-right: none; }
-      .cred-grid { grid-template-columns: 1fr; }
-      .contact-inner { grid-template-columns: 1fr; gap: 40px; }
+    .hero-social:hover {
+      color: var(--amber); border-color: rgba(217,138,43,.4);
+      background: rgba(217,138,43,.08);
     }
-    @media (max-width: 640px) {
-      body { font-size: 17px; }
-      section, .contact-section { padding: 56px 0; }
-      .hero { padding: 60px 0 52px; }
-      .hero-photo { width: 150px; height: 185px; }
-      .expertise-grid { grid-template-columns: 1fr; }
-      .nav-links a:not(.nav-cta) { display: none; }
-      .footer-inner { flex-direction: column; text-align: center; }
-      .footer-links { justify-content: center; }
+    /* Scroll hint */
+    .scroll-hint {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      z-index: 3; animation: hintIn 1s ease 2.2s both;
+    }
+    .scroll-hint-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px; letter-spacing: .24em; text-transform: uppercase;
+      color: rgba(243,237,227,.25);
+    }
+    .scroll-hint-line {
+      width: 1px; height: 32px;
+      background: linear-gradient(to bottom, rgba(243,237,227,.25), transparent);
+      animation: lineAnim 2s ease-in-out 3s infinite;
+    }
+    @keyframes hintIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes lineAnim {
+      0%,100% { transform: scaleY(1); opacity: .4; }
+      55%      { transform: scaleY(.55) translateY(8px); opacity: .9; }
+    }
+
+    /* ── SCROLL ANIMATIONS ────────────────────────────── */
+    .fade { opacity: 0; transform: translateY(28px); transition: opacity .72s ease, transform .72s ease; }
+    .fade.in { opacity: 1; transform: none; }
+    .fade.d1 { transition-delay: .1s; }
+    .fade.d2 { transition-delay: .2s; }
+    .fade.d3 { transition-delay: .32s; }
+
+    /* ── SECTION BASE ─────────────────────────────────── */
+    section { padding: 92px 0; }
+    section + section { border-top: 1px solid var(--line); }
+    .sec-eye {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: .24em; text-transform: uppercase;
+      color: var(--rust); font-weight: 700; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sec-eye::before { content: ''; display: block; width: 22px; height: 2px; background: currentColor; }
+    .sec-h {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(30px, 4.8vw, 54px); font-weight: 400;
+      line-height: 1.06; letter-spacing: -.022em;
+    }
+    .sec-h em { font-style: italic; color: var(--rust); }
+
+    /* ── NOW ──────────────────────────────────────────── */
+    .now-top {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 12px; margin-bottom: 40px; flex-wrap: wrap;
+    }
+    .now-since {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--line-2);
+    }
+    .now-rows { border-top: 1px solid var(--line); }
+    .now-row {
+      display: grid; grid-template-columns: 38px 130px 1fr;
+      gap: 0 18px; padding: 20px 0;
+      border-bottom: 1px solid var(--line);
+      align-items: start;
+    }
+    .now-icon { font-size: 17px; line-height: 1.5; }
+    .now-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--line-2); font-weight: 700; padding-top: 3px;
+    }
+    .now-val { font-size: 16px; color: var(--ink-soft); line-height: 1.6; }
+    .now-val strong { color: var(--ink); font-weight: 600; }
+    .now-val a { color: var(--rust); border-bottom: 1px solid transparent; transition: border-color .18s; }
+    .now-val a:hover { border-color: var(--rust); }
+
+    /* ── NOTEBOOK / POSTS ─────────────────────────────── */
+    .notebook-section { background: var(--paper-2); }
+    .nb-head { margin-bottom: 42px; }
+    .nb-dek { font-size: 16px; color: var(--ink-soft); margin-top: 10px; max-width: 46ch; }
+    .posts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+
+    .post-card {
+      background: var(--paper); border: 1px solid var(--line); border-radius: 18px;
+      overflow: hidden; display: flex; flex-direction: column;
+      transition: border-color .2s, transform .22s;
+    }
+    .post-card:hover { border-color: rgba(190,74,44,.35); transform: translateY(-4px); }
+    .post-card:focus-within { outline: 2px solid var(--rust); outline-offset: 2px; }
+
+    .pc-body { padding: 28px 26px 20px; flex: 1; }
+    .pc-series {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--rust); font-weight: 700; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .pc-series::before { content: ''; width: 12px; height: 2px; background: var(--rust); display: block; }
+    .post-card h2 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(19px, 2.5vw, 24px); font-weight: 500;
+      line-height: 1.2; letter-spacing: -.015em; color: var(--ink); margin-bottom: 12px;
+    }
+    .post-card p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.65; }
+
+    .pc-footer {
+      padding: 16px 26px 18px; border-top: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+    .pc-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--line-2);
+    }
+    .pc-read {
+      font-size: 13px; font-weight: 600; color: var(--rust);
+      display: flex; align-items: center; gap: 4px;
+      border-bottom: 1px solid transparent; transition: border-color .18s;
+    }
+    .pc-read:hover { border-color: var(--rust); }
+    .pc-read svg { transition: transform .18s; }
+    .post-card:hover .pc-read svg { transform: translate(3px,-3px); }
+
+    /* Reactions */
+    .rxn-bar { padding: 0 26px 22px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .reactions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .rxn-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--line-2);
+      margin-right: 3px;
+    }
+    .rxn-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--paper-2); border: 1px solid var(--line);
+      border-radius: 100px; padding: 5px 12px;
+      cursor: pointer; font-size: 12.5px; transition: all .15s;
+      color: var(--ink-soft); font-family: 'JetBrains Mono', monospace;
+      user-select: none; line-height: 1;
+    }
+    .rxn-btn:hover { border-color: var(--rust); background: rgba(190,74,44,.07); color: var(--rust); }
+    .rxn-btn.on { border-color: var(--rust); background: rgba(190,74,44,.1); color: var(--rust); }
+    .rxn-btn.pop { animation: rxnPop .28s var(--spring); }
+    @keyframes rxnPop { 0%{ transform:scale(1); } 45%{ transform:scale(1.32); } 100%{ transform:scale(1); } }
+    .rxn-emoji { font-size: 14px; }
+    .rxn-n { font-size: 11.5px; font-weight: 700; min-width: 8px; }
+
+    .nb-more {
+      text-align: center; margin-top: 30px;
+      font-size: 15px; color: var(--ink-soft); font-family: 'Fraunces', serif; font-style: italic;
+    }
+    .nb-more a { color: var(--rust); border-bottom: 1px solid var(--line-2); transition: border-color .18s; }
+    .nb-more a:hover { border-color: var(--rust); }
+
+    /* ── ABOUT ────────────────────────────────────────── */
+    .about-inner { display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: start; }
+    .about-frame {
+      width: 230px; height: 290px; border-radius: 16px; overflow: hidden;
+      border: 2px solid var(--ink); flex-shrink: 0;
+      box-shadow: 6px 6px 0 var(--line);
+    }
+    .about-frame img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .about-copy { margin-top: 22px; display: flex; flex-direction: column; gap: 17px; }
+    .about-copy p { font-size: 17px; color: var(--ink-soft); line-height: 1.75; }
+    .about-copy strong { color: var(--ink); font-weight: 600; }
+    .about-links { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .about-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--line-2); border-bottom: 1px solid var(--line-2);
+      padding-bottom: 1px; transition: color .18s, border-color .18s;
+    }
+    .about-link:hover { color: var(--rust); border-color: var(--rust); }
+
+    /* ── CONNECT ──────────────────────────────────────── */
+    .connect-section { background: var(--ink); padding: 92px 0; }
+    .connect-wrap { max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+    .connect-wrap .sec-eye { color: var(--amber); }
+    .connect-wrap .sec-eye::before { background: var(--amber); }
+    .connect-h {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(36px, 6vw, 72px); font-weight: 300;
+      line-height: .96; letter-spacing: -.035em;
+      color: var(--paper); margin: 14px 0 44px;
+    }
+    .connect-h em { font-style: italic; font-weight: 400; color: var(--amber); }
+    .connect-items { display: flex; flex-direction: column; max-width: 500px; }
+    .citem {
+      display: flex; align-items: center; gap: 18px;
+      padding: 20px 0; border-bottom: 1px solid rgba(243,237,227,.1);
+      color: var(--paper); transition: color .18s;
+    }
+    .citem:last-child { border-bottom: none; }
+    .citem:hover { color: var(--amber); }
+    .citem:hover .ci-arrow { transform: translate(5px,-5px); }
+    .ci-ico {
+      width: 42px; height: 42px; border-radius: 11px;
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background .18s;
+    }
+    .citem:hover .ci-ico { background: rgba(217,138,43,.14); border-color: rgba(217,138,43,.3); }
+    .ci-body { flex: 1; }
+    .ci-lbl { font-size: 14.5px; font-weight: 600; display: block; }
+    .ci-sub { font-size: 12.5px; color: rgba(243,237,227,.4); display: block; margin-top: 2px; transition: color .18s; }
+    .citem:hover .ci-sub { color: rgba(243,237,227,.6); }
+    .ci-arrow { color: rgba(243,237,227,.25); transition: transform .18s, color .18s; }
+    .citem:hover .ci-arrow { color: var(--amber); }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    .site-footer { border-top: 2px solid var(--ink); padding: 26px 0; background: var(--paper); }
+    .ft { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+    .ft-brand { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 500; color: var(--ink); letter-spacing: -.02em; }
+    .ft-brand span { color: var(--rust); }
+    .ft-nav { display: flex; gap: 20px; }
+    .ft-nav a { font-size: 13px; color: var(--line-2); transition: color .18s; }
+    .ft-nav a:hover { color: var(--rust); }
+    .ft-copy { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--line-2); }
+
+    /* ── RESPONSIVE ───────────────────────────────────── */
+    @media (max-width: 820px) {
+      section, .connect-section { padding: 68px 0; }
+      .posts-grid { grid-template-columns: 1fr; }
+      .about-inner { grid-template-columns: 1fr; gap: 34px; }
+      .about-frame { width: 160px; height: 200px; }
+      .now-row { grid-template-columns: 32px 110px 1fr; gap: 0 12px; }
+    }
+    @media (max-width: 560px) {
+      .hero-statement { font-size: clamp(42px, 13vw, 68px); letter-spacing: -.03em; }
+      .now-row { grid-template-columns: 1fr; gap: 4px; }
+      .now-icon { display: none; }
+      .nav-links a:not(:last-child) { display: none; }
+      .ft { flex-direction: column; text-align: center; }
+      .ft-nav { justify-content: center; }
     }
   </style>
 </head>
 <body>
 
-<!-- JSON-LD structured data -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Md. Shahriar Bin Mohsin",
-  "jobTitle": "AI/ML Engineer",
-  "description": "AI/ML Engineer with 10+ years building intelligent systems — GenAI, LLM applications, and cloud-native data pipelines on AWS, Microsoft Fabric, and Snowflake.",
-  "url": "https://sbmsoikot.github.io/",
-  "image": "https://sbmsoikot.github.io/Images/HeadShotClean.png",
-  "email": "shahriarbm@gmail.com",
-  "telephone": "+17789154109",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Surrey",
-    "addressRegion": "BC",
-    "addressCountry": "CA"
-  },
-  "alumniOf": [
-    { "@type": "CollegeOrUniversity", "name": "Northeastern University", "address": "Vancouver, BC, Canada" },
-    { "@type": "CollegeOrUniversity", "name": "East West University", "address": "Dhaka, Bangladesh" }
-  ],
-  "hasCredential": [
-    { "@type": "EducationalOccupationalCredential", "name": "AWS Certified Machine Learning Engineer – Associate" },
-    { "@type": "EducationalOccupationalCredential", "name": "AWS Certified AI Practitioner" },
-    { "@type": "EducationalOccupationalCredential", "name": "Master of Science, Data Analytics Engineering — Northeastern University" }
-  ],
-  "knowsAbout": [
-    "Machine Learning Engineering", "Generative AI", "LLM Applications",
-    "Retrieval-Augmented Generation", "Data Engineering", "MLOps",
-    "AWS SageMaker", "AWS Bedrock", "Microsoft Fabric", "Snowflake", "dbt",
-    "Apache Spark", "PySpark", "Python", "AI Strategy"
-  ],
-  "sameAs": ["https://linkedin.com/in/sbmsoikot"]
-}
-</script>
+<!-- Scroll progress -->
+<div id="scroll-bar" aria-hidden="true"></div>
 
-<!-- NAVIGATION -->
-<nav class="site-nav" role="navigation" aria-label="Site navigation">
+<!-- NAV -->
+<nav class="nav" id="nav" role="navigation" aria-label="Site navigation">
   <div class="nav-inner">
-    <a class="nav-logo" href="#top">SBM<span>.</span></a>
+    <a href="#top" class="nav-logo">SBM<span>.</span></a>
     <div class="nav-links">
+      <a href="#now">Now</a>
+      <a href="#notebook">Writing</a>
       <a href="#about">About</a>
-      <a href="#expertise">Expertise</a>
-      <a href="#experience">Experience</a>
-      <a href="#blog">Blog</a>
-      <a href="#contact" class="nav-cta">Hire Me</a>
+      <a href="#connect">Connect</a>
     </div>
   </div>
 </nav>
 
-<!-- HERO -->
-<header class="hero" id="top" role="banner">
-  <div class="wrap">
-    <div class="hero-inner">
-      <div class="hero-text">
-        <div class="avail-pill">
-          <span class="dot" aria-hidden="true"></span>
-          <strong>Open to opportunities</strong>&ensp;—&ensp;BC · AB · ON, Canada
-        </div>
-        <p class="hero-kicker">AI/ML Engineer · Data Engineer · 10+ Years</p>
-        <h1>Md. Shahriar<br><em>Bin Mohsin</em></h1>
-        <p class="hero-dek">Building production ML systems and intelligent applications — from data ingestion to deployed LLMs. Sharing the architecture behind it all through <strong>The ML Engineering Notebook</strong>.</p>
-        <div class="hero-btns">
-          <a href="#contact" class="btn btn-primary">Get in Touch</a>
-          <a href="#blog" class="btn btn-outline">Read the Blog</a>
-          <a href="Resume/Shahriar_Bin_Mohsin_Resume_Master_AI_ML_2026.pdf" class="btn btn-outline" download>Resume ↓</a>
-        </div>
-      </div>
-      <div class="hero-photo" aria-hidden="true">
-        <img
-          src="Images/HeadShotClean.png"
-          alt="Md. Shahriar Bin Mohsin — AI/ML Engineer, Surrey BC Canada"
-          width="270" height="330"
-          loading="eager"
-        >
-      </div>
-    </div>
-  </div>
-</header>
-
-<!-- STATS BAR -->
-<div class="stats-bar" role="region" aria-label="Career highlights">
-  <div class="stats-inner">
-    <div class="stat-item">
-      <span class="stat-num">10+</span>
-      <span class="stat-label">Years in Tech</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num">2×</span>
-      <span class="stat-label">AWS Certified</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num">MSc</span>
-      <span class="stat-label">Data Analytics Eng · Northeastern</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num">$150M</span>
-      <span class="stat-label">Program Delivered · Huawei</span>
-    </div>
-  </div>
-</div>
-
-<!-- ABOUT -->
-<section id="about" aria-labelledby="about-title">
-  <div class="wrap">
-    <div class="sec-label">About me</div>
-    <div class="about-grid">
-      <div class="about-body">
-        <h2 class="sec-title" id="about-title">I build the full stack of production AI.</h2>
-        <p>I'm an AI/ML Engineer and data professional with over a decade of experience shipping intelligent systems — from telecom network automation at global scale to LLM-powered enterprise applications. Currently consulting at <strong>NeuNov Technologies</strong>, I design and deliver end-to-end ML solutions on AWS and help leadership teams translate AI trade-offs into strategy.</p>
-        <p>My foundation spans data engineering (dbt, Snowflake, Microsoft Fabric, Databricks), ML lifecycle (SageMaker AI, Bedrock, LangChain, MLOps), and product management. I've led teams, won $150M programs, and co-founded a consumer AI startup. I hold a <strong>Master of Science in Data Analytics Engineering from Northeastern University</strong>, and I'm AWS certified in both Machine Learning Engineering and AI Practitioner.</p>
-        <p>I'm actively seeking senior roles as an <strong>AI/ML Engineer</strong>, <strong>Data Engineer</strong>, or <strong>Technical Product Manager</strong> at companies doing serious work with data and AI — primarily in British Columbia, Alberta, or Ontario.</p>
-      </div>
-      <div class="highlight-list" aria-label="Core strengths">
-        <div class="highlight">
-          <h4>End-to-end ML systems</h4>
-          <p>LLM applications, RAG pipelines, model fine-tuning, evaluation, and monitoring on AWS — from raw data to production inference.</p>
-        </div>
-        <div class="highlight teal">
-          <h4>Modern data platforms</h4>
-          <p>Medallion-architecture lakehouses on Snowflake, Microsoft Fabric, and Databricks; real-time streaming with Kinesis and Apache Flink.</p>
-        </div>
-        <div class="highlight slate">
-          <h4>Strategy &amp; leadership</h4>
-          <p>10+ years of executive stakeholder engagement, AI advisory for government, and cross-functional delivery across enterprise SaaS and telecom.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- EXPERTISE -->
-<section id="expertise" aria-labelledby="expertise-title">
-  <div class="wrap">
-    <div class="sec-label">What I do</div>
-    <h2 class="sec-title" id="expertise-title">Core Expertise</h2>
-    <p class="sec-dek">Spanning the full AI/ML lifecycle — from data architecture through deployed, monitored models — plus the product thinking to ship what actually matters.</p>
-    <div class="expertise-grid">
-
-      <div class="exp-card">
-        <span class="exp-card-icon" aria-hidden="true">🤖</span>
-        <h3>AI &amp; ML Engineering</h3>
-        <p>Designing and deploying production ML systems: LLM applications, retrieval-augmented generation (RAG), model fine-tuning, inference APIs, and full MLOps pipelines with evaluation and monitoring.</p>
-        <div class="tag-row">
-          <span class="chip chip-rust">SageMaker AI</span>
-          <span class="chip chip-rust">AWS Bedrock</span>
-          <span class="chip chip-rust">LangChain</span>
-          <span class="chip chip-rust">RAG</span>
-          <span class="chip chip-rust">Fine-tuning</span>
-          <span class="chip chip-rust">MLOps</span>
-        </div>
-      </div>
-
-      <div class="exp-card teal">
-        <span class="exp-card-icon" aria-hidden="true">🏗️</span>
-        <h3>Data Engineering</h3>
-        <p>Building lakehouse architectures, streaming pipelines, and scalable batch ETL — medallion architecture (bronze → silver → gold) applied to real enterprise data stacks at scale.</p>
-        <div class="tag-row">
-          <span class="chip chip-teal">dbt</span>
-          <span class="chip chip-teal">Snowflake</span>
-          <span class="chip chip-teal">Microsoft Fabric</span>
-          <span class="chip chip-teal">Azure Databricks</span>
-          <span class="chip chip-teal">Apache Spark</span>
-          <span class="chip chip-teal">PySpark</span>
-        </div>
-      </div>
-
-      <div class="exp-card slate">
-        <span class="exp-card-icon" aria-hidden="true">☁️</span>
-        <h3>AWS Cloud Architecture</h3>
-        <p>Architecting cost-efficient, production-grade AWS data and ML platforms — S3 lakehouses, Kinesis streaming, Apache Flink, Glue ETL, Athena, Lambda, and Lake Formation governance.</p>
-        <div class="tag-row">
-          <span class="chip chip-slate">S3 Lakehouse</span>
-          <span class="chip chip-slate">Kinesis / MSK</span>
-          <span class="chip chip-slate">EMR</span>
-          <span class="chip chip-slate">AWS Glue</span>
-          <span class="chip chip-slate">Athena</span>
-          <span class="chip chip-slate">Lambda</span>
-        </div>
-      </div>
-
-      <div class="exp-card">
-        <span class="exp-card-icon" aria-hidden="true">🧬</span>
-        <h3>Generative AI &amp; LLMs</h3>
-        <p>Building intelligent automation workflows — prompt engineering, agent design, knowledge-grounded RAG systems, and responsible AI evaluation with bias detection and safety frameworks.</p>
-        <div class="tag-row">
-          <span class="chip chip-rust">Generative AI</span>
-          <span class="chip chip-rust">Prompt Eng.</span>
-          <span class="chip chip-rust">AI Agents</span>
-          <span class="chip chip-rust">PyTorch</span>
-          <span class="chip chip-rust">LLM Evaluation</span>
-        </div>
-      </div>
-
-      <div class="exp-card teal">
-        <span class="exp-card-icon" aria-hidden="true">📊</span>
-        <h3>BI &amp; Data Science</h3>
-        <p>Feature engineering, model-ready dataset preparation, and executive dashboards — translating raw data into actionable insight from the data lake to the boardroom.</p>
-        <div class="tag-row">
-          <span class="chip chip-teal">Power BI</span>
-          <span class="chip chip-teal">Tableau</span>
-          <span class="chip chip-teal">Python / pandas</span>
-          <span class="chip chip-teal">SQL</span>
-          <span class="chip chip-teal">Scikit-learn</span>
-        </div>
-      </div>
-
-      <div class="exp-card slate">
-        <span class="exp-card-icon" aria-hidden="true">🧭</span>
-        <h3>Product &amp; AI Strategy</h3>
-        <p>Translating technical trade-offs into roadmap decisions — AI strategy advisory, build-vs-buy analysis, cross-functional delivery, and executive stakeholder communication from startup to $150M programs.</p>
-        <div class="tag-row">
-          <span class="chip chip-slate">Technical PM</span>
-          <span class="chip chip-slate">AI Advisory</span>
-          <span class="chip chip-slate">Roadmapping</span>
-          <span class="chip chip-slate">Agile / Scrum</span>
-          <span class="chip chip-slate">Stakeholder Eng.</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- EXPERIENCE -->
-<section id="experience" aria-labelledby="experience-title">
-  <div class="wrap">
-    <div class="sec-label">Career history</div>
-    <h2 class="sec-title" id="experience-title">Experience</h2>
-    <p class="sec-dek">Over two decades shipping data systems, ML solutions, and digital products — from startup co-founder to $150M enterprise programs.</p>
-
-    <div class="timeline">
-
-      <div class="tl-item">
-        <div class="tl-dot" aria-hidden="true"></div>
-        <div class="tl-period">May 2026 – Present</div>
-        <div class="tl-role">AI/ML Engineer Consultant</div>
-        <div class="tl-company">NeuNov Technologies &nbsp;·&nbsp; Remote</div>
-        <ul class="tl-bullets">
-          <li>Building <strong>LLM-enabled applications</strong> using retrieval-augmented generation, prompt engineering, and agent workflows to automate knowledge-heavy business processes.</li>
-          <li>Developing and deploying ML models on <strong>AWS (SageMaker AI, Bedrock, Lambda)</strong> with attention to evaluation, monitoring, and responsible AI practices across the full model lifecycle.</li>
-          <li>Scoping AI/ML use cases for enterprise clients and advising leadership on <strong>AI strategy, build-vs-buy decisions, and roadmap prioritization</strong>, translating technical trade-offs into business language.</li>
-        </ul>
-      </div>
-
-      <div class="tl-item">
-        <div class="tl-dot" aria-hidden="true"></div>
-        <div class="tl-period">Nov 2025 – May 2026</div>
-        <div class="tl-role">Data Engineer Consultant</div>
-        <div class="tl-company">Allied Global (Daxko Account) &nbsp;·&nbsp; Remote</div>
-        <ul class="tl-bullets">
-          <li>Modernized <strong>legacy SSIS ETL pipelines into dbt models on Snowflake</strong> for a multi-product SaaS analytics ecosystem, applying medallion architecture (bronze → silver → gold).</li>
-          <li>Leveraged <strong>Microsoft Fabric (Lakehouse, Data Factory)</strong> and <strong>Azure Databricks</strong> for data preparation and orchestration as part of an on-premises-to-cloud migration.</li>
-          <li>Documented data contracts, lineage, and quality tests; partnered with product owners and platform engineers to align architecture with reporting and governance standards.</li>
-        </ul>
-      </div>
-
-      <div class="tl-item">
-        <div class="tl-dot" aria-hidden="true"></div>
-        <div class="tl-period">Jul 2018 – Sep 2023</div>
-        <div class="tl-role">Product Leader</div>
-        <div class="tl-company">Nitto Digital Service and Analytics &nbsp;·&nbsp; Dhaka</div>
-        <ul class="tl-bullets">
-          <li>Designed AI-powered automation and intelligent alerting for <strong>telecom network operations</strong>, cutting average incident resolution time by roughly <strong>35%</strong> and improving SLA compliance.</li>
-          <li>Directed end-to-end development of <strong>B2B SaaS platforms</strong> for the RMG sector — payment gateway integrations, partner APIs, and multi-stakeholder rollout.</li>
-          <li>Designed and delivered <strong>AI and automation training for government organizations</strong> under a national capacity-building project; advised industry leaders and policymakers on AI-enabled digital transformation.</li>
-          <li>Ran quarterly reviews with client executives and CXO sponsors, translating delivery progress into business KPIs.</li>
-        </ul>
-      </div>
-
-      <div class="tl-item">
-        <div class="tl-dot" aria-hidden="true"></div>
-        <div class="tl-period">Jul 2018 – Jul 2021</div>
-        <div class="tl-role">Co-Founder &amp; Product Leader</div>
-        <div class="tl-company">Fordo &nbsp;·&nbsp; Dhaka, Bangladesh</div>
-        <ul class="tl-bullets">
-          <li>Co-founded and launched a consumer mobile app for personal data and spending analytics, implementing <strong>AI-driven recommendation logic</strong> based on user behavior patterns.</li>
-          <li>Iterated UX through four major versions — user interviews, wireframes, and testing — lifting <strong>30-day retention by ~40%</strong>.</li>
-          <li>Secured investor funding; led partner API integrations across financial, retail, and social platforms.</li>
-        </ul>
-      </div>
-
-      <div class="tl-item muted">
-        <div class="tl-dot" aria-hidden="true"></div>
-        <div class="tl-period">Aug 2005 – Jul 2018 &nbsp;·&nbsp; 13 years</div>
-        <div class="tl-role">Solution Manager / Product Manager</div>
-        <div class="tl-company">Huawei Technologies &nbsp;·&nbsp; Dhaka, Bangladesh</div>
-        <ul class="tl-bullets">
-          <li>Managed a portfolio of four product lines hitting <strong>US$100M annual sales</strong> in two consecutive years at the country-level account.</li>
-          <li>Won and delivered a <strong>US$150M network modernization program</strong> for Orascom Telecom Bangladesh, coordinating a delivery team of <strong>200+ engineers</strong>.</li>
-          <li>Sponsored early analytics-driven network optimization initiatives; awarded <strong>Huawei Global Gold Medal</strong>.</li>
-        </ul>
-      </div>
-
-      <div class="tl-item muted">
-        <div class="tl-dot" aria-hidden="true"></div>
-        <div class="tl-period">Dec 2003 – Sep 2004</div>
-        <div class="tl-role">Database Engineer</div>
-        <div class="tl-company">Grameenphone Ltd. (Telenor) &nbsp;·&nbsp; Dhaka, Bangladesh</div>
-        <ul class="tl-bullets">
-          <li>Built internal tools in VB6 and SQL Server for the customer service team, streamlining data lookups used daily in call handling.</li>
-        </ul>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- CREDENTIALS -->
-<section id="credentials" aria-labelledby="credentials-title">
-  <div class="wrap">
-    <div class="sec-label">Education &amp; Certifications</div>
-    <h2 class="sec-title" id="credentials-title">Credentials</h2>
-    <div class="cred-grid">
-
+<!-- ═══ HERO ═══════════════════════════════════════════════ -->
+<section class="hero" id="top" aria-label="Introduction">
+  <div class="hero-inner">
+    <h1 class="hero-statement">
+      I build systems<br>
+      that <em>learn</em> —<br>
+      and write about<br>
+      what I <em>discover</em>.
+    </h1>
+    <div class="hero-rule"></div>
+    <div class="hero-byline">
       <div>
-        <div class="cred-block-title">Education</div>
-        <div class="edu-item">
-          <div class="edu-degree">M.Sc. Data Analytics Engineering</div>
-          <div class="edu-school">Northeastern University &nbsp;·&nbsp; Vancouver, BC, Canada</div>
-        </div>
-        <div class="edu-item">
-          <div class="edu-degree">MBA, Finance</div>
-          <div class="edu-school">East West University &nbsp;·&nbsp; Dhaka, Bangladesh</div>
-        </div>
-        <div class="edu-item">
-          <div class="edu-degree">B.Sc. Computer Science &amp; Engineering</div>
-          <div class="edu-school">Asian University of Bangladesh &nbsp;·&nbsp; Dhaka, Bangladesh</div>
-        </div>
+        <div class="hero-name">Md. Shahriar Bin Mohsin</div>
+        <div class="hero-role">AI/ML Engineer &nbsp;·&nbsp; Surrey, BC, Canada</div>
       </div>
-
-      <div>
-        <div class="cred-block-title">Certifications</div>
-        <div class="cert-list">
-          <div class="cert-item">
-            <div class="cert-badge aws" aria-hidden="true">☁️</div>
-            <div>
-              <div class="cert-name">AWS Certified Machine Learning Engineer – Associate</div>
-              <div class="cert-issuer">Amazon Web Services &nbsp;·&nbsp; MLA-C01</div>
-              <div class="cert-year">2026</div>
-            </div>
-          </div>
-          <div class="cert-item">
-            <div class="cert-badge aws" aria-hidden="true">☁️</div>
-            <div>
-              <div class="cert-name">AWS Certified AI Practitioner</div>
-              <div class="cert-issuer">Amazon Web Services</div>
-              <div class="cert-year">Sep 2024</div>
-            </div>
-          </div>
-          <div class="cert-item">
-            <div class="cert-badge edu" aria-hidden="true">🎓</div>
-            <div>
-              <div class="cert-name">Diploma in AI Applications</div>
-              <div class="cert-issuer">Northeastern University</div>
-              <div class="cert-year">Dec 2025</div>
-            </div>
-          </div>
-          <div class="cert-item">
-            <div class="cert-badge edu" aria-hidden="true">🎓</div>
-            <div>
-              <div class="cert-name">Applying AI Technologies to the Workplace</div>
-              <div class="cert-issuer">Northeastern University</div>
-              <div class="cert-year">Sep 2024</div>
-            </div>
-          </div>
-          <div class="cert-item">
-            <div class="cert-badge biz" aria-hidden="true">🏛️</div>
-            <div>
-              <div class="cert-name">Digital Transformation</div>
-              <div class="cert-issuer">Boston Consulting Group (BCG)</div>
-              <div class="cert-year">Aug 2021</div>
-            </div>
-          </div>
-          <div class="cert-item">
-            <div class="cert-badge biz" aria-hidden="true">🎯</div>
-            <div>
-              <div class="cert-name">Entrepreneurship</div>
-              <div class="cert-issuer">Harvard Business School</div>
-              <div class="cert-year">Sep 2018</div>
-            </div>
-          </div>
-        </div>
+      <div class="hero-socials">
+        <a href="https://linkedin.com/in/sbmsoikot" class="hero-social" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="https://github.com/sbmsoikot" class="hero-social" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+        </a>
+        <a href="mailto:shahriarbm@gmail.com" class="hero-social" aria-label="Email">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2.5"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </a>
       </div>
-
     </div>
+  </div>
+  <div class="scroll-hint" aria-hidden="true">
+    <span class="scroll-hint-text">scroll</span>
+    <div class="scroll-hint-line"></div>
   </div>
 </section>
 
-<!-- BLOG -->
-<section id="blog" aria-labelledby="blog-title">
+<!-- ═══ NOW ════════════════════════════════════════════════ -->
+<!-- UPDATE THIS SECTION EACH MONTH — just edit the now-val spans and the datetime attribute -->
+<section id="now" aria-labelledby="now-h">
   <div class="wrap">
-    <div class="sec-label">The ML Engineering Notebook</div>
-    <h2 class="sec-title" id="blog-title">Latest Writing</h2>
-    <p class="sec-dek">Deep-dive posts on building real ML systems on AWS — explained through one realistic project, end to end. Currently covering the AWS MLA-C01 certification series.</p>
-
-    <div class="blog-grid">
-      <a href="Blogs/D1P1-data-ingestion-storage-blog.html" class="blog-card">
-        <div class="blog-series">AWS MLA-C01 · Series #1 of 6 · Domain 1 Part 1</div>
-        <h3>Where ML Really Begins: Data Ingestion &amp; Storage on AWS</h3>
-        <p>No model survives bad plumbing. Here's how to architect the ingestion and storage layer — Kinesis, MSK, Apache Flink, S3 lakehouse, Glue — through the MetroPulse city-scale mobility platform.</p>
-        <div class="blog-card-footer">
-          <span>~22 min read &nbsp;·&nbsp; 2026</span>
-          <span class="blog-read">Read article →</span>
-        </div>
-      </a>
-
-      <a href="Blogs/D1P2-data-ransformation-ntegrity-feature-engineering.html" class="blog-card">
-        <div class="blog-series">AWS MLA-C01 · Series #2 of 6 · Domain 1 Part 2</div>
-        <h3>From Raw to Ready: Data Transformation, Integrity &amp; Feature Engineering</h3>
-        <p>The lake is full — and useless. Turning MetroPulse's messy data into model-ready signal with EMR, Spark, SageMaker Data Wrangler, Ground Truth, and AWS Glue.</p>
-        <div class="blog-card-footer">
-          <span>~24 min read &nbsp;·&nbsp; 2026</span>
-          <span class="blog-read">Read article →</span>
-        </div>
-      </a>
+    <div class="now-top fade">
+      <div>
+        <div class="sec-eye">Now</div>
+        <h2 class="sec-h" id="now-h">What I'm doing <em>right now</em>.</h2>
+      </div>
+      <!-- UPDATE: change datetime and text when you edit this section -->
+      <time class="now-since" datetime="2026-06">Last updated: June 2026</time>
     </div>
-
-    <p class="blog-note">More in the series: Domain 2 (EDA &amp; Visualization), Domain 3 (Modeling), Domain 4 (Deployment &amp; Monitoring) — <a href="#contact">get notified when they publish</a>.</p>
+    <div class="now-rows">
+      <div class="now-row fade d1">
+        <span class="now-icon">🔨</span>
+        <span class="now-lbl">Building</span>
+        <span class="now-val">LLM-powered enterprise applications at <strong>NeuNov Technologies</strong> — RAG pipelines, agent workflows, and responsible AI on AWS.</span>
+      </div>
+      <div class="now-row fade d2">
+        <span class="now-icon">📚</span>
+        <span class="now-lbl">Studying</span>
+        <span class="now-val"><strong>AWS Certified Machine Learning Engineer – Associate</strong> (MLA-C01) — documenting every domain as I go through <a href="#notebook">The Notebook</a>.</span>
+      </div>
+      <div class="now-row fade d2">
+        <span class="now-icon">✍️</span>
+        <span class="now-lbl">Writing</span>
+        <span class="now-val">A 6-part series on building ML systems on AWS. Two posts live, four more in progress.</span>
+      </div>
+      <div class="now-row fade d3">
+        <span class="now-icon">📍</span>
+        <span class="now-lbl">Based in</span>
+        <span class="now-val"><strong>Surrey, BC, Canada</strong></span>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- CONTACT -->
-<div class="contact-section" id="contact" role="region" aria-label="Contact information">
-  <div class="contact-inner">
-    <div class="contact-text">
-      <div class="sec-label">Let's talk</div>
-      <h2 class="contact-title">Open to AI/ML, Data&nbsp;Engineering, and Product roles in Canada.</h2>
-      <p class="contact-dek">Based in Surrey, BC. Available for full-time positions, contract engagements, and AI consulting. Targeting BC, AB, and ON.</p>
+<!-- ═══ NOTEBOOK / BLOG ════════════════════════════════════ -->
+<section class="notebook-section" id="notebook" aria-labelledby="nb-h">
+  <div class="wrap">
+    <div class="nb-head fade">
+      <div class="sec-eye">The ML Engineering Notebook</div>
+      <h2 class="sec-h" id="nb-h">Writing that earns <em>its keep</em>.</h2>
+      <p class="nb-dek">Not tutorials — architecture. Explaining how production ML systems actually work, through one realistic project, end to end.</p>
     </div>
-    <div class="contact-links">
-      <a href="mailto:shahriarbm@gmail.com" class="contact-link">
-        <div class="cl-icon" aria-hidden="true">✉️</div>
-        <div class="cl-text">
-          <strong>Email</strong>
-          <span>shahriarbm@gmail.com</span>
+
+    <div class="posts-grid">
+
+      <!-- POST 1 -->
+      <article class="post-card fade d1"
+        aria-label="Where ML Really Begins">
+        <div class="pc-body">
+          <div class="pc-series">AWS MLA-C01 &nbsp;·&nbsp; #1 of 6 &nbsp;·&nbsp; Domain 1 Part 1</div>
+          <h2>Where ML Really Begins: Data Ingestion &amp; Storage on AWS</h2>
+          <p>No model survives bad plumbing. Before a single feature is engineered, the data has to be captured, moved, and stored — Kinesis, Apache Flink, S3 lakehouse, and Glue.</p>
         </div>
+        <div class="pc-footer">
+          <span class="pc-meta">~22 min read &nbsp;·&nbsp; 2026</span>
+          <a href="Blogs/D1P1-data-ingestion-storage-blog.html" class="pc-read">
+            Read
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17 17 7M7 7h10v10"/></svg>
+          </a>
+        </div>
+        <div class="rxn-bar">
+          <span class="rxn-label">React</span>
+          <div class="reactions" data-post="d1p1"></div>
+        </div>
+      </article>
+
+      <!-- POST 2 -->
+      <article class="post-card fade d2"
+        aria-label="From Raw to Ready">
+        <div class="pc-body">
+          <div class="pc-series">AWS MLA-C01 &nbsp;·&nbsp; #2 of 6 &nbsp;·&nbsp; Domain 1 Part 2</div>
+          <h2>From Raw to Ready: Data Transformation, Integrity &amp; Feature Engineering</h2>
+          <p>The lake is full — and useless. Models don't learn from raw events. Turning MetroPulse's messy data into model-ready signal with EMR, Spark, SageMaker, and Glue.</p>
+        </div>
+        <div class="pc-footer">
+          <span class="pc-meta">~24 min read &nbsp;·&nbsp; 2026</span>
+          <a href="Blogs/D1P2-data-ransformation-ntegrity-feature-engineering.html" class="pc-read">
+            Read
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17 17 7M7 7h10v10"/></svg>
+          </a>
+        </div>
+        <div class="rxn-bar">
+          <span class="rxn-label">React</span>
+          <div class="reactions" data-post="d1p2"></div>
+        </div>
+      </article>
+
+    </div>
+
+    <p class="nb-more fade">
+      Series continues: Domain 2 (EDA), Domain 3 (Modeling), Domain 4 (Deployment) —
+      <a href="#connect">reach out to get notified</a>.
+    </p>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ══════════════════════════════════════════════ -->
+<section id="about" aria-labelledby="about-h">
+  <div class="wrap">
+    <div class="about-inner">
+      <div class="fade">
+        <div class="about-frame">
+          <img src="Images/HeadShotClean.png" alt="Shahriar Bin Mohsin" loading="lazy" width="230" height="290">
+        </div>
+      </div>
+      <div class="fade d1">
+        <div class="sec-eye">About</div>
+        <h2 class="sec-h" id="about-h">The person behind<br>the <em>work</em>.</h2>
+        <div class="about-copy">
+          <p>I'm Shahriar — an engineer who has spent twenty years building things. I've designed networks carrying millions of conversations, co-founded a consumer startup, delivered a US$150M program with 200 engineers on the ground, and now I build AI systems that automate complex, knowledge-heavy work for enterprise clients.</p>
+          <p>Each chapter taught me something the previous one couldn't. Telecom gave me operational scale. The startup gave me product instincts. Consulting gave me the ability to walk into any organization and understand what's actually broken. Now I'm applying all of it to AI.</p>
+          <p>I live in Surrey, BC — I came for my <strong>Master's in Data Analytics Engineering at Northeastern</strong> in Vancouver and decided to stay. I write <strong>The ML Engineering Notebook</strong> because explaining what I build forces me to understand it more deeply. And because I wish this kind of writing had existed when I was learning.</p>
+        </div>
+        <div class="about-links">
+          <a href="Resume/Shahriar_Bin_Mohsin_Resume_Master_AI_ML_2026.docx" download class="about-link">↓ Resume</a>
+          <a href="https://linkedin.com/in/sbmsoikot" target="_blank" rel="noopener" class="about-link">LinkedIn ↗</a>
+          <a href="https://github.com/sbmsoikot" target="_blank" rel="noopener" class="about-link">GitHub ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONNECT ════════════════════════════════════════════ -->
+<div class="connect-section" id="connect" role="region" aria-label="Contact">
+  <div class="connect-wrap">
+    <div class="sec-eye fade">Say hello</div>
+    <h2 class="connect-h fade d1">
+      Let's <em>talk</em>.
+    </h2>
+    <div class="connect-items fade d2">
+      <a href="mailto:shahriarbm@gmail.com" class="citem">
+        <div class="ci-ico">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2.5"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </div>
+        <div class="ci-body">
+          <span class="ci-lbl">Email</span>
+          <span class="ci-sub">shahriarbm@gmail.com</span>
+        </div>
+        <svg class="ci-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17 17 7M7 7h10v10"/></svg>
       </a>
-      <a href="https://linkedin.com/in/sbmsoikot" class="contact-link" target="_blank" rel="noopener noreferrer">
-        <div class="cl-icon" aria-hidden="true">💼</div>
-        <div class="cl-text">
-          <strong>LinkedIn</strong>
-          <span>linkedin.com/in/sbmsoikot</span>
+      <a href="https://linkedin.com/in/sbmsoikot" class="citem" target="_blank" rel="noopener noreferrer">
+        <div class="ci-ico">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
         </div>
+        <div class="ci-body">
+          <span class="ci-lbl">LinkedIn</span>
+          <span class="ci-sub">linkedin.com/in/sbmsoikot</span>
+        </div>
+        <svg class="ci-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17 17 7M7 7h10v10"/></svg>
       </a>
-      <a href="https://github.com/sbmsoikot" class="contact-link" target="_blank" rel="noopener noreferrer">
-        <div class="cl-icon" aria-hidden="true">🐙</div>
-        <div class="cl-text">
-          <strong>GitHub</strong>
-          <span>github.com/sbmsoikot</span>
+      <a href="https://github.com/sbmsoikot" class="citem" target="_blank" rel="noopener noreferrer">
+        <div class="ci-ico">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
         </div>
+        <div class="ci-body">
+          <span class="ci-lbl">GitHub</span>
+          <span class="ci-sub">github.com/sbmsoikot</span>
+        </div>
+        <svg class="ci-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17 17 7M7 7h10v10"/></svg>
       </a>
     </div>
   </div>
 </div>
 
-<!-- FOOTER -->
+<!-- ═══ FOOTER ═════════════════════════════════════════════ -->
 <footer class="site-footer">
   <div class="wrap">
-    <div class="footer-inner">
-      <div class="footer-brand">SBM<span>.</span> Shahriar Bin Mohsin</div>
-      <div class="footer-links">
+    <div class="ft">
+      <span class="ft-brand">SBM<span>.</span> Shahriar Bin Mohsin</span>
+      <nav class="ft-nav" aria-label="Footer navigation">
+        <a href="#now">Now</a>
+        <a href="#notebook">Writing</a>
         <a href="#about">About</a>
-        <a href="#expertise">Expertise</a>
-        <a href="#experience">Experience</a>
-        <a href="#blog">Blog</a>
-        <a href="#contact">Contact</a>
-      </div>
-      <p class="footer-copy">© 2026 Md. Shahriar Bin Mohsin</p>
+        <a href="#connect">Connect</a>
+      </nav>
+      <span class="ft-copy">© 2026</span>
     </div>
   </div>
 </footer>
+
+<!-- ═══ SCRIPTS ════════════════════════════════════════════ -->
+<script>
+/* Scroll progress + Nav transition + Intersection animations */
+(function () {
+  var bar  = document.getElementById('scroll-bar');
+  var nav  = document.getElementById('nav');
+  var hero = document.querySelector('.hero');
+
+  function tick() {
+    var doc   = document.documentElement;
+    var total = doc.scrollHeight - window.innerHeight;
+    bar.style.width = (total > 0 ? (window.scrollY / total) * 100 : 0) + '%';
+    nav.classList.toggle('solid', hero.getBoundingClientRect().bottom <= 0);
+  }
+
+  window.addEventListener('scroll', tick, { passive: true });
+  tick();
+
+  var io = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('in'); });
+    },
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll('.fade').forEach(function (el) { io.observe(el); });
+})();
+</script>
+
+<!-- Reactions module (requires Firebase — see js/reactions.js for setup) -->
+<script type="module">
+  import { initReactions } from './js/reactions.js';
+  document.querySelectorAll('.reactions[data-post]').forEach(function (el) { initReactions(el); });
+</script>
 
 </body>
 </html>

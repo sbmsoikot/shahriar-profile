@@ -259,11 +259,11 @@
 
 <!-- ===== SITE NAV ===== -->
 <nav style="position:sticky;top:0;z-index:999;background:rgba(243,237,227,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #D9CFBE;display:flex;align-items:center;justify-content:space-between;padding:13px 28px;font-family:'Spline Sans',system-ui,sans-serif;" role="navigation" aria-label="Site navigation">
-  <a href="../index.html" style="font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:600;color:#17130F;text-decoration:none;border:none;letter-spacing:-.02em;">SBM<span style="color:#BE4A2C">.</span></a>
-  <div style="display:flex;align-items:center;gap:22px;">
-    <a href="../index.html" style="font-size:14px;font-weight:500;color:#473d33;text-decoration:none;border:none;">← Portfolio</a>
-    <a href="../index.html#blog" style="font-size:14px;font-weight:500;color:#473d33;text-decoration:none;border:none;">All Posts</a>
-    <a href="../index.html#contact" style="font-size:13px;font-weight:600;color:#fff;background:#BE4A2C;padding:7px 18px;border-radius:8px;text-decoration:none;border:none;white-space:nowrap;">Hire Me</a>
+  <a href="../index.html" style="font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:500;color:#17130F;text-decoration:none;border:none;letter-spacing:-.025em;">SBM<span style="color:#BE4A2C;">.</span></a>
+  <div style="display:flex;align-items:center;gap:24px;">
+    <a href="../index.html" style="font-size:13.5px;font-weight:500;color:#473d33;text-decoration:none;border:none;">← Home</a>
+    <a href="../index.html#notebook" style="font-size:13.5px;font-weight:500;color:#473d33;text-decoration:none;border:none;">All Writing</a>
+    <a href="../index.html#connect" style="font-size:13px;font-weight:500;color:#473d33;text-decoration:none;border:none;">Connect</a>
   </div>
 </nav>
 
@@ -1145,6 +1145,29 @@ kinesis.put_record(
 
 </main>
 
+<!-- ===================== REACTIONS + COMMENTS ===================== -->
+<section style="border-top:1px solid var(--line);padding:48px 0 0;">
+  <div class="wrap">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust);font-weight:700;margin-bottom:18px;">Reactions</p>
+    <div class="reactions" data-post="d1p1" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:48px;"></div>
+
+    <!-- ── GISCUS COMMENTS ─────────────────────────────────────────────────
+         TO ENABLE comments, replace this placeholder block with the
+         <script> tag from https://giscus.app after you:
+         1. Push this repo to GitHub (public)
+         2. Enable Discussions: repo Settings → Features → Discussions ✓
+         3. Install Giscus app: https://github.com/apps/giscus
+         4. Go to https://giscus.app, enter your repo name, copy the snippet
+         5. Paste the <script> tag here (replacing everything between the dashes)
+    ──────────────────────────────────────────────────────────────────────── -->
+    <p style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust);font-weight:700;margin-bottom:16px;">Discussion</p>
+    <div id="giscus-placeholder" style="background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:28px 24px;text-align:center;">
+      <p style="font-family:'Fraunces',serif;font-size:18px;font-weight:500;margin:0 0 8px;color:var(--ink);">Comments coming soon.</p>
+      <p style="font-size:14px;color:var(--ink-soft);margin:0;">Once this site is published on GitHub, I'll enable Giscus discussions here. Reach me at <a href="mailto:shahriarbm@gmail.com" style="color:var(--rust);border-bottom:1px solid var(--line-2);">shahriarbm@gmail.com</a> in the meantime.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== FOOTER ===================== -->
 <footer>
   <div class="wrap">
@@ -1153,8 +1176,23 @@ kinesis.put_record(
       <p>I'm publishing six project-driven deep-dives across the four MLA-C01 domains, each advancing the same MetroPulse build — the same path that got me certified. Follow along whether you're working toward the cert yourself or hiring someone who's earned it.</p>
     </div>
     <p class="next-up">Next in the series → <b>#2 · Domain 1, Part 2 — Data Transformation, Integrity &amp; Feature Engineering</b> · cleaning, encoding, imbalance, bias &amp; PII on the MetroPulse lake</p>
+    <p style="text-align:center;margin-top:24px;"><a href="../index.html" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);border-bottom:1px solid var(--line-2);padding-bottom:2px;">← Back to sbmsoikot.github.io</a></p>
   </div>
 </footer>
+
+<!-- Reactions -->
+<style>
+  .rxn-btn{display:flex;align-items:center;gap:5px;background:var(--paper-2);border:1px solid var(--line);border-radius:100px;padding:6px 13px;cursor:pointer;font-size:13px;transition:all .15s;color:var(--ink-soft);font-family:'JetBrains Mono',monospace;user-select:none;}
+  .rxn-btn:hover{border-color:var(--rust);background:rgba(190,74,44,.07);color:var(--rust);}
+  .rxn-btn.on{border-color:var(--rust);background:rgba(190,74,44,.1);color:var(--rust);}
+  .rxn-btn.pop{animation:rxnPop .28s cubic-bezier(.22,.68,0,1.2);}
+  @keyframes rxnPop{0%{transform:scale(1)}45%{transform:scale(1.32)}100%{transform:scale(1)}}
+  .rxn-emoji{font-size:15px;line-height:1;}.rxn-n{font-size:12px;font-weight:700;min-width:8px;}
+</style>
+<script type="module">
+  import { initReactions } from '../js/reactions.js';
+  document.querySelectorAll('.reactions[data-post]').forEach(el => initReactions(el));
+</script>
 
 </body>
 </html>
