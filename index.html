@@ -345,11 +345,16 @@
     /* ── ABOUT ────────────────────────────────────────── */
     .about-inner { display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: start; }
     .about-frame {
-      width: 230px; height: 290px; border-radius: 16px; overflow: hidden;
+      width: 290px; height: 365px; border-radius: 16px; overflow: hidden;
       border: 2px solid var(--ink); flex-shrink: 0;
       box-shadow: 6px 6px 0 var(--line);
     }
-    .about-frame img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .about-frame img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center 5%;
+      image-rendering: -webkit-optimize-contrast;
+      filter: contrast(1.06) brightness(1.01) saturate(1.04);
+    }
     .about-copy { margin-top: 22px; display: flex; flex-direction: column; gap: 17px; }
     .about-copy p { font-size: 17px; color: var(--ink-soft); line-height: 1.75; }
     .about-copy strong { color: var(--ink); font-weight: 600; }
@@ -412,7 +417,7 @@
       section, .connect-section { padding: 68px 0; }
       .posts-grid { grid-template-columns: 1fr; }
       .about-inner { grid-template-columns: 1fr; gap: 34px; }
-      .about-frame { width: 160px; height: 200px; }
+      .about-frame { width: 200px; height: 250px; }
       .now-row { grid-template-columns: 32px 110px 1fr; gap: 0 12px; }
     }
     @media (max-width: 560px) {
@@ -624,7 +629,7 @@
     <div class="about-inner">
       <div class="fade">
         <div class="about-frame">
-          <img src="Images/HeadShotClean.png" alt="Shahriar Bin Mohsin" loading="lazy" width="230" height="290">
+          <img src="Images/HeadShotClean.png" alt="Shahriar Bin Mohsin" loading="lazy" width="290" height="365">
         </div>
       </div>
       <div class="fade d1">
