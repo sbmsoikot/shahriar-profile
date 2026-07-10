@@ -266,6 +266,70 @@
     .now-val a { color: var(--rust); border-bottom: 1px solid transparent; transition: border-color .18s; }
     .now-val a:hover { border-color: var(--rust); }
 
+    /* ── WORK / FEATURED PROJECT ──────────────────────── */
+    .work-head { margin-bottom: 40px; }
+    .work-dek { font-size: 16px; color: var(--ink-soft); margin-top: 10px; max-width: 48ch; }
+    .feature {
+      display: grid; grid-template-columns: 1.05fr .95fr; gap: 0;
+      border: 1px solid var(--line); border-radius: 20px; overflow: hidden;
+      background: var(--paper-2);
+    }
+    .feature-media {
+      position: relative; background: #0b0d10; min-height: 100%;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+      border-right: 1px solid var(--line);
+    }
+    .feature-media img { width: 100%; height: 100%; object-fit: cover; object-position: left top; }
+    .feature-live {
+      position: absolute; top: 16px; left: 16px; z-index: 2;
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(11,13,16,.82); backdrop-filter: blur(6px);
+      color: #f3ede3; font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700;
+      padding: 7px 13px; border-radius: 100px; border: 1px solid rgba(255,255,255,.12);
+    }
+    .feature-live .pulse {
+      width: 8px; height: 8px; border-radius: 50%; background: #4ade80;
+      box-shadow: 0 0 0 0 rgba(74,222,128,.7); animation: livePulse 2s infinite;
+    }
+    @keyframes livePulse {
+      0% { box-shadow: 0 0 0 0 rgba(74,222,128,.6); }
+      70% { box-shadow: 0 0 0 7px rgba(74,222,128,0); }
+      100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+    }
+    .feature-body { padding: 38px 36px; display: flex; flex-direction: column; }
+    .feature-tag {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--rust); font-weight: 700; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .feature-tag::before { content: ''; width: 14px; height: 2px; background: var(--rust); display: block; }
+    .feature-body h3 {
+      font-family: 'Fraunces', serif; font-size: clamp(24px, 3.4vw, 32px); font-weight: 500;
+      line-height: 1.12; letter-spacing: -.018em; color: var(--ink); margin-bottom: 14px;
+    }
+    .feature-body p { font-size: 15.5px; color: var(--ink-soft); line-height: 1.66; margin-bottom: 16px; }
+    .feature-stack { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 26px; }
+    .chip {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .04em;
+      color: var(--ink-soft); background: var(--paper); border: 1px solid var(--line);
+      padding: 5px 11px; border-radius: 100px;
+    }
+    .feature-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: auto; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--ink); color: var(--paper);
+      font-size: 13.5px; font-weight: 600; padding: 12px 20px; border-radius: 100px;
+      transition: transform .18s, background .18s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); background: var(--rust); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 7px;
+      color: var(--rust); font-size: 13.5px; font-weight: 600;
+      padding: 12px 6px; border-bottom: 1px solid transparent; transition: border-color .18s;
+    }
+    .btn-ghost:hover { border-color: var(--rust); }
+
     /* ── NOTEBOOK / POSTS ─────────────────────────────── */
     .notebook-section { background: var(--paper-2); }
     .nb-head { margin-bottom: 42px; }
@@ -416,6 +480,10 @@
     @media (max-width: 820px) {
       section, .connect-section { padding: 68px 0; }
       .posts-grid { grid-template-columns: 1fr; }
+      .feature { grid-template-columns: 1fr; }
+      .feature-media { border-right: none; border-bottom: 1px solid var(--line); min-height: 240px; }
+      .feature-media img { object-position: center top; }
+      .feature-body { padding: 30px 26px; }
       .about-inner { grid-template-columns: 1fr; gap: 34px; }
       .about-frame { width: 200px; height: 250px; }
       .now-row { grid-template-columns: 32px 110px 1fr; gap: 0 12px; }
@@ -441,6 +509,7 @@
     <a href="#top" class="nav-logo">SBM<span>.</span></a>
     <div class="nav-links">
       <a href="#now">Now</a>
+      <a href="#work">Work</a>
       <a href="#notebook">Writing</a>
       <a href="#about">About</a>
       <a href="#connect">Connect</a>
@@ -460,7 +529,7 @@
     <div class="hero-rule"></div>
     <div class="hero-byline">
       <div>
-        <div class="hero-name">Md. Shahriar Bin Mohsin</div>
+        <div class="hero-name">Shahriar Bin Mohsin</div>
         <div class="hero-role">AI/ML Engineer &nbsp;·&nbsp; Surrey, BC, Canada</div>
       </div>
       <div class="hero-socials">
@@ -492,13 +561,18 @@
         <h2 class="sec-h" id="now-h">What I'm doing <em>right now</em>.</h2>
       </div>
       <!-- UPDATE: change datetime and text when you edit this section -->
-      <time class="now-since" datetime="2026-06">Last updated: June 2026</time>
+      <time class="now-since" datetime="2026-07">Last updated: July 2026</time>
     </div>
     <div class="now-rows">
       <div class="now-row fade d1">
         <span class="now-icon">🔨</span>
         <span class="now-lbl">Building</span>
-        <span class="now-val">LLM-powered enterprise applications at <strong>NeuNov Technologies</strong> — RAG pipelines, agent workflows, and responsible AI on AWS.</span>
+        <span class="now-val">LLM-powered enterprise applications at <a href="https://neunov.com/" target="_blank" rel="noopener noreferrer"><strong>NeuNov Technologies</strong></a> — RAG pipelines, agent workflows, and responsible AI on AWS.</span>
+      </div>
+      <div class="now-row fade d1">
+        <span class="now-icon">🚀</span>
+        <span class="now-lbl">Shipped</span>
+        <span class="now-val"><a href="https://atwc26.com" target="_blank" rel="noopener noreferrer"><strong>AnalyseThisWC26</strong></a> — a live World Cup 2026 analytics platform with a backtested multi-model predictor and a Monte Carlo tournament simulation. <a href="#work">See the build →</a></span>
       </div>
       <div class="now-row fade d2">
         <span class="now-icon">📚</span>
@@ -516,6 +590,49 @@
         <span class="now-val"><strong>Surrey, BC, Canada</strong></span>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ═══ WORK / FEATURED PROJECT ════════════════════════════ -->
+<section id="work" aria-labelledby="work-h">
+  <div class="wrap">
+    <div class="work-head fade">
+      <div class="sec-eye">Selected Work</div>
+      <h2 class="sec-h" id="work-h">Shipping systems that <em>predict</em>.</h2>
+      <p class="work-dek">A live product, not a demo — real data, validated models, and production-grade infrastructure behind every prediction.</p>
+    </div>
+
+    <article class="feature fade d1" aria-label="AnalyseThisWC26">
+      <div class="feature-media">
+        <span class="feature-live"><span class="pulse"></span> Live</span>
+        <a href="https://atwc26.com" target="_blank" rel="noopener noreferrer" aria-label="Open AnalyseThisWC26 live site">
+          <img src="Blogs/atwc26-images/knockout-bracket.png" alt="AnalyseThisWC26 knockout bracket with predicted winners and confidence bars" loading="lazy">
+        </a>
+      </div>
+      <div class="feature-body">
+        <div class="feature-tag">AnalyseThisWC26 · with NeuNov Technologies</div>
+        <h3>Real-time FIFA World Cup 2026 analytics &amp; prediction</h3>
+        <p>A full-stack platform that turns real ESPN data into match analysis, player scouting, and statistical forecasts — a <strong>validated multi-model predictor</strong> (Dixon-Coles / Poisson / Elo, backtested out-of-sample) and a <strong>Monte Carlo simulation</strong> that runs the whole tournament 10,000 times to estimate every team's title odds.</p>
+        <div class="feature-stack">
+          <span class="chip">Next.js</span>
+          <span class="chip">Python · scipy</span>
+          <span class="chip">Serverless AWS</span>
+          <span class="chip">Terraform</span>
+          <span class="chip">Monte Carlo</span>
+          <span class="chip">Dixon-Coles</span>
+        </div>
+        <div class="feature-cta">
+          <a href="https://atwc26.com" target="_blank" rel="noopener noreferrer" class="btn-primary">
+            Visit atwc26.com
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17 17 7M7 7h10v10"/></svg>
+          </a>
+          <a href="Blogs/atwc26-building-a-world-cup-analytics-platform.html" class="btn-ghost">
+            Read the build story
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -699,6 +816,7 @@
       <span class="ft-brand">SBM<span>.</span> Shahriar Bin Mohsin</span>
       <nav class="ft-nav" aria-label="Footer navigation">
         <a href="#now">Now</a>
+        <a href="#work">Work</a>
         <a href="#notebook">Writing</a>
         <a href="#about">About</a>
         <a href="#connect">Connect</a>
