@@ -315,6 +315,7 @@
       color: var(--ink-soft); background: var(--paper); border: 1px solid var(--line);
       padding: 5px 11px; border-radius: 100px;
     }
+    .feature + .feature { margin-top: 22px; }
     .feature-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: auto; }
     .btn-primary {
       display: inline-flex; align-items: center; gap: 8px;
@@ -598,8 +599,8 @@
   <div class="wrap">
     <div class="work-head fade">
       <div class="sec-eye">Selected Work</div>
-      <h2 class="sec-h" id="work-h">Shipping systems that <em>predict</em>.</h2>
-      <p class="work-dek">A live product, not a demo — real data, validated models, and production-grade infrastructure behind every prediction.</p>
+      <h2 class="sec-h" id="work-h">Shipping systems that turn data into <em>understanding</em>.</h2>
+      <p class="work-dek">Live products, not demos — real data, transparent methods, and production-grade cloud infrastructure behind each one.</p>
     </div>
 
     <article class="feature fade d1" aria-label="AnalyseThisWC26">
@@ -629,6 +630,34 @@
           <a href="Blogs/atwc26-building-a-world-cup-analytics-platform.html" class="btn-ghost">
             Read the build story
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <article class="feature fade d2" aria-label="Trade War Dashboard">
+      <div class="feature-media">
+        <span class="feature-live"><span class="pulse"></span> Live</span>
+        <a href="https://tradewardashboard.com" target="_blank" rel="noopener noreferrer" aria-label="Open Trade War Dashboard live site">
+          <img src="tradewar-images/main-page.png" alt="Trade War Dashboard news homepage with featured trade-policy stories, source labels, and original publication dates" loading="lazy">
+        </a>
+      </div>
+      <div class="feature-body">
+        <div class="feature-tag">Trade War Dashboard · Full-stack build</div>
+        <h3>Trade policy &amp; tariffs, clearly explained</h3>
+        <p>A public platform that makes tariffs, trade balances, and trade-policy news easier to explore. A <strong>publisher-verified news pipeline</strong> preserves each story's original publication time and links straight back to the source, paired with an <strong>interactive country-level analysis</strong> of U.S. trade deficits, exports, imports, and tariff measures.</p>
+        <div class="feature-stack">
+          <span class="chip">React 19</span>
+          <span class="chip">Python · Dash · Plotly</span>
+          <span class="chip">Serverless AWS</span>
+          <span class="chip">Lambda · DynamoDB</span>
+          <span class="chip">RSS + GDELT</span>
+          <span class="chip">CloudFormation IaC</span>
+        </div>
+        <div class="feature-cta">
+          <a href="https://tradewardashboard.com" target="_blank" rel="noopener noreferrer" class="btn-primary">
+            Visit tradewardashboard.com
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17 17 7M7 7h10v10"/></svg>
           </a>
         </div>
       </div>
