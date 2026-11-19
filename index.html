@@ -343,6 +343,7 @@
       transition: border-color .2s, transform .22s;
     }
     .post-card:hover { border-color: rgba(190,74,44,.35); transform: translateY(-4px); }
+    .post-card.featured { grid-column: 1 / -1; }
     .post-card:focus-within { outline: 2px solid var(--rust); outline-offset: 2px; }
 
     .pc-body { padding: 28px 26px 20px; flex: 1; }
@@ -675,6 +676,27 @@
     </div>
 
     <div class="posts-grid">
+
+      <!-- FIELD NOTES: ANTHROPIC IPO -->
+      <article class="post-card featured fade"
+        aria-label="Anthropic Goes Public Today: Riding the Exponential">
+        <div class="pc-body">
+          <div class="pc-series">Field Notes &nbsp;·&nbsp; Market Analysis &nbsp;·&nbsp; Nov 19, 2026</div>
+          <h2>Anthropic Goes Public Today: Riding the Exponential</h2>
+          <p>A record $81.34B IPO and a $1.5T valuation, read like an analyst: a revenue run-rate that grew ~930x in 33 months, a market pricing the curve rather than the company, the "exponential gap" — and the compute costs that grow exponentially too.</p>
+        </div>
+        <div class="pc-footer">
+          <span class="pc-meta">~9 min read &nbsp;·&nbsp; 2026</span>
+          <a href="Blogs/anthropic-ipo-riding-the-exponential.html" class="pc-read">
+            Read
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17 17 7M7 7h10v10"/></svg>
+          </a>
+        </div>
+        <div class="rxn-bar">
+          <span class="rxn-label">React</span>
+          <div class="reactions" data-post="anthropic-ipo"></div>
+        </div>
+      </article>
 
       <!-- POST 1 -->
       <article class="post-card fade d1"
