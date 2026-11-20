@@ -11,14 +11,14 @@
 <meta property="og:description" content="The largest IPO by gross base offering size, and what the shape of the numbers behind it says about exponential technology, valuation and the cost of staying at the frontier.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://sbmsoikot.github.io/shahriar-profile/Blogs/anthropic-ipo-riding-the-exponential.html">
-<meta property="og:image" content="https://sbmsoikot.github.io/shahriar-profile/Blogs/anthropic-ipo-images/banner-exponential-gap.png">
+<meta property="og:image" content="https://sbmsoikot.github.io/shahriar-profile/Blogs/anthropic-ipo-images/banner-share.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="627">
-<meta property="og:image:alt" content="Conceptual chart: technology compounds exponentially while a typical business improves linearly; frontier AI labs push the curve itself.">
+<meta property="og:image:alt" content="Anthropic Goes Public: Riding the Exponential — title card with key figures ($81.34B IPO, $1.5T valuation, ~930x run-rate growth) and a chart of the exponential gap.">
 <meta property="article:published_time" content="2026-11-19">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Anthropic Goes Public: Riding the Exponential">
-<meta name="twitter:image" content="https://sbmsoikot.github.io/shahriar-profile/Blogs/anthropic-ipo-images/banner-exponential-gap.png">
+<meta name="twitter:image" content="https://sbmsoikot.github.io/shahriar-profile/Blogs/anthropic-ipo-images/banner-share.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -161,6 +161,29 @@
   }
   figcaption b{font-style:normal;color:var(--rust);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;}
 
+
+  /* ---------- Chart cards ---------- */
+  .viz{background:var(--paper-2);border:1px solid var(--line);border-radius:16px;padding:24px 26px 18px;margin:42px 0;box-shadow:0 22px 44px -34px rgba(20,15,10,.5);}
+  .viz-eye{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--rust);font-weight:700;}
+  .viz-title{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(20px,2.6vw,25px);line-height:1.2;letter-spacing:-.01em;color:var(--ink);margin:6px 0 4px;}
+  .viz-sub{font-size:14.5px;line-height:1.5;color:var(--ink-soft);margin:0 0 16px;}
+  .viz-legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:-6px 0 14px;font-size:13px;color:var(--ink-soft);}
+  .viz-legend span{display:inline-flex;align-items:center;gap:7px;}
+  .viz-legend .sw{display:inline-block;width:20px;height:3px;border-radius:2px;}
+  .viz-legend .sw.dash{background:repeating-linear-gradient(90deg,#BE4A2C 0 6px,transparent 6px 10px);}
+  .viz-legend .sw.area{height:12px;background:rgba(46,109,164,.18);border-radius:3px;}
+  .viz-plot{position:relative;min-height:220px;}
+  .viz-tip{position:absolute;left:0;top:0;pointer-events:none;background:var(--ink);color:#efe6d6;font-size:12.5px;line-height:1.5;padding:7px 11px;border-radius:8px;opacity:0;transition:opacity .12s;white-space:nowrap;z-index:3;box-shadow:0 10px 24px -10px rgba(0,0,0,.5);}
+  .viz-tip b{color:#fff;}
+  figcaption.viz-src{font-family:'JetBrains Mono',monospace;font-style:normal;font-size:11px;line-height:1.6;color:var(--ink-soft);text-align:left;margin-top:14px;border-top:1px solid var(--line);padding-top:12px;}
+  .viz-data{margin-top:10px;}
+  .viz-data summary{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--rust);font-weight:700;cursor:pointer;}
+  .viz-data .table-scroll{overflow-x:auto;margin-top:10px;}
+  .viz-data table{border-collapse:collapse;width:100%;font-size:14px;}
+  .viz-data th,.viz-data td{text-align:left;padding:7px 12px;border-bottom:1px solid var(--line);}
+  .viz-data th{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;}
+  @media (max-width:680px){.viz{padding:18px 14px 14px;margin:34px -6px;}}
+
   /* ---------- Stat row ---------- */
   .stat-row{
     display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:34px 0 10px;
@@ -300,11 +323,15 @@
 
   <p>The $83 price implies an equity value of about <strong>$1.5 trillion</strong> on a fully diluted basis (<a href="https://www.pbs.org/newshour/economy/anthropic-prices-its-ipo-at-83-per-share-valuing-the-ai-giant-at-1-5-trillion" target="_blank" rel="noopener">PBS NewsHour</a>). On the same basis, the opening trade implies about $2.02 trillion, by my calculation.</p>
 
-  <figure>
-    <div class="chart">
-      <img src="anthropic-ipo-images/largest-ipos.png" alt="Bar chart of the largest IPOs by gross base offering size: Anthropic $81.34B (Nov 2026), SpaceX $75B (Jun 2026), Saudi Aramco $25.6B (2019), Alibaba $21.8B (2014)" loading="lazy">
+  <figure class="viz" id="fig-ipo">
+    <div class="viz-head">
+      <span class="viz-eye">Fig. 1 · The deal</span>
+      <div class="viz-title">The largest IPO ever, by base offering</div>
+      <p class="viz-sub">Gross base offering, US$ billions. Hatched: SpaceX’s over-allotment option, excluded from the ranking.</p>
     </div>
-    <figcaption><b>Record</b> Largest IPOs by gross base offering size, excluding underwriters' over-allotment options.</figcaption>
+    <div class="viz-plot" data-chart="ipo"><noscript><img src="anthropic-ipo-images/largest-ipos.png" alt="Largest IPOs by gross base offering size" style="width:100%"></noscript></div>
+    <figcaption class="viz-src">Sources: Anthropic <a href="https://www.sec.gov/Archives/edgar/data/2130357/000162828026074944/anthropicpbc-424b4.htm" target="_blank" rel="noopener">final prospectus</a> via <a href="https://decrypt.co/383623/anthropic-tops-spacex-initial-ipo-81-billion-deal-where-the-money-went" target="_blank" rel="noopener">Decrypt</a>; <a href="https://www.thestar.com.my/tech/tech-news/2026/06/15/spacex-ipo-raises-857-billion-as-underwriters-exercise-039greenshoe-option" target="_blank" rel="noopener">The Star</a> (SpaceX); company disclosures (Saudi Aramco, Alibaba). If Anthropic’s 147M-share option is fully exercised, its offering would reach ~$93.5B.</figcaption>
+    <details class="viz-data"><summary>View data</summary><div class="table-scroll"><table><thead><tr><th>IPO</th><th>Date</th><th>Gross base offering</th></tr></thead><tbody><tr><td>Anthropic</td><td>Nov 2026</td><td>$81.34B</td></tr><tr><td>SpaceX</td><td>Jun 2026</td><td>$75B ($85.7B incl. option)</td></tr><tr><td>Saudi Aramco</td><td>Dec 2019</td><td>$25.6B</td></tr><tr><td>Alibaba</td><td>Sep 2014</td><td>$21.8B</td></tr></tbody></table></div></details>
   </figure>
 
   <p class="lead-line">Put on an analyst's hat, and the headline is less interesting than the shape of the numbers behind it.</p>
@@ -315,11 +342,15 @@
 
   <p>Customer depth grew too. More than 11,900 customers generated at least $100,000 in trailing-12-month revenue as of September 30, 2026, up from more than 950 a year earlier.</p>
 
-  <figure>
-    <div class="chart">
-      <img src="anthropic-ipo-images/revenue-run-rate.png" alt="Log-scale line chart of Anthropic's annualized revenue run-rate, from $87M in Jan 2024 to $3B in May 2025, $9B in Dec 2025, $30B in Apr 2026, $65B in Jul 2026 and $81B in Oct 2026" loading="lazy">
+  <figure class="viz" id="fig-runrate">
+    <div class="viz-head">
+      <span class="viz-eye">Fig. 2 · Revenue</span>
+      <div class="viz-title">From $87 million to $81 billion in 33 months</div>
+      <p class="viz-sub">Anthropic annualized revenue run-rate, US$, log scale: a steeper slope means faster growth. Dashed: no reported data points in between.</p>
     </div>
-    <figcaption><b>Run-rate</b> Anthropic's annualized revenue run-rate on a log scale. A steeper slope means faster growth. The May 2025 point is from <a href="https://www.thestar.com.my/tech/tech-news/2025/05/31/exclusive-anthropic-hits-3-billion-in-annualized-revenue-on-business-demand-for-ai" target="_blank" rel="noopener">Reuters</a>.</figcaption>
+    <div class="viz-plot" data-chart="runrate"><noscript><img src="anthropic-ipo-images/revenue-run-rate.png" alt="Anthropic revenue run-rate, log scale" style="width:100%"></noscript></div>
+    <figcaption class="viz-src">Sources: Anthropic (Jan 2024, Aug 2025, Feb/Apr/May 2026); Reuters (May, Oct 2025, Jul 2026); Bloomberg (Dec 2025); <a href="https://www.sec.gov/Archives/edgar/data/2130357/000162828026074944/anthropicpbc-424b4.htm" target="_blank" rel="noopener">final prospectus</a> ($81B, Oct 31, 2026). Run-rate per prospectus: 28 days of consumption fees annualized + one month of subscription fees annualized.</figcaption>
+    <details class="viz-data"><summary>View data</summary><div class="table-scroll"><table><thead><tr><th>Date</th><th>Run-rate</th></tr></thead><tbody><tr><td>Jan 2024</td><td>$87M</td></tr><tr><td>May 2025</td><td>$3B</td></tr><tr><td>Aug 2025</td><td>$5B</td></tr><tr><td>Oct 2025</td><td>$7B</td></tr><tr><td>Dec 2025</td><td>$9B</td></tr><tr><td>Feb 2026</td><td>$14B</td></tr><tr><td>Apr 2026</td><td>$30B</td></tr><tr><td>May 2026</td><td>$47B</td></tr><tr><td>Jul 2026</td><td>$65B</td></tr><tr><td>Oct 31, 2026</td><td>$81B</td></tr></tbody></table></div></details>
   </figure>
 
   <p>On a log scale, a constant growth <em>rate</em> would draw a straight line, and a steeper slope means faster growth. This line shows rapid growth at varying rates: steepest in early 2026 and flatter from July to October. For context, Reuters reported in late 2025, citing unnamed sources, that Anthropic's <em>best-case</em> target for 2026 was $26 billion (<a href="https://finance.yahoo.com/news/exclusive-anthropic-aims-nearly-triple-170234463.html" target="_blank" rel="noopener">Reuters via Yahoo</a>). Anthropic <a href="https://www.anthropic.com/news/google-broadcom-partnership-compute" target="_blank" rel="noopener">said</a> it passed $30 billion in early April.</p>
@@ -333,11 +364,15 @@
 
   <p>Anthropic's valuation rose about 365x in three and a half years. The starting point, about $4.1 billion at the 2023 Series C, was reported by <a href="https://www.theinformation.com/articles/openai-rival-anthropic-raises-funding-at-4-1-billion-valuation" target="_blank" rel="noopener">The Information</a>; Anthropic disclosed the $450 million raised but not the valuation. Later private post-money valuations come from the company's own announcements, ending at $965 billion for the May 2026 <a href="https://www.anthropic.com/news/series-h" target="_blank" rel="noopener">Series H</a>. The IPO price implies about $1.5 trillion, fully diluted. That is about 1.55x the Series H headline valuation, a comparison of headline valuations, not of what investors paid for equivalent shares (<a href="https://finance.yahoo.com/markets/stocks/articles/anthropic-prices-ipo-83-share-014000480.html" target="_blank" rel="noopener">Yahoo Finance</a>).</p>
 
-  <figure>
-    <div class="chart">
-      <img src="anthropic-ipo-images/valuation-by-round.png" alt="Bar chart of Anthropic valuation by round: Series C $4.1B (May 2023), Series E $61.5B, Series F $183B, Series G $380B, Series H $965B, IPO price $1.5T, first trade ~$2.0T" loading="lazy">
+  <figure class="viz" id="fig-valuation">
+    <div class="viz-head">
+      <span class="viz-eye">Fig. 3 · Valuation</span>
+      <div class="viz-title">From $4.1 billion to $1.5 trillion at the IPO</div>
+      <p class="viz-sub">Private post-money valuations by round; IPO bars show implied fully diluted equity value. US$. Hatched: my estimate at the first trade.</p>
     </div>
-    <figcaption><b>Valuation</b> Private post-money valuations by round; IPO bars show implied fully diluted equity value.</figcaption>
+    <div class="viz-plot" data-chart="valuation"><noscript><img src="anthropic-ipo-images/valuation-by-round.png" alt="Anthropic valuation by funding round and IPO" style="width:100%"></noscript></div>
+    <figcaption class="viz-src">Sources: <a href="https://www.theinformation.com/articles/openai-rival-anthropic-raises-funding-at-4-1-billion-valuation" target="_blank" rel="noopener">The Information</a> (Series C, reported); Anthropic announcements (Series E–H); <a href="https://www.pbs.org/newshour/economy/anthropic-prices-its-ipo-at-83-per-share-valuing-the-ai-giant-at-1-5-trillion" target="_blank" rel="noopener">PBS NewsHour</a> (IPO). First-trade estimate: $1.5T × $111.50 ÷ $83 at 11:48 a.m. ET, Nov 19.</figcaption>
+    <details class="viz-data"><summary>View data</summary><div class="table-scroll"><table><thead><tr><th>Round</th><th>Date</th><th>Valuation</th></tr></thead><tbody><tr><td>Series C</td><td>May 2023</td><td>~$4.1B</td></tr><tr><td>Series E</td><td>Mar 2025</td><td>$61.5B</td></tr><tr><td>Series F</td><td>Sep 2025</td><td>$183B</td></tr><tr><td>Series G</td><td>Feb 2026</td><td>$380B</td></tr><tr><td>Series H</td><td>May 2026</td><td>$965B</td></tr><tr><td>IPO price ($83)</td><td>Nov 18, 2026</td><td>~$1.5T</td></tr><tr><td>First trade ($111.50)</td><td>Nov 19, 2026</td><td>~$2.02T (estimate)</td></tr></tbody></table></div></details>
   </figure>
 
   <p>The multiple, stated precisely: fully diluted equity value divided by annualized revenue run-rate is about <strong>18.5x at the IPO price</strong> and <strong>24.9x at the opening trade</strong>. My reading is that the market is pricing the curve, not the company: it is paying for where revenue could go, not for where it stands now.</p>
@@ -346,11 +381,16 @@
 
   <p>In <a href="https://www.diversionbooks.com/books/the-exponential-age" target="_blank" rel="noopener"><em>The Exponential Age</em></a>, Azeem Azhar calls it the "exponential gap": <strong>technology can improve faster than many organizations can adapt to it.</strong> The reason is rarely a lack of interest. Budgets are set once a year, hiring takes months, and new tools have to clear security reviews, training and process redesign before they are used reliably at scale. Change takes time, even when the technology is ready.</p>
 
-  <figure>
-    <div class="chart">
-      <img src="anthropic-ipo-images/exponential-gap.png" alt="Conceptual illustration: technology capability compounds exponentially while a typical business improves linearly; the shaded gap between them is where AI-native startups win, and a steeper dashed curve shows frontier AI labs pushing the curve itself" loading="lazy">
+  <figure class="viz" id="fig-gap">
+    <div class="viz-head">
+      <span class="viz-eye">Fig. 4 · The theory</span>
+      <div class="viz-title">Technology compounds; most businesses add</div>
+      <p class="viz-sub">Conceptual illustration of capability over time. Curves are illustrative, not measured data.</p>
+      <div class="viz-legend"><span><i class="sw" style="background:#2E6DA4"></i>Technology</span><span><i class="sw dash"></i>Frontier AI labs</span><span><i class="sw" style="background:#9C9284"></i>Typical business</span><span><i class="sw area"></i>The gap</span></div>
     </div>
-    <figcaption><b>The gap</b> Technology compounds; most businesses add. A conceptual illustration based on the exponential-technology thesis (e.g. Azhar, Kurzweil). Not to scale.</figcaption>
+    <div class="viz-plot" data-chart="gap"><noscript><img src="anthropic-ipo-images/exponential-gap.png" alt="Conceptual illustration of the exponential gap" style="width:100%"></noscript></div>
+    <figcaption class="viz-src">Based on the “exponential technology vs. linear organization” thesis (e.g. Azhar, Kurzweil). Not to scale.</figcaption>
+
   </figure>
 
   <p>The space between what the technology makes possible and what organizations can reliably deploy is a <strong>potential opportunity</strong>. Gains inside it can be measured one workflow at a time. A 2025 study of 5,172 customer-support agents found that AI assistance raised issues resolved per hour by <strong>15% on average</strong>. Gains varied widely: less experienced workers improved the most, while the most experienced saw small speed gains and small declines in quality (<a href="https://academic.oup.com/qje/article/140/2/889/7990658" target="_blank" rel="noopener">Brynjolfsson, Li and Raymond, <em>Quarterly Journal of Economics</em></a>). That shows a workflow-level gain is measurable. Measuring the gap itself would also need a baseline for what an organization can already deploy reliably.</p>
@@ -378,11 +418,15 @@
 
   <p>Profitability moved the wrong way in Q3. Anthropic reported a $567 million operating loss after a $974 million operating profit in Q2. The Q3 net loss was $23.3 billion, including a $21.9 billion non-cash fair-value charge on convertible notes, derivative liabilities and SAFEs (<a href="https://www.sec.gov/Archives/edgar/data/2130357/000162828026074944/anthropicpbc-424b4.htm" target="_blank" rel="noopener">final prospectus</a>).</p>
 
-  <figure>
-    <div class="chart">
-      <img src="anthropic-ipo-images/quarterly-revenue.png" alt="Bar chart of Anthropic quarterly recognized revenue: Q3 2025 $1.38B, Q4 2025 $2.04B, Q1 2026 $4.7B (+131%), Q2 2026 $11.6B (+144%), Q3 2026 $17.0B (+47%)" loading="lazy">
+  <figure class="viz" id="fig-quarterly">
+    <div class="viz-head">
+      <span class="viz-eye">Fig. 5 · The caution</span>
+      <div class="viz-title">Still growing fast, but sequential growth slowed in Q3</div>
+      <p class="viz-sub">Anthropic quarterly revenue, US$ billions. Recognized GAAP revenue, not run-rate.</p>
     </div>
-    <figcaption><b>Quarterly revenue</b> Recognized GAAP revenue, not run-rate. Source: Anthropic <a href="https://www.sec.gov/Archives/edgar/data/2130357/000162828026074944/anthropicpbc-424b4.htm" target="_blank" rel="noopener">final prospectus</a>, Quarterly Consolidated Statements of Operations (Q4 2025: $2.040 billion).</figcaption>
+    <div class="viz-plot" data-chart="quarterly"><noscript><img src="anthropic-ipo-images/quarterly-revenue.png" alt="Anthropic quarterly revenue, Q3 2025 to Q3 2026" style="width:100%"></noscript></div>
+    <figcaption class="viz-src">Source: Anthropic <a href="https://www.sec.gov/Archives/edgar/data/2130357/000162828026074944/anthropicpbc-424b4.htm" target="_blank" rel="noopener">final prospectus</a>, Quarterly Consolidated Statements of Operations.</figcaption>
+    <details class="viz-data"><summary>View data</summary><div class="table-scroll"><table><thead><tr><th>Quarter</th><th>Revenue</th><th>vs. prior quarter</th></tr></thead><tbody><tr><td>Q3 2025</td><td>$1.382B</td><td>—</td></tr><tr><td>Q4 2025</td><td>$2.040B</td><td>+48%</td></tr><tr><td>Q1 2026</td><td>$4.731B</td><td>+132%</td></tr><tr><td>Q2 2026</td><td>$11.555B</td><td>+144%</td></tr><tr><td>Q3 2026</td><td>$16.956B</td><td>+47%</td></tr></tbody></table></div></details>
   </figure>
 
   <p>Sequential growth also slowed. Quarterly revenue rose 144% from Q1 to Q2, then 47% into Q3, to $17.0 billion, about 12.3x the same quarter a year earlier. One slower quarter does not settle the long-run trend. It does sharpen the question for ANT shareholders: can growth stay high long enough for durable profits to arrive?</p>
@@ -459,6 +503,7 @@
   @keyframes rxnPop{0%{transform:scale(1)}45%{transform:scale(1.32)}100%{transform:scale(1)}}
   .rxn-emoji{font-size:15px;line-height:1;}.rxn-n{font-size:12px;font-weight:700;min-width:8px;}
 </style>
+<script src="../js/ipo-charts.js" defer></script>
 <script type="module">
   import { initReactions } from '../js/reactions.js';
   document.querySelectorAll('.reactions[data-post]').forEach(el => initReactions(el));
